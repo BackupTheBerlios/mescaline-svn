@@ -3,7 +3,7 @@
 if (!class_exists("Table")) include("table.inc");
 
 class Field {
-	
+
 	public $name;
 	public $optional;
 
@@ -15,7 +15,12 @@ class Field {
 
 	function toString() {
 
-		return $this->name . " (Default)";	
+		return $this->name . " (Default)";
+	}
+
+	function formatValue($value) {
+
+		return $value;
 	}
 }
 
