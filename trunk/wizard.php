@@ -8,6 +8,12 @@ if (!class_exists("ListField")) include("listfield.inc");
 if (!class_exists("Database")) include("database.inc");
 if (!class_exists("WebContext")) include("webcontext.inc");
 
+if (!class_exists("WizardStep")) include("wizardstep.inc");
+if (!class_exists("EnterDBInfo")) include("enterdbinfo.inc");
+if (!class_exists("ChooseTable")) include("choosetable.inc");
+if (!class_exists("ChooseIDField")) include("chooseidfield.inc");
+if (!class_exists("SelectFields")) include("selectfields.inc");
+
 function printHTML($html) {
 
 	print "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">"
@@ -505,7 +511,40 @@ function getFields($database, $table) {
 	return $fields;
 }
 
-if (isset($_GET['step'])) {
+$nextstep = new WizardStep("next1");
+$previousstep = new WizardStep("previous1");
+
+$enterdbinfo = new EnterDBInfo("enterdbinfo");
+$choosetable = new ChooseTable("choosetable");
+$chooseidfield = new ChooseIDField("chooseidfield");
+$selectfields = new SelectFields("selectfields");
+
+$enterdbinfo->next = $choosetable;
+$choosetable->previous = $enterdbinfo;
+$choosetable->next = $chooseidfield;
+$chooseidfield->previous = $choosetable;
+$chooseidfield->next = $selectfields;
+$selectfields->previous = $chooseidfield;
+
+$dialogs = array();
+
+$dialogs[$enterdbinfo->name] = $enterdbinfo;
+$dialogs[$choosetable->name] = $choosetable;
+$dialogs[$chooseidfield->name] = $chooseidfield;
+$dialogs[$selectfields->name] = $selectfields;
+
+if (isset($_GET['dialog'])) {
+
+	$dialog = $dialogs[$_GET['dialog']];
+	$dialog->printHTML();
+
+} else {
+
+	$enterdbinfo->printHTML();
+}
+
+
+/*if (isset($_GET['step'])) {
 
 	$step = $_GET['step'];
 
@@ -525,6 +564,6 @@ if (isset($_GET['step'])) {
 		printHTML("<p>Finished. Context " . $_GET['context'] . " is available.</p>");
 	}
 }
-else printHTML(Step1());
+else printHTML(Step1());*/
 
 ?>

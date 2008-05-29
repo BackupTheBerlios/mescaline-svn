@@ -58,7 +58,7 @@ class WebTable
 			foreach ($row as $i => $value)
 				if (($this->context->table->fields[$i] instanceof IDField) == false)
 					$ret .= "<td nowrap=\"nowrap\">"
-						. $this->context->table->fields[$i].formatValue($value)
+						. $this->context->table->fields[$i]->formatValue($value)
 						. "</td>";
 
 			// Get the id
