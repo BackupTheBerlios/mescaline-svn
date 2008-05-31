@@ -4,54 +4,37 @@ if (!class_exists("WizardStep")) include("wizardstep.inc");
 if (!class_exists("Database")) include("database.inc");
 if (!class_exists("WebContext")) include("webcontext.inc");
 if (!class_exists("Table")) include("table.inc");
+if (!class_exists("Field")) include("field.inc");
+if (!class_exists("IDField")) include("idfield.inc");
 
-class ChooseTable extends WizardStep
-{
+class EditReferences extends WizardStep {
 
 	public $context;
 
 	protected function caption() {
 
-		return "<b>Step 2</b>: Choose a table.<br><br>";
+		return "<b>Step 5</b>: Edit fields which reference other tables.<br><br>";
 	}
 
 	public function content() {
+		
+		$contextfile = $_GET['context'] . ".wizard";
+		$s = implode("", @file($contextfile));
+		$this->context = unserialize($s);
 
-		// check whether we have a context yet, if not create one. 
+		if (isset($_GET['back'])) {
 
-		if (isset($_GET['context'])) {
-
-			$contextfile =  $_GET['context'] . ".wizard";
-			$s = implode("", @file($contextfile));
-			$this->context = unserialize($s);
 		} else {
-
-			$contextname = $_GET['contextname'];
-			$databasename = $_GET['databasename'];
-			$hostname = $_GET['hostname'];
-			$user = $_GET['user'];
-			$password = $_GET['password'];
 	
-			$database = new Database($databasename, $hostname, $user, $password);
-			$this->context = new WebContext($contextname, null, $database); 
+			$selection = array();
+			foreach ($this->context->table->fields as $i => $field) if (isset($_GET[$i])) $selection[] = $field;
+			$this->context->table->fields = $selection;
 		
 			$s = serialize($this->context);
 			$fp = fopen($this->context->name . ".wizard", "w");
 			fputs($fp, $s);
 			fclose($fp);
 		}
-
-		// Get table list.
-
-		$database = $this->context->database;
-
-		$database->connect();
-		$tables = $database->tables();
-		$database->disconnect();
-
-		// If there is no table set in the context yet, set the first one.
-
-		if ($this->context->table == null) $this->context->table = reset($tables);
 
 		$dark = 1;
 	
@@ -60,15 +43,13 @@ class ChooseTable extends WizardStep
 		$ret .= "<table border=0 cellpadding=0 cellspacing=0>";
 		$ret .= "<input type=\"hidden\" name=\"context\" value=\"" . $this->context->name . "\">";	
 		$ret .= "<input type=\"hidden\" name=\"dialog\" value=\"" . $this->next->name . "\">";
-		
-		foreach ($tables as $i => $table) { 
-
-			// If current table is the one in the context, select the entry.
-
-			$selected = ($this->context->table->name == $table->name) ? " checked=\"checked\"" : "";
-
-			$ret .= "<tr><td nowrap=\"nowrap\" class=\"" . ($dark ? "darkline" : "brightline") . "\"><input type=\"radio\"" . $selected . " name=\"table\" value=\"" . $i . "\">" . $table->toString() . "</td></tr>";
-			$dark = $dark ^ 1;
+	
+		foreach ($this->context->table->fields as $i => $field) { 
+			
+			if (($field instanceof IDField) == false) { 
+				$ret .= "<tr nowrap=\"nowrap\" class=\"" . ($dark ? "darkline" : "brightline") . "\"><td>" . $field->toString() . "</td><td><a href=\"./wizard.php?context=" . $this->context->name . "&dialog=choosereferencetable&field=" . $i ."\"><img src=\"edit.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"edit\"></a></td></tr>";
+				$dark = $dark ^ 1;
+			}
 		}
 	
 		$ret .= "</table>";

@@ -1,57 +1,38 @@
 <?php
 
-if (!class_exists("WizardStep")) include("wizardstep.inc");
-if (!class_exists("Database")) include("database.inc");
-if (!class_exists("WebContext")) include("webcontext.inc");
-if (!class_exists("Table")) include("table.inc");
+if (!class_exists("ChooseTable")) include("choosetable.inc");
 
-class ChooseTable extends WizardStep
-{
+class ChooseReferenceTable extends ChooseTable {
 
-	public $context;
+	public $table;
 
 	protected function caption() {
 
-		return "<b>Step 2</b>: Choose a table.<br><br>";
+		return "<b>Step 5/1</b>: Choose referenced table.<br><br>";
 	}
 
 	public function content() {
 
-		// check whether we have a context yet, if not create one. 
+		// There has to be a context yet.
 
-		if (isset($_GET['context'])) {
+		$contextfile = $_GET['context'] . ".wizard";
+		$s = implode("", @file($contextfile));
+		$this->context = unserialize($s);
 
-			$contextfile =  $_GET['context'] . ".wizard";
-			$s = implode("", @file($contextfile));
-			$this->context = unserialize($s);
-		} else {
-
-			$contextname = $_GET['contextname'];
-			$databasename = $_GET['databasename'];
-			$hostname = $_GET['hostname'];
-			$user = $_GET['user'];
-			$password = $_GET['password'];
-	
-			$database = new Database($databasename, $hostname, $user, $password);
-			$this->context = new WebContext($contextname, null, $database); 
-		
-			$s = serialize($this->context);
-			$fp = fopen($this->context->name . ".wizard", "w");
-			fputs($fp, $s);
-			fclose($fp);
-		}
-
-		// Get table list.
+		// Get database.
 
 		$database = $this->context->database;
+
+		// Get tables.
 
 		$database->connect();
 		$tables = $database->tables();
 		$database->disconnect();
 
-		// If there is no table set in the context yet, set the first one.
+		// Either the table parameter ist set (back button) or not. 
 
-		if ($this->context->table == null) $this->context->table = reset($tables);
+		if (isset($_GET['table'])) $this->table = $tables[$_GET['table']];
+		else $this->table = reset($tables);
 
 		$dark = 1;
 	
@@ -60,7 +41,8 @@ class ChooseTable extends WizardStep
 		$ret .= "<table border=0 cellpadding=0 cellspacing=0>";
 		$ret .= "<input type=\"hidden\" name=\"context\" value=\"" . $this->context->name . "\">";	
 		$ret .= "<input type=\"hidden\" name=\"dialog\" value=\"" . $this->next->name . "\">";
-		
+		$ret .= "<input type=\"hidden\" name=\"field\" value=\"" . $_GET['field'] . "\">";		
+
 		foreach ($tables as $i => $table) { 
 
 			// If current table is the one in the context, select the entry.

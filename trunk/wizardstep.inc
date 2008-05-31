@@ -44,7 +44,12 @@ class WizardStep {
 
 	protected function content() {
 		
-		return "blabla";
+		$this->caption();
+	}
+
+	protected function caption() {
+
+		return "";
 	}
 
 	protected function previousButton() {

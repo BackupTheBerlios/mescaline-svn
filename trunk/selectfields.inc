@@ -12,6 +12,11 @@ class SelectFields extends WizardStep {
 	public $context;
 	public $selection;
 
+	protected function caption() {
+
+		return "<b>Step 4</b>: Select the needed columns.<br><br>";
+	}
+
 	public function content() {
 
 		// There has to be a context yet.
@@ -39,7 +44,7 @@ class SelectFields extends WizardStep {
 
 			$this->selection[] = $idfield;
 
-		} else {
+		} else { // back button 
 
 			// Get selection.
 
@@ -51,6 +56,10 @@ class SelectFields extends WizardStep {
 			$database->connect();
 			$this->context->table->fields = $database->columns($this->context->table);
 			$database->disconnect();
+
+			// Find id field in selection and add it to context fields.
+
+			foreach ($this->selection as $i => $field) if ($field instanceof IDField) $this->context->table->fields[$i] = $field;
 		}
 
 		// Write context to disk
@@ -62,7 +71,7 @@ class SelectFields extends WizardStep {
 
 		$dark = 1;
 	
-		$ret .= "<b>Step 4</b>: Select the needed columns.<br><br>";
+		$ret .= $this->caption();
 		$ret .= "<form action=\"./wizard.php\">";
 		$ret .= "<table border=0 cellpadding=0 cellspacing=0>";
 		$ret .= "<input type=\"hidden\" name=\"context\" value=\"" . $this->context->name . "\">";	
@@ -81,14 +90,20 @@ class SelectFields extends WizardStep {
 			$dark = $dark ^ 1;
 		}
 	
-		$ret .= "</table><br>";
+		$ret .= "</table>";
 	
 		return $ret;
 	}
 
+	protected function nextButton() {
+
+		if ($this->next) return "<input id=\"next\" type=\"image\" src=\"next.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"next\"></form>";
+		return "";
+	}
+
 	protected function previousButton() {
 
-		if ($this->previous) return "<a id=\"previous\"href=\"./wizard.php?dialog=" . $this->previous->name . "&context=" . $this->context->name ."\"><img src=\"previous.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"previous\"></a>";
+		if ($this->previous) return "<a id=\"previous\"href=\"./wizard.php?dialog=" . $this->previous->name . "&back=true&context=" . $this->context->name ."\"><img src=\"previous.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"previous\"></a>";
 		return "";
 	}
 

@@ -12,6 +12,11 @@ class ChooseIDField extends WizardStep {
 	public $context;
 	public $idfield;
 
+	protected function caption() {
+
+		return "<b>Step 3</b>: Choose the tables ID field.<br><br>";
+	}
+
 	public function content() {
 
 		// There has to be a context yet.
@@ -73,7 +78,7 @@ class ChooseIDField extends WizardStep {
 
 		$dark = 1;
 
-		$ret .= "<b>Step 3</b>: Choose the tables ID field.<br><br>";
+		$ret .= $this->caption();
 		$ret .= "<form action=\"./wizard.php\">";
 		$ret .= "<table border=0 cellpadding=0 cellspacing=0>";
 		$ret .= "<input type=\"hidden\" name=\"context\" value=\"" . $this->context->name . "\">";	
@@ -102,7 +107,7 @@ class ChooseIDField extends WizardStep {
 
 	protected function previousButton() {
 
-		if ($this->previous) return "<a id=\"previous\"href=\"./wizard.php?dialog=" . $this->previous->name . "&context=" . $this->context->name ."\"><img src=\"previous.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"previous\"></a>";
+		if ($this->previous) return "<a id=\"previous\"href=\"./wizard.php?dialog=" . $this->previous->name . "&context=" . $this->context->name ."&back=true\"><img src=\"previous.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"previous\"></a>";
 		return "";
 	}
 }

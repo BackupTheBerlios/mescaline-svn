@@ -5,11 +5,16 @@ if (!class_exists("WizardStep")) include("wizardstep.inc");
 class EnterDBInfo extends WizardStep
 {
 
+	protected function caption() {
+
+		return "<b>Step 1</b>: Enter the database configuration.<br><br>";
+	}
+
 	protected function content() {
 	
 		$dark = 1;
 	
-		$ret .= "<b>Step 1</b>: Enter the database configuration.<br><br>";
+		$ret .= $this->caption();
 		$ret .= "<form action=\"./wizard.php\">";
 		$ret .= "<table border=0 cellpadding=0 cellspacing=0>";
 		$ret .= "<input type=\"hidden\" name=\"dialog\" value=\"" . $this->next->name . "\">";
