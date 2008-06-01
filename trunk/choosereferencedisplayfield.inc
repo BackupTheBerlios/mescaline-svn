@@ -70,7 +70,12 @@ class ChooseReferenceDisplayField extends ChooseIDField {
 
 		// Send back table parameter
 
-		if ($this->previous) return "<a id=\"previous\"href=\"./wizard.php?dialog=" . $this->previous->name . "&context=" . $this->context->name . "&table=" . $_GET['table'] . "&idfield=" . $_GET['idfield'] . "&back=true\"><img src=\"previous.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"previous\"></a>";
+		if ($this->previous) return "<a id=\"previous\"href=\"./wizard.php?dialog=" . $this->previous->name 
+			. "&context=" . $this->context->name 
+			. "&field=" . $_GET['field']
+			. "&table=" . $_GET['table'] 
+			. "&idfield=" . $_GET['idfield'] 
+			. "&back=true\"><img src=\"previous.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"previous\"></a>";
 		return "";
 	}
 

@@ -81,7 +81,7 @@ class SelectFields extends WizardStep {
 			
 			// If the field exists in the selection array, the box is checked.
 
-			$selected = (in_array($field, $this->selection)) ? " checked=\"checked\"" : "";
+			$selected = (isset($this->selection[$i])) ? " checked=\"checked\"" : "";
 
 			// Disabled HTML checkboxes send no value obviously, so we have to do it manually.
 

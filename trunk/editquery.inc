@@ -39,9 +39,9 @@ class EditQuery extends WizardStep {
 		$displayfield = $fields[$_GET['displayfield']];
 		$reference = new Reference($table, $idfield, $displayfield);
 	
-		// Get fields from main table.
+		// Get fields from context
 
-		$fields = $database->columns($this->context->table);
+		$fields = $this->context->table->fields;
 		$database->disconnect();
 
 		// Create new listfield.
@@ -66,23 +66,40 @@ class EditQuery extends WizardStep {
 	
 		$dark = 1;
 	
-		$ret .= "<p><b>Step 5.4</b>: Edit the list fields SQL query" . ($error ? "<font color=\"red\"> (The custom query has errors).</font>" : "." ) . "</p>";
+		$ret .= $this->caption();
 		$ret .= "<form action=\"./wizard.php\">";
 		$ret .= "<table border=0 cellpadding=0 cellspacing=0>";
-		$ret .= "<input type=\"hidden\" name=\"context\" value=\"" . $context . "\">";	
-		$ret .= "<input type=\"hidden\" name=\"step\" value=\"5_5\">";
-		$ret .= "<input type=\"hidden\" name=\"field\" value=\"" . $fieldindex . "\">";		 
-		$ret .= "<input type=\"hidden\" name=\"table\" value=\"" . $tableindex . "\">";		
-		$ret .= "<input type=\"hidden\" name=\"idfield\" value=\"" . $tableindex . "\">";
-		$ret .= "<input type=\"hidden\" name=\"displayfield\" value=\"" . $tableindex . "\">";
-	
+		$ret .= "<input type=\"hidden\" name=\"field\" value=\"" . $_GET['field'] . "\">";		 
+		$ret .= "<input type=\"hidden\" name=\"reference\" value=\"check\">";		
+		$ret .= "<input type=\"hidden\" name=\"context\" value=\"" . $this->context->name . "\">";	
+		$ret .= "<input type=\"hidden\" name=\"dialog\" value=\"" . $this->next->name . "\">";	
 		$ret .= "<tr><td nowrap=\"nowrap\" class=\"" . ($dark ? "darkline" : "brightline") . "\">". $newfield->toString() . "</td>";
 		$ret .= "<td><input name=\"query\" value=\"" . $newfield->query . "\"></td></tr>";
 	
-		$ret .= "</table><br>";
-		$ret .= "<input type=\"image\" src=\"ok.png\" alt=\"ok\"></form>";
+		$ret .= "</table>";
 	
 		return $ret;
+	}
+
+	protected function nextButton() {
+
+		if ($this->next) return "<input id=\"next\" type=\"image\" src=\"next.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"next\"></form>";
+		return "";
+	}
+
+	protected function previousButton() {
+
+		// Send back table parameter
+
+		if ($this->previous) return "<a id=\"previous\"href=\"./wizard.php" 
+			. "?dialog=" . $this->previous->name 
+			. "&context=" . $this->context->name
+			. "&field=" . $_GET['field'] 
+			. "&table=" . $_GET['table']
+			. "&idfield=" . $_GET['idfield'] 
+			. "&displayfield=" . $_GET['displayfield']
+			. "&back=true\"><img src=\"previous.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"previous\"></a>";
+		return "";
 	}
 
 	function replaceElement($old, $new, $array) {

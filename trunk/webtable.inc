@@ -23,8 +23,10 @@ class WebTable
 			. "<style type=\"text/css\">"
 			. ".brightline { background-color:#FFFFFF; }"
 			. ".darkline { background-color:#DDDDDD; }"
+			. "#container { float: left; position: relative; left: 50%; margin-top: 1em; }"
+			. "#inner { padding: 3px; position: relative; left: -50%; border: 1px solid black; }"
 			. "</style>"
-			. "</head><body><div id=\"tables\" align=\"center\">";
+			. "</head><body><div id=\"container\">";
 		print $this->buildTable();
 		print "</div></body></html>";
 	}
@@ -38,7 +40,7 @@ class WebTable
 			return "ERROR: table could not be build from query: " . $this->context->table->buildQuery($this->context->database);
 		}
 
-		$ret = "<div id=\"machinetable\"><table border=0 cellspacing=0>";
+		$ret = "<div id=\"inner\"><table border=0 cellspacing=0>";
 
 		// create header
 

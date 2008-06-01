@@ -22,10 +22,12 @@ class WebForm
 			. "<style type=\"text/css\">"
 			. ".brightline { background-color:#FFFFFF; }"
 			. ".darkline { background-color:#DDDDDD; }"
+			. "#container { float: left; position: relative; left: 50%; margin-top: 1em; }"
+			. "#inner { padding: 3px; position: relative; left: -50%; border: 1px solid black; }"
 			. "</style>"
-			. "</head><body><div id=\"tables\" align=\"center\">";
+			. "</head><body><div id=\"container\"><div id=\"inner\" align=\"center\">";
 		print $this->buildForm();
-		print "</div></body></html>";
+		print "</div></div></body></html>";
 	}
 
 	protected function buildForm() {

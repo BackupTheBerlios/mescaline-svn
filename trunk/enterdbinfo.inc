@@ -12,6 +12,23 @@ class EnterDBInfo extends WizardStep
 
 	protected function content() {
 	
+		// At back button, load context, fill in the values, and delete context file.
+
+		if (isset($_GET['context'])) {
+
+			$contextfile =  $_GET['context'] . ".wizard";
+			$s = implode("", @file($contextfile));
+			$context = unserialize($s);
+
+			$databasename = $context->database->name;
+			$hostname = $context->database->hostname;
+			$user = $context->database->user;
+			$password = $context->database->password;
+			$contextname = $context->name;
+
+			unlink($contextfile);
+		}
+
 		$dark = 1;
 	
 		$ret .= $this->caption();
@@ -21,23 +38,23 @@ class EnterDBInfo extends WizardStep
 		
 		$ret .= "<tr><td nowrap=\"nowrap\" class=\"" . ($dark ? "darkline" : "brightline") . "\">Context:</td>";
 		$dark = $dark ^ 1;
-		$ret .= "<td><input name=\"contextname\" value=\"\"></td></tr>";
+		$ret .= "<td><input name=\"contextname\" value=\"" . $contextname ."\"></td></tr>";
 	
 		$ret .= "<tr><td nowrap=\"nowrap\" class=\"" . ($dark ? "darkline" : "brightline") . "\">Database:</td>";
 		$dark = $dark ^ 1;
-		$ret .= "<td><input name=\"databasename\" value=\"\"></td></tr>";	
+		$ret .= "<td><input name=\"databasename\" value=\"" .  $databasename . "\"></td></tr>";	
 	
 		$ret .= "<tr><td nowrap=\"nowrap\" class=\"" . ($dark ? "darkline" : "brightline") . "\">Hostname:</td>";
 		$dark = $dark ^ 1;
-		$ret .= "<td><input name=\"hostname\" value=\"\"></td></tr>";
+		$ret .= "<td><input name=\"hostname\" value=\"" . $hostname . "\"></td></tr>";
 	
 		$ret .= "<tr><td nowrap=\"nowrap\" class=\"" . ($dark ? "darkline" : "brightline") . "\">User:</td>";
 		$dark = $dark ^ 1;
-		$ret .= "<td><input name=\"user\" value=\"\"></td></tr>";
+		$ret .= "<td><input name=\"user\" value=\"" . $user . "\"></td></tr>";
 	
 		$ret .= "<tr><td nowrap=\"nowrap\" class=\"" . ($dark ? "darkline" : "brightline") . "\">Password:</td>";
 		$dark = $dark ^ 1;
-		$ret .= "<td><input name=\"password\" value=\"\"></td></tr>";
+		$ret .= "<td><input name=\"password\" value=\"" . $password ."\"></td></tr>";
 	
 		$ret .= "</table>";
 	

@@ -47,7 +47,7 @@ class ChooseReferenceTable extends ChooseTable {
 
 			// If current table is the one in the context, select the entry.
 
-			$selected = ($this->context->table->name == $table->name) ? " checked=\"checked\"" : "";
+			$selected = ($table == $this->table) ? " checked=\"checked\"" : "";
 
 			$ret .= "<tr><td nowrap=\"nowrap\" class=\"" . ($dark ? "darkline" : "brightline") . "\"><input type=\"radio\"" . $selected . " name=\"table\" value=\"" . $i . "\">" . $table->toString() . "</td></tr>";
 			$dark = $dark ^ 1;
@@ -56,12 +56,6 @@ class ChooseReferenceTable extends ChooseTable {
 		$ret .= "</table>";
 	
 		return $ret;
-	}
-
-	protected function nextButton() {
-
-		if ($this->next) return "<input id=\"next\" type=\"image\" src=\"next.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"next\"></form>";
-		return "";
 	}
 
 	protected function previousButton() {
