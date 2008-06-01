@@ -1,10 +1,10 @@
 <?php
 
 if (!class_exists("WizardStep")) include("wizardstep.inc");
-if (!class_exists("Table")) include("table.inc");
-if (!class_exists("IDField")) include("idfield.inc");
-if (!class_exists("ListField")) include("listfield.inc");
-if (!class_exists("Reference")) include("reference.inc");
+if (!class_exists("Table")) include("../table.inc");
+if (!class_exists("IDField")) include("../idfield.inc");
+if (!class_exists("ListField")) include("../listfield.inc");
+if (!class_exists("Reference")) include("../reference.inc");
 
 class EditQuery extends WizardStep {
 
@@ -83,7 +83,7 @@ class EditQuery extends WizardStep {
 
 	protected function nextButton() {
 
-		if ($this->next) return "<input id=\"next\" type=\"image\" src=\"next.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"next\"></form>";
+		if ($this->next) return "<input id=\"next\" type=\"image\" src=\"../icons/next.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"next\"></form>";
 		return "";
 	}
 
@@ -98,7 +98,7 @@ class EditQuery extends WizardStep {
 			. "&table=" . $_GET['table']
 			. "&idfield=" . $_GET['idfield'] 
 			. "&displayfield=" . $_GET['displayfield']
-			. "&back=true\"><img src=\"previous.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"previous\"></a>";
+			. "&back=true\"><img src=\"../icons/previous.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"previous\"></a>";
 		return "";
 	}
 

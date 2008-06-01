@@ -1,11 +1,11 @@
 <?php
 
 if (!class_exists("WizardStep")) include("wizardstep.inc");
-if (!class_exists("Database")) include("database.inc");
-if (!class_exists("WebContext")) include("webcontext.inc");
-if (!class_exists("Table")) include("table.inc");
-if (!class_exists("Field")) include("field.inc");
-if (!class_exists("IDField")) include("idfield.inc");
+if (!class_exists("Database")) include("../database.inc");
+if (!class_exists("WebContext")) include("../webcontext.inc");
+if (!class_exists("Table")) include("../table.inc");
+if (!class_exists("Field")) include("../field.inc");
+if (!class_exists("IDField")) include("../idfield.inc");
 
 class ChooseIDField extends WizardStep {
 
@@ -101,13 +101,13 @@ class ChooseIDField extends WizardStep {
 
 	protected function nextButton() {
 
-		if ($this->next) return "<input id=\"next\" type=\"image\" src=\"next.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"next\"></form>";
+		if ($this->next) return "<input id=\"next\" type=\"image\" src=\"../icons/next.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"next\"></form>";
 		return "";
 	}
 
 	protected function previousButton() {
 
-		if ($this->previous) return "<a id=\"previous\"href=\"./wizard.php?dialog=" . $this->previous->name . "&context=" . $this->context->name ."&back=true\"><img src=\"previous.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"previous\"></a>";
+		if ($this->previous) return "<a id=\"previous\"href=\"./wizard.php?dialog=" . $this->previous->name . "&context=" . $this->context->name ."&back=true\"><img src=\"../icons/previous.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"previous\"></a>";
 		return "";
 	}
 }

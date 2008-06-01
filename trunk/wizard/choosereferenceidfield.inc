@@ -62,7 +62,7 @@ class ChooseReferenceIDField extends ChooseIDField {
 
 	protected function nextButton() {
 
-		if ($this->next) return "<input id=\"next\" type=\"image\" src=\"next.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"next\"></form>";
+		if ($this->next) return "<input id=\"next\" type=\"image\" src=\"../icons/next.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"next\"></form>";
 		return "";
 	}
 
@@ -74,7 +74,7 @@ class ChooseReferenceIDField extends ChooseIDField {
 			. "&context=" . $this->context->name 
 			. "&field=" . $_GET['field']
 			. "&table=" . $_GET['table'] 
-			. "&back=true\"><img src=\"previous.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"previous\"></a>";
+			. "&back=true\"><img src=\"../icons/previous.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"previous\"></a>";
 		return "";
 	}
 

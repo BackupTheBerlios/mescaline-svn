@@ -1,6 +1,7 @@
 <?php
 
-if (!class_exists("WebContext")) include("webcontext.inc");
+if (!class_exists("WizardStep")) include("wizardstep.inc");
+if (!class_exists("WebContext")) include("../webcontext.inc");
 
 class FinishedContext extends WizardStep {
 
@@ -17,7 +18,7 @@ class FinishedContext extends WizardStep {
 		unlink($contextfile);
 
 		$s = serialize($this->context);
-		$fp = fopen($this->context->name . ".context", "w");
+		$fp = fopen("../" . $this->context->name . ".context", "w");
 		fputs($fp, $s);
 		fclose($fp);
 

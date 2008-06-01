@@ -1,12 +1,12 @@
 <?php
 
 if (!class_exists("WizardStep")) include("wizardstep.inc");
-if (!class_exists("Database")) include("database.inc");
-if (!class_exists("WebContext")) include("webcontext.inc");
-if (!class_exists("Table")) include("table.inc");
-if (!class_exists("Field")) include("field.inc");
-if (!class_exists("IDField")) include("idfield.inc");
-if (!class_exists("ListField")) include("listfield.inc");
+if (!class_exists("Database")) include("../database.inc");
+if (!class_exists("WebContext")) include("../webcontext.inc");
+if (!class_exists("Table")) include("../table.inc");
+if (!class_exists("Field")) include("../field.inc");
+if (!class_exists("IDField")) include("../idfield.inc");
+if (!class_exists("ListField")) include("../listfield.inc");
 
 class EditReferences extends WizardStep {
 
@@ -92,8 +92,8 @@ class EditReferences extends WizardStep {
 			else $string = $field->toString();
 
 			if (($field instanceof IDField) == false) { 
-				$ret .= "<tr nowrap=\"nowrap\" class=\"" . ($dark ? "darkline" : "brightline") . "\"><td>" . $string . "</td><td><a href=\"./wizard.php?context=" . $this->context->name . "&dialog=choosereferencetable&field=" . $i ."\"><img src=\"edit.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"edit\"></a>";
-				if ($field instanceof ListField) $ret .= "<a href=\"./wizard.php?context=" . $this->context->name . "&dialog=editreferences&reference=remove&field=" . $i ."\"><img src=\"remove.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"remove\"></a>";
+				$ret .= "<tr nowrap=\"nowrap\" class=\"" . ($dark ? "darkline" : "brightline") . "\"><td>" . $string . "</td><td><a href=\"./wizard.php?context=" . $this->context->name . "&dialog=choosereferencetable&field=" . $i ."\"><img src=\"../icons/edit.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"edit\"></a>";
+				if ($field instanceof ListField) $ret .= "<a href=\"./wizard.php?context=" . $this->context->name . "&dialog=editreferences&reference=remove&field=" . $i ."\"><img src=\"../icons/remove.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"remove\"></a>";
 				$ret .= "</td></tr>";
 				$dark = $dark ^ 1;
 			}
@@ -117,13 +117,13 @@ class EditReferences extends WizardStep {
 
 		if (sizeof($this->errors) > 0) return "";
 
-		if ($this->next) return "<input id=\"next\" type=\"image\" src=\"next.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"next\"></form>";
+		if ($this->next) return "<input id=\"next\" type=\"image\" src=\"../icons/next.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"next\"></form>";
 		return "";
 	}
 
 	protected function previousButton() {
 
-		if ($this->previous) return "<a id=\"previous\"href=\"./wizard.php?dialog=" . $this->previous->name . "&context=" . $this->context->name ."&back=true\"><img src=\"previous.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"previous\"></a>";
+		if ($this->previous) return "<a id=\"previous\"href=\"./wizard.php?dialog=" . $this->previous->name . "&context=" . $this->context->name ."&back=true\"><img src=\"../icons/previous.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"previous\"></a>";
 		return "";
 	}
 }

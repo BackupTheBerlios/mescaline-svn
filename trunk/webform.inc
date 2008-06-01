@@ -135,7 +135,7 @@ class WebForm
 			$ret .= "</td></tr>";
 		}
 
-		$ret .= "</td></tr></table><br><input type=\"image\" src=\"ok.png\" alt=\"ok\"></form>";
+		$ret .= "</td></tr></table><br><input type=\"image\" src=\"./icons/ok.png\" alt=\"ok\"></form>";
 
 		return $ret;
 	}
