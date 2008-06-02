@@ -1,16 +1,18 @@
 <?php 
 
-if (!class_exists("WizardStep")) include("wizardstep.inc");
-if (!class_exists("EnterDBInfo")) include("enterdbinfo.inc");
-if (!class_exists("ChooseTable")) include("choosetable.inc");
-if (!class_exists("ChooseIDField")) include("chooseidfield.inc");
-if (!class_exists("SelectFields")) include("selectfields.inc");
-if (!class_exists("EditReferences")) include("editreferences.inc");
-if (!class_exists("FinishedContext")) include("finishedcontext.inc");
-if (!class_exists("ChooseReferenceTable")) include("choosereferencetable.inc");
-if (!class_exists("ChooseReferenceIDField")) include("choosereferenceidfield.inc");
-if (!class_exists("ChooseReferenceDisplayField")) include("choosereferencedisplayfield.inc");
-if (!class_exists("EditQuery")) include("editquery.inc");
+ini_set('include_path', '../includes/');
+
+require_once("wizardstep.inc");
+require_once("enterdbinfo.inc");
+require_once("choosetable.inc");
+require_once("chooseidfield.inc");
+require_once("selectfields.inc");
+require_once("editreferences.inc");
+require_once("finishedcontext.inc");
+require_once("choosereferencetable.inc");
+require_once("choosereferenceidfield.inc");
+require_once("choosereferencedisplayfield.inc");
+require_once("editquery.inc");
 
 $enterdbinfo = new EnterDBInfo("enterdbinfo");
 $choosetable = new ChooseTable("choosetable");

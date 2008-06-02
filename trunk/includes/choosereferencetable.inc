@@ -1,6 +1,6 @@
 <?php
 
-if (!class_exists("ChooseTable")) include("choosetable.inc");
+require_once("choosetable.inc");
 
 class ChooseReferenceTable extends ChooseTable {
 

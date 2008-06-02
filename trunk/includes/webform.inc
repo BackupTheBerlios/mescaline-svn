@@ -1,8 +1,8 @@
 <?php
 
-if (!class_exists("IDField")) include("idfield.inc");
-if (!class_exists("ListField")) include("listfield.inc");
-if (!class_exists("BoolField")) include("boolfield.inc");
+require_once("idfield.inc");
+require_once("listfield.inc");
+require_once("boolfield.inc");
 
 class WebForm 
 {
@@ -140,7 +140,7 @@ class WebForm
 
 			} else if ($field instanceof IDField) {
 
-				$ret .= "<input size=\"5\" readonly=\"readonly\" name=\"field:" . $hash . "\" value=\"" . $value ."\">";	
+				$ret .= "<input size=\"5\" disabled=\"disabled\" value=\"" . $value ."\"><input type=\"hidden\" name=\"field:" . $hash . "\" value=\"" . $value ."\">";	
 	
 			} else {
 

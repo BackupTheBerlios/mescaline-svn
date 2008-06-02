@@ -1,12 +1,12 @@
 <?php
 
-if (!class_exists("WizardStep")) include("wizardstep.inc");
-if (!class_exists("Database")) include("../database.inc");
-if (!class_exists("WebContext")) include("../webcontext.inc");
-if (!class_exists("Table")) include("../table.inc");
-if (!class_exists("Field")) include("../field.inc");
-if (!class_exists("IDField")) include("../idfield.inc");
-if (!class_exists("ListField")) include("../listfield.inc");
+require_once("table.inc");
+require_once("field.inc");
+require_once("idfield.inc");
+require_once("listfield.inc");
+require_once("wizardstep.inc");
+require_once("database.inc");
+require_once("webcontext.inc");
 
 class EditReferences extends WizardStep {
 
@@ -35,11 +35,15 @@ class EditReferences extends WizardStep {
 
 		$this->errors = array();
 
-		if (isset($_GET['reference'])) { // back button
+		if (isset($_GET['back'])) {
+
+		} else if (isset($_GET['reference'])) { 
 	
 			// Set the query to the context.
 
-			$this->context->table->fields[$_GET['field']]->query = $_GET['query'];
+			$query = $_GET['query'];
+
+			$this->context->table->fields[$_GET['field']]->query = $query;
 
 			$action = $_GET['reference'];
 
@@ -49,7 +53,7 @@ class EditReferences extends WizardStep {
 
 				// When the query isn't working set the correspondent error field.
 
-				if ($this->testQuery($this->context->database, $_GET['query']) == false) 
+				if ($this->testQuery($this->context->database, $query) == false) 
 					$this->errors[$_GET['field']] = true;
 			} else if ($action == "remove") {
 

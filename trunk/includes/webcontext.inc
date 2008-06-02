@@ -1,14 +1,13 @@
 <?php
 
-include "version.inc";
-
-if (!class_exists("Table")) include("table.inc");
-if (!class_exists("IDField")) include("idfield.inc");
-if (!class_exists("ListField")) include("listfield.inc");
-if (!class_exists("BoolField")) include("boolfield.inc");
-if (!class_exists("WebForm")) include("webform.inc");
-if (!class_exists("WebTable")) include("webtable.inc");
-if (!class_exists("Database")) include("database.inc");
+require_once("version.inc");
+require_once("table.inc");
+require_once("idfield.inc");
+require_once("listfield.inc");
+require_once("boolfield.inc");
+require_once("webform.inc");
+require_once("webtable.inc");
+require_once("database.inc");
 
 class WebContext {
 

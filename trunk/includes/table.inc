@@ -1,6 +1,6 @@
 <?php
 
-if (!class_exists("ListField")) include("listfield.inc");
+require_once("listfield.inc");
 
 class Table {
 	

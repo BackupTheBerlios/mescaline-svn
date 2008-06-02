@@ -1,6 +1,6 @@
 <?php
 
-if (!class_exists("Field")) include("field.inc");
+require_once("field.inc");
 
 class BoolField extends Field {
 

@@ -1,10 +1,10 @@
 <?php
 
-if (!class_exists("WizardStep")) include("wizardstep.inc");
-if (!class_exists("Table")) include("../table.inc");
 if (!class_exists("IDField")) include("../idfield.inc");
 if (!class_exists("ListField")) include("../listfield.inc");
 if (!class_exists("Reference")) include("../reference.inc");
+if (!class_exists("Table")) include("../table.inc");
+if (!class_exists("WizardStep")) include("wizardstep.inc");
 
 class EditQuery extends WizardStep {
 

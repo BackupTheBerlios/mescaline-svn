@@ -1,7 +1,7 @@
 <?php
 
-if (!class_exists("Table")) include("table.inc");
-if (!class_exists("Field")) include("field.inc");
+require_once("table.inc");
+require_once("field.inc");
 
 class WebTable
 {

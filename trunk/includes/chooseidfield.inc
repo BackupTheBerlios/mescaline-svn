@@ -1,11 +1,11 @@
 <?php
 
-if (!class_exists("WizardStep")) include("wizardstep.inc");
-if (!class_exists("Database")) include("../database.inc");
-if (!class_exists("WebContext")) include("../webcontext.inc");
-if (!class_exists("Table")) include("../table.inc");
-if (!class_exists("Field")) include("../field.inc");
-if (!class_exists("IDField")) include("../idfield.inc");
+require_once("table.inc");
+require_once("field.inc");
+require_once("idfield.inc");
+require_once("wizardstep.inc");
+require_once("database.inc");
+require_once("webcontext.inc");
 
 class ChooseIDField extends WizardStep {
 

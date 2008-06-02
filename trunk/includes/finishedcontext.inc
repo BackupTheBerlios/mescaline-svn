@@ -1,7 +1,7 @@
 <?php
 
-if (!class_exists("WizardStep")) include("wizardstep.inc");
-if (!class_exists("WebContext")) include("../webcontext.inc");
+require_once("wizardstep.inc");
+require_once("webcontext.inc");
 
 class FinishedContext extends WizardStep {
 

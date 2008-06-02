@@ -1,6 +1,6 @@
 <?php
 
-if (!class_exists("WizardStep")) include("wizardstep.inc");
+require_once("wizardstep.inc");
 
 class EnterDBInfo extends WizardStep
 {

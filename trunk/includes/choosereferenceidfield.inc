@@ -1,15 +1,14 @@
 <?php
 
-if (!class_exists("ChooseIDField")) include("chooseidfield.inc");
+require_once("chooseidfield.inc");
 
-class ChooseReferenceDisplayField extends ChooseIDField {
+class ChooseReferenceIDField extends ChooseIDField {
 
 	public $table;
-	public $displayfield;
 
 	protected function caption() {
 
-		return "<b>Step 5/3</b>: Select the referenced tables field to be displayed.<br><br>";
+		return "<b>Step 5/2</b>: Select the referenced tables id field.<br><br>";
 	}
 
 	public function content() {
@@ -29,15 +28,10 @@ class ChooseReferenceDisplayField extends ChooseIDField {
 		$fields = $database->columns($this->table);
 		$database->disconnect();
 
-		// Remove idfield entry from list.
+		// Either the idfield parameter ist set (back button) or not. 
 
-		$this->idfield = $fields[$_GET['idfield']];
-		$fields = $this->removeElement($this->idfield, $fields);
-
-		// Either the displayfield parameter ist set (back button) or not. 
-
-		if (isset($_GET['displayfield'])) $this->displayfield = $fields[$_GET['displayfield']];
-		else $this->displayfield = reset($fields);
+		if (isset($_GET['idfield'])) $this->idfield = $fields[$_GET['idfield']];
+		else $this->idfield = reset($fields);
 
 		$dark = 1;
 
@@ -48,21 +42,27 @@ class ChooseReferenceDisplayField extends ChooseIDField {
 		$ret .= "<input type=\"hidden\" name=\"dialog\" value=\"" . $this->next->name . "\">";
 		$ret .= "<input type=\"hidden\" name=\"field\" value=\"" . $_GET['field'] . "\">";
 		$ret .= "<input type=\"hidden\" name=\"table\" value=\"" . $_GET['table'] . "\">";
-		$ret .= "<input type=\"hidden\" name=\"idfield\" value=\"" . $_GET['idfield'] . "\">";		
-
+		
+		
 		foreach ($fields as $i => $field) { 
 			
 			// If current field is the one in the context, select the entry.
 
-			$selected = ($field == $this->displayfield) ? " checked=\"checked\"" : "";
+			$selected = ($field == $this->idfield) ? " checked=\"checked\"" : "";
 
-			$ret .= "<tr><td nowrap=\"nowrap\" class=\"" . ($dark ? "darkline" : "brightline") . "\"><input type=\"radio\"" . $selected . " name=\"displayfield\" value=\"" . $i . "\">" . $field->toString() . "</td></tr>";
+			$ret .= "<tr><td nowrap=\"nowrap\" class=\"" . ($dark ? "darkline" : "brightline") . "\"><input type=\"radio\"" . $selected . " name=\"idfield\" value=\"" . $i . "\">" . $field->toString() . "</td></tr>";
 			$dark = $dark ^ 1;
 		}
 	
 		$ret .= "</table>";
 	
 		return $ret;
+	}
+
+	protected function nextButton() {
+
+		if ($this->next) return "<input id=\"next\" type=\"image\" src=\"../icons/next.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"next\"></form>";
+		return "";
 	}
 
 	protected function previousButton() {
@@ -73,16 +73,8 @@ class ChooseReferenceDisplayField extends ChooseIDField {
 			. "&context=" . $this->context->name 
 			. "&field=" . $_GET['field']
 			. "&table=" . $_GET['table'] 
-			. "&idfield=" . $_GET['idfield'] 
 			. "&back=true\"><img src=\"../icons/previous.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"previous\"></a>";
 		return "";
-	}
-
-	function removeElement($remove, $array) {
-
-		foreach ($array as $i => $element) if ($remove == $element) unset($array[$i]);
-
-		return $array;
 	}
 
 }

@@ -1,7 +1,5 @@
 <?php
 
-if (!class_exists("Table")) include("table.inc");
-
 class Field {
 
 	public $name;

@@ -1,9 +1,9 @@
 <?php
 
-if (!class_exists("WizardStep")) include("wizardstep.inc");
-if (!class_exists("Database")) include("../database.inc");
-if (!class_exists("WebContext")) include("../webcontext.inc");
-if (!class_exists("Table")) include("../table.inc");
+require_once("table.inc");
+require_once("wizardstep.inc");
+require_once("database.inc");
+require_once("webcontext.inc");
 
 class ChooseTable extends WizardStep
 {
@@ -56,13 +56,13 @@ class ChooseTable extends WizardStep
 		if ($this->context->table == null) $this->context->table = reset($tables);
 
 		$dark = 1;
-	
+
 		$ret .= $this->caption();
 		$ret .= "<form action=\"./index.php\">";
 		$ret .= "<table border=0 cellpadding=0 cellspacing=0>";
 		$ret .= "<input type=\"hidden\" name=\"context\" value=\"" . $this->context->name . "\">";	
 		$ret .= "<input type=\"hidden\" name=\"dialog\" value=\"" . $this->next->name . "\">";
-		
+
 		foreach ($tables as $i => $table) { 
 
 			// If current table is the one in the context, select the entry.
@@ -74,7 +74,7 @@ class ChooseTable extends WizardStep
 		}
 	
 		$ret .= "</table>";
-	
+
 		return $ret;
 	}
 

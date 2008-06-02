@@ -1,11 +1,11 @@
 <?php
 
-if (!class_exists("WizardStep")) include("wizardstep.inc");
-if (!class_exists("Database")) include("../database.inc");
-if (!class_exists("WebContext")) include("../webcontext.inc");
-if (!class_exists("Table")) include("../table.inc");
-if (!class_exists("Field")) include("../field.inc");
-if (!class_exists("IDField")) include("../idfield.inc");
+require_once("table.inc");
+require_once("field.inc");
+require_once("idfield.inc");
+require_once("wizardstep.inc");
+require_once("database.inc");
+require_once("webcontext.inc");
 
 class SelectFields extends WizardStep {
 
@@ -58,7 +58,8 @@ class SelectFields extends WizardStep {
 
 			// Find id field in selection and add it to context fields.
 
-			foreach ($this->selection as $i => $field) if ($field instanceof IDField) $this->context->table->fields[$i] = $field;
+			foreach ($this->selection as $i => $field) 
+				if ($field instanceof IDField) $this->context->table->fields[$i] = $field;
 		}
 
 		// Write context to disk
@@ -84,11 +85,11 @@ class SelectFields extends WizardStep {
 			// If the field exists in the selection array, the box is checked.
 
 			if ($field instanceof IDField) $ret .= "\"><input disabled=\"disabled\"" 
-				. " type=\"checkbox\" checked=\"checked\"><input type=\"hidden\" name=\""; 
-			else $ret .= "\"><input type=\"checkbox\" name=\""
+				. " type=\"checkbox\" checked=\"checked\"><input type=\"hidden\" name=\"" . $i . "\""; 
+			else $ret .= "\"><input type=\"checkbox\" name=\"" . $i . "\""
 				. ((isset($this->selection[$i])) ? " checked=\"checked\"" : ""); 
 
-			$ret .= $i . "\" value=\"" . $i . "\"" . ">" 
+			$ret .= " value=\"" . $i . "\"" . ">" 
 				. $field->toString() . ((($field->optional) || ($field instanceof IDField)) ? "" : "<font color=\"red\">*</font>")
 				. "</td></tr>";
 			$dark = $dark ^ 1;

@@ -1,8 +1,8 @@
 <?php
 
-if (!class_exists("BoolField")) include("boolfield.inc");
-if (!class_exists("Field")) include("field.inc");
-if (!class_exists("Table")) include("table.inc");
+require_once("boolfield.inc");
+require_once("field.inc");
+require_once("table.inc");
 
 class Database {
 
@@ -67,6 +67,7 @@ class Database {
 		$tables = array();
 
 		while($row = mysql_fetch_row($result)) $tables[] = new Table($row[0], $this);	
+
 
 		return $tables;
 	}

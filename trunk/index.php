@@ -1,8 +1,9 @@
 <?php
 
-include "version.inc";
+ini_set('include_path', './includes/');
 
-if (!class_exists("WebContext")) include("webcontext.inc");
+require_once("version.inc");
+require_once("webcontext.inc");
 
 if (isset($_GET['context'])) {
 
