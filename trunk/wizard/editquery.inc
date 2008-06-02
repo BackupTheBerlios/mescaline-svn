@@ -19,9 +19,7 @@ class EditQuery extends WizardStep {
 
 		// The dialog cannot be reached by back button!
 		
-		$contextfile = $_GET['context'] . ".wizard";
-	
-		$s = implode("", @file($contextfile));
+		$s = implode("", @file($this->wizardFilename()));
 		$this->context = unserialize($s);
 
 		$database = $this->context->database;
@@ -60,14 +58,14 @@ class EditQuery extends WizardStep {
 		// Save the context
 
 		$s = serialize($this->context);
-		$fp = fopen($this->context->name . ".wizard", "w");
+		$fp = fopen($this->wizardFilename(), "w");
 		fputs($fp, $s);
 		fclose($fp);
 	
 		$dark = 1;
 	
 		$ret .= $this->caption();
-		$ret .= "<form action=\"./wizard.php\">";
+		$ret .= "<form action=\"./index.php\">";
 		$ret .= "<table border=0 cellpadding=0 cellspacing=0>";
 		$ret .= "<input type=\"hidden\" name=\"field\" value=\"" . $_GET['field'] . "\">";		 
 		$ret .= "<input type=\"hidden\" name=\"reference\" value=\"check\">";		
@@ -91,7 +89,7 @@ class EditQuery extends WizardStep {
 
 		// Send back table parameter
 
-		if ($this->previous) return "<a id=\"previous\"href=\"./wizard.php" 
+		if ($this->previous) return "<a id=\"previous\"href=\"./index.php" 
 			. "?dialog=" . $this->previous->name 
 			. "&context=" . $this->context->name
 			. "&field=" . $_GET['field'] 

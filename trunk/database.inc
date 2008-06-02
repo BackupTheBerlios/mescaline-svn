@@ -19,7 +19,7 @@ class Database {
 		$this->user = $user;
 		$this->password = $password;
 	}
-
+	
 	function connect() {
 		
 		$this->link = mysql_connect($this->hostname,$this->user,$this->password);
@@ -40,7 +40,9 @@ class Database {
 
 	function columns($table) {
 
-		$query = "SHOW COLUMNS FROM " . "`" . $this->name . "`.`" . $table->name . "`";
+		$query = "SHOW COLUMNS FROM " . "`" 
+			. mysql_real_escape_string($this->name) . "`.`" 
+			. mysql_real_escape_string($table->name) . "`";
 
 		$result = mysql_query($query, $this->link);
 
@@ -57,7 +59,8 @@ class Database {
 
 	function tables() {
 
-		$query = "SHOW TABLES FROM `" . $this->name . "`";
+		$query = "SHOW TABLES FROM `" . 
+			mysql_real_escape_string($this->name) . "`";
 
 		$result = mysql_query($query, $this->link);
 
@@ -70,14 +73,15 @@ class Database {
 
 	function update($table, $valuepairs) {
 
-		$query = "UPDATE `" . $table->name . "` SET ";
+		$query = "UPDATE `" 
+			. mysql_real_escape_string($table->name) . "` SET ";
 
 		foreach ($valuepairs as $i => $pair) {
 
-			$col = $pair[0]; 
-			$value = (($pair[1] == "null") ? "NULL" : "
-'" . $pair[1] . "'");
-			$query .= "`" . $col . "` = " . $value . ",";
+			$col = mysql_real_escape_string($pair[0]); 
+			$value = (($pair[1] == "null") ? "NULL" : "'" . mysql_real_escape_string($pair[1]) . "'");
+			$query .= "`" 
+				. $col . "` = " . $value . ",";
 		}
 		// Remove trailing comma.
 
@@ -85,14 +89,17 @@ class Database {
 
 		$pair = reset($valuepairs);
 
-		$query .= " WHERE `" . $pair[0] . "` = '" . $pair[1] . "'";
+		$query .= " WHERE `" 
+			. mysql_real_escape_string($pair[0]) . "` = '" 
+			. mysql_real_escape_string($pair[1]) . "'";
 
 		mysql_query($query, $this->link) or die(mysql_error($this->link));
 	}
 
 	function insert($table, $valuepairs) {
 
-		$query = "INSERT INTO `" . $table->name . "` (";
+		$query = "INSERT INTO `" 
+			. mysql_real_escape_string($table->name) . "` (";
 
 		// Skip ID field.
 
@@ -100,7 +107,8 @@ class Database {
 
 		foreach ($valuepairs as $i => $pair) {
 
-			if (!$skipid) $query .= "`" . $pair[0] . "`,";
+			if (!$skipid) $query .= "`" 
+				. mysql_real_escape_string($pair[0]) . "`,";
 			else $skipid = false;
 		}		
 
@@ -114,7 +122,7 @@ class Database {
 
 		foreach ($valuepairs as $i => $pair) {
 		
-			if (!$skipid) $query .= "'" . $pair[1] . "',";
+			if (!$skipid) $query .= "'" . mysql_real_escape_string($pair[1]) . "',";
 			else $skipid = false;
 		}		
 
@@ -131,7 +139,9 @@ class Database {
 
 		$value = reset($table->fields);
 
-		$query = "DELETE FROM `" . $table->name . "` WHERE `" . $value->name . "` = '" . $id . "'";
+		$query = "DELETE FROM `" 
+			. mysql_real_escape_string($table->name) . "` WHERE `" 
+			. mysql_real_escape_string($value->name) . "` = '" . $id . "'";
 
 		mysql_query($query, $this->link) or die(mysql_error($this->link));
 	}

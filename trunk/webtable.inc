@@ -16,19 +16,41 @@ class WebTable
 		$this->sort = $sort;
 	}
 
+	protected function CSS() {
+
+		return "<style type=\"text/css\">
+			#container { float: left; position: relative; left: 50%; margin-top: 1em; }
+			#inner { padding: 3px; position: relative; left: -50%; border: 1px solid black; }
+			#footer { clear: both; text-align: center; padding: 6px; }
+			a { color : #3c3; font-family : verdana, arial, helvetica, sans-serif; text-decoration : none; }
+			a:link { color : #3c3; }
+			a:visited { color : #3c3; }
+			a:hover { text-decoration : underline; }
+			.brightline { background-color:#FFFFFF; }
+			.darkline { background-color:#DDDDDD; }
+		</style>";
+	}
+
+	protected function footer() {
+
+		return "<div id=\"footer\"><a href=\"http://mescaline.berlios.de\"><img width=\"100\" height=\"21\" border=\"0\" style=\"vertical-align:middle\" src=\"./icons/footer.png\"/ alt=\"mescaline\"/></a></div>";
+	}
+
 	function printHTML() {
 
-		print "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">"
-			. "<html><head><title>table</title>"
-			. "<style type=\"text/css\">"
-			. ".brightline { background-color:#FFFFFF; }"
-			. ".darkline { background-color:#DDDDDD; }"
-			. "#container { float: left; position: relative; left: 50%; margin-top: 1em; }"
-			. "#inner { padding: 3px; position: relative; left: -50%; border: 1px solid black; }"
-			. "</style>"
-			. "</head><body><div id=\"container\">";
+		print "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">
+			<html>
+				<head>
+					<title>table</title>"
+					. $this->CSS()
+				. "</head>
+				<body>";
+	
+		print "<div id=\"container\">";
 		print $this->buildTable();
-		print "</div></body></html>";
+		print "</div>";
+		print $this->footer();
+		print "</body></html>";
 	}
 
 	protected function buildTable() {
@@ -47,7 +69,8 @@ class WebTable
 		$skipid = 1;
 		$ret .= "<tr class=\"darkline\">";
 		foreach ($this->context->table->fields as $i => $value) ($skipid ? $skipid = 0 : $ret .= "<td nowrap=\"nowrap\"><a href=\"./index.php?context=" . $this->context->name . "&sort=" . $value->name . "\">" . $value->name . "</a></td>");
-		$ret .= "<td><a href=\"./index.php?context=" . $this->context->name . "&new=true\"><img src=\"./icons/new.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"new\"></a></td></tr>";
+		$ret .= "<td>" 
+			. (($this->context->allownew) ? "<a href=\"./index.php?context=" . $this->context->name . "&new=true\"><img src=\"./icons/new.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"new\"></a>" : "") . "</td></tr>";
 
 		$dark = 0;
 

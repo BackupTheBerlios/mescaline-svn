@@ -6,7 +6,7 @@ if (!class_exists("WebContext")) include("webcontext.inc");
 
 if (isset($_GET['context'])) {
 
-	$contextfile = $_GET['context'] . ".context";
+	$contextfile = "./context/" . $_GET['context'] . ".context";
 
 	if (!file_exists($contextfile)) {
 

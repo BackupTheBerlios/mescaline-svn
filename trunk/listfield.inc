@@ -16,7 +16,13 @@ class ListField extends Field {
 
 	function buildQuery($database) {
 
-		return "SELECT `" . $this->reference->table->name . "`.`" . $this->reference->idfield->name . "`,`" . $this->reference->table->name . "`.`" . $this->reference->displayfield->name ."` FROM `" . $database->name . "`.`" . $this->reference->table->name . "`";
+		return "SELECT `" 
+			. mysql_real_escape_string($this->reference->table->name) . "`.`" 
+			. mysql_real_escape_string($this->reference->idfield->name) . "`,`" 
+			. mysql_real_escape_string($this->reference->table->name) . "`.`" 
+			. mysql_real_escape_string($this->reference->displayfield->name) ."` FROM `" 
+			. mysql_real_escape_string($database->name) . "`.`" 
+			. mysql_real_escape_string($this->reference->table->name) . "`";
 	}
 
 	function toString() {

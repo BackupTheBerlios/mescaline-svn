@@ -11,14 +11,13 @@ class FinishedContext extends WizardStep {
 
 		// There has to be a context yet.
 
-		$contextfile = $_GET['context'] . ".wizard";
-		$s = implode("", @file($contextfile));
+		$s = implode("", @file($this->wizardFilename()));
 		$this->context = unserialize($s);
 
-		unlink($contextfile);
+		unlink($this->wizardFilename());
 
 		$s = serialize($this->context);
-		$fp = fopen("../" . $this->context->name . ".context", "w");
+		$fp = fopen("../context/" . $this->context->name . ".context", "w");
 		fputs($fp, $s);
 		fclose($fp);
 

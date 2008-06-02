@@ -21,8 +21,7 @@ class ChooseTable extends WizardStep
 
 		if (isset($_GET['context'])) {
 
-			$contextfile =  $_GET['context'] . ".wizard";
-			$s = implode("", @file($contextfile));
+			$s = implode("", @file($this->wizardFilename()));
 			$this->context = unserialize($s);
 		} else {
 
@@ -36,7 +35,10 @@ class ChooseTable extends WizardStep
 			$this->context = new WebContext($contextname, null, $database); 
 		
 			$s = serialize($this->context);
-			$fp = fopen($this->context->name . ".wizard", "w");
+			$fp = fopen("../context/" . $this->context->name . ".wizard", "w");
+
+			if (!$fp) exit(1);
+			
 			fputs($fp, $s);
 			fclose($fp);
 		}
@@ -56,7 +58,7 @@ class ChooseTable extends WizardStep
 		$dark = 1;
 	
 		$ret .= $this->caption();
-		$ret .= "<form action=\"./wizard.php\">";
+		$ret .= "<form action=\"./index.php\">";
 		$ret .= "<table border=0 cellpadding=0 cellspacing=0>";
 		$ret .= "<input type=\"hidden\" name=\"context\" value=\"" . $this->context->name . "\">";	
 		$ret .= "<input type=\"hidden\" name=\"dialog\" value=\"" . $this->next->name . "\">";
@@ -84,7 +86,7 @@ class ChooseTable extends WizardStep
 
 	protected function previousButton() {
 
-		if ($this->previous) return "<a id=\"previous\"href=\"./wizard.php?dialog=" . $this->previous->name . "&context=" . $this->context->name ."&back=true\"><img src=\"../icons/previous.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"previous\"></a>";
+		if ($this->previous) return "<a id=\"previous\"href=\"./index.php?dialog=" . $this->previous->name . "&context=" . $this->context->name ."&back=true\"><img src=\"../icons/previous.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"previous\"></a>";
 		return "";
 	}
 }

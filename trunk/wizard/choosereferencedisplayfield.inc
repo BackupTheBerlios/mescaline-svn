@@ -16,8 +16,7 @@ class ChooseReferenceDisplayField extends ChooseIDField {
 
 		// There has to be a context yet, and table has to be set.
 
-		$contextfile = $_GET['context'] . ".wizard";
-		$s = implode("", @file($contextfile));
+		$s = implode("", @file($this->wizardFilename()));
 		$this->context = unserialize($s);
 
 		$database = $this->context->database;
@@ -43,7 +42,7 @@ class ChooseReferenceDisplayField extends ChooseIDField {
 		$dark = 1;
 
 		$ret .= $this->caption();
-		$ret .= "<form action=\"./wizard.php\">";
+		$ret .= "<form action=\"./index.php\">";
 		$ret .= "<table border=0 cellpadding=0 cellspacing=0>";
 		$ret .= "<input type=\"hidden\" name=\"context\" value=\"" . $this->context->name . "\">";	
 		$ret .= "<input type=\"hidden\" name=\"dialog\" value=\"" . $this->next->name . "\">";
@@ -70,7 +69,7 @@ class ChooseReferenceDisplayField extends ChooseIDField {
 
 		// Send back table parameter
 
-		if ($this->previous) return "<a id=\"previous\"href=\"./wizard.php?dialog=" . $this->previous->name 
+		if ($this->previous) return "<a id=\"previous\"href=\"./index.php?dialog=" . $this->previous->name 
 			. "&context=" . $this->context->name 
 			. "&field=" . $_GET['field']
 			. "&table=" . $_GET['table'] 

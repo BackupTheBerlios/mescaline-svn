@@ -21,8 +21,7 @@ class ChooseIDField extends WizardStep {
 
 		// There has to be a context yet.
 
-		$contextfile = $_GET['context'] . ".wizard";
-		$s = implode("", @file($contextfile));
+		$s = implode("", @file($this->wizardFilename()));
 		$this->context = unserialize($s);
 
 		$database = $this->context->database;
@@ -72,14 +71,14 @@ class ChooseIDField extends WizardStep {
 		// Write context.
 
 		$s = serialize($this->context);
-		$fp = fopen($this->context->name . ".wizard", "w");
+		$fp = fopen($this->wizardFilename(), "w");
 		fputs($fp, $s);
 		fclose($fp);
 
 		$dark = 1;
 
 		$ret .= $this->caption();
-		$ret .= "<form action=\"./wizard.php\">";
+		$ret .= "<form action=\"./index.php\">";
 		$ret .= "<table border=0 cellpadding=0 cellspacing=0>";
 		$ret .= "<input type=\"hidden\" name=\"context\" value=\"" . $this->context->name . "\">";	
 		$ret .= "<input type=\"hidden\" name=\"dialog\" value=\"" . $this->next->name . "\">";
@@ -107,7 +106,7 @@ class ChooseIDField extends WizardStep {
 
 	protected function previousButton() {
 
-		if ($this->previous) return "<a id=\"previous\"href=\"./wizard.php?dialog=" . $this->previous->name . "&context=" . $this->context->name ."&back=true\"><img src=\"../icons/previous.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"previous\"></a>";
+		if ($this->previous) return "<a id=\"previous\"href=\"./index.php?dialog=" . $this->previous->name . "&context=" . $this->context->name ."&back=true\"><img src=\"../icons/previous.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"previous\"></a>";
 		return "";
 	}
 }

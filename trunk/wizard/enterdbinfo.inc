@@ -16,8 +16,7 @@ class EnterDBInfo extends WizardStep
 
 		if (isset($_GET['context'])) {
 
-			$contextfile =  $_GET['context'] . ".wizard";
-			$s = implode("", @file($contextfile));
+			$s = implode("", @file($this->wizardFilename()));
 			$context = unserialize($s);
 
 			$databasename = $context->database->name;
@@ -32,7 +31,7 @@ class EnterDBInfo extends WizardStep
 		$dark = 1;
 	
 		$ret .= $this->caption();
-		$ret .= "<form action=\"./wizard.php\">";
+		$ret .= "<form action=\"./index.php\">";
 		$ret .= "<table border=0 cellpadding=0 cellspacing=0>";
 		$ret .= "<input type=\"hidden\" name=\"dialog\" value=\"" . $this->next->name . "\">";
 		
@@ -54,7 +53,7 @@ class EnterDBInfo extends WizardStep
 	
 		$ret .= "<tr><td nowrap=\"nowrap\" class=\"" . ($dark ? "darkline" : "brightline") . "\">Password:</td>";
 		$dark = $dark ^ 1;
-		$ret .= "<td><input name=\"password\" value=\"" . $password ."\"></td></tr>";
+		$ret .= "<td><input type=\"password\" name=\"password\" value=\"" . $password ."\"></td></tr>";
 	
 		$ret .= "</table>";
 	

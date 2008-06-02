@@ -15,19 +15,34 @@ class WebForm
 		$this->id = $id;
 	} 
 
+	protected function CSS() {
+
+		return "<style type=\"text/css\">
+			#container { float: left; position: relative; left: 50%; margin-top: 1em; }
+			#inner { padding: 3px; position: relative; left: -50%; border: 1px solid black; }
+			#footer { clear: both; text-align: center; padding: 6px; }
+			a { color : #3c3; font-family : verdana, arial, helvetica, sans-serif; text-decoration : none; }
+			a:link { color : #3c3; }
+			a:visited { color : #3c3; }
+			a:hover { text-decoration : underline; }
+			.brightline { background-color:#FFFFFF; }
+			.darkline { background-color:#DDDDDD; }
+		</style>";
+	}
+
 	function printHTML() {
 	
 		print "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">"
 			. "<html><head><title>form</title>"
-			. "<style type=\"text/css\">"
-			. ".brightline { background-color:#FFFFFF; }"
-			. ".darkline { background-color:#DDDDDD; }"
-			. "#container { float: left; position: relative; left: 50%; margin-top: 1em; }"
-			. "#inner { padding: 3px; position: relative; left: -50%; border: 1px solid black; }"
-			. "</style>"
+			. $this->CSS()
 			. "</head><body><div id=\"container\"><div id=\"inner\" align=\"center\">";
 		print $this->buildForm();
-		print "</div></div></body></html>";
+		print "</div></div>" . $this->footer() . "</body></html>";
+	}
+
+	protected function footer() {
+
+		return "<div id=\"footer\"><a href=\"http://mescaline.berlios.de\"><img width=\"100\" height=\"21\" border=\"0\" style=\"vertical-align:middle\" src=\"./icons/footer.png\"/ alt=\"mescaline\"/></a></div>";
 	}
 
 	protected function buildForm() {

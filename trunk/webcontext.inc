@@ -16,6 +16,7 @@ class WebContext {
 	public $name;
 	public $database;
 	public $version;
+	public $allownew;
 
 	function __construct($name, $table, $database)
 	{
@@ -25,6 +26,7 @@ class WebContext {
 		$this->name = $name;
 		$this->table = $table;
 		$this->database = $database;
+		$allownew = false;
 	}
 
 	private function extractFields() {

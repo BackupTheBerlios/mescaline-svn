@@ -30,8 +30,7 @@ class EditReferences extends WizardStep {
 
 	public function content() {
 		
-		$contextfile = $_GET['context'] . ".wizard";
-		$s = implode("", @file($contextfile));
+		$s = implode("", @file($this->wizardFilename()));
 		$this->context = unserialize($s);
 
 		$this->errors = array();
@@ -67,21 +66,32 @@ class EditReferences extends WizardStep {
 				$this->context->table->fields = replaceElement($oldfield, $newfield, $this->context->table->fields);		
 			}
 		} else {
+
+			// Put fields which were into selection array, if a non-optional field was selected
+			// disable new entry functionality.
 	
 			$selection = array();
-			foreach ($this->context->table->fields as $i => $field) if (isset($_GET[$i])) $selection[] = $field;
+			$allownew = true;
+
+			foreach ($this->context->table->fields as $i => $field) { 
+				if (isset($_GET[$i])) $selection[] = $field;
+				else if ($field->optional == false) $allownew = false;
+			}
 			$this->context->table->fields = $selection;
+			$this->context->allownew = $allownew;
 		}
 
+		// Write context to disk.
+
 		$s = serialize($this->context);
-		$fp = fopen($this->context->name . ".wizard", "w");
+		$fp = fopen($this->wizardFilename(), "w");
 		fputs($fp, $s);
 		fclose($fp);
 
 		$dark = 1;
 	
 		$ret .= $this->caption();
-		$ret .= "<form action=\"./wizard.php\">";
+		$ret .= "<form action=\"./index.php\">";
 		$ret .= "<table border=0 cellpadding=0 cellspacing=0>";
 		$ret .= "<input type=\"hidden\" name=\"context\" value=\"" . $this->context->name . "\">";	
 		$ret .= "<input type=\"hidden\" name=\"dialog\" value=\"" . $this->next->name . "\">";
@@ -92,8 +102,8 @@ class EditReferences extends WizardStep {
 			else $string = $field->toString();
 
 			if (($field instanceof IDField) == false) { 
-				$ret .= "<tr nowrap=\"nowrap\" class=\"" . ($dark ? "darkline" : "brightline") . "\"><td>" . $string . "</td><td><a href=\"./wizard.php?context=" . $this->context->name . "&dialog=choosereferencetable&field=" . $i ."\"><img src=\"../icons/edit.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"edit\"></a>";
-				if ($field instanceof ListField) $ret .= "<a href=\"./wizard.php?context=" . $this->context->name . "&dialog=editreferences&reference=remove&field=" . $i ."\"><img src=\"../icons/remove.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"remove\"></a>";
+				$ret .= "<tr nowrap=\"nowrap\" class=\"" . ($dark ? "darkline" : "brightline") . "\"><td>" . $string . "</td><td><a href=\"./index.php?context=" . $this->context->name . "&dialog=choosereferencetable&field=" . $i ."\"><img src=\"../icons/edit.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"edit\"></a>";
+				if ($field instanceof ListField) $ret .= "<a href=\"./index.php?context=" . $this->context->name . "&dialog=editreferences&reference=remove&field=" . $i ."\"><img src=\"../icons/remove.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"remove\"></a>";
 				$ret .= "</td></tr>";
 				$dark = $dark ^ 1;
 			}
@@ -123,7 +133,7 @@ class EditReferences extends WizardStep {
 
 	protected function previousButton() {
 
-		if ($this->previous) return "<a id=\"previous\"href=\"./wizard.php?dialog=" . $this->previous->name . "&context=" . $this->context->name ."&back=true\"><img src=\"../icons/previous.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"previous\"></a>";
+		if ($this->previous) return "<a id=\"previous\"href=\"./index.php?dialog=" . $this->previous->name . "&context=" . $this->context->name ."&back=true\"><img src=\"../icons/previous.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"previous\"></a>";
 		return "";
 	}
 }

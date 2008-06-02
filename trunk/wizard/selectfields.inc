@@ -21,8 +21,7 @@ class SelectFields extends WizardStep {
 
 		// There has to be a context yet.
 
-		$contextfile = $_GET['context'] . ".wizard";
-		$s = implode("", @file($contextfile));
+		$s = implode("", @file($this->wizardFilename()));
 		$this->context = unserialize($s);
 
 		// Create Selection array
@@ -65,33 +64,40 @@ class SelectFields extends WizardStep {
 		// Write context to disk
 
 		$s = serialize($this->context);
-		$fp = fopen($this->context->name . ".wizard", "w");
+		$fp = fopen($this->wizardFilename(), "w");
 		fputs($fp, $s);
 		fclose($fp);
 
 		$dark = 1;
 	
 		$ret .= $this->caption();
-		$ret .= "<form action=\"./wizard.php\">";
+		$ret .= "<form action=\"./index.php\">";
 		$ret .= "<table border=0 cellpadding=0 cellspacing=0>";
 		$ret .= "<input type=\"hidden\" name=\"context\" value=\"" . $this->context->name . "\">";	
 		$ret .= "<input type=\"hidden\" name=\"dialog\" value=\"" . $this->next->name . "\">";
 	
 		foreach ($this->context->table->fields as $i => $field) { 
 			
-			// If the field exists in the selection array, the box is checked.
-
-			$selected = (isset($this->selection[$i])) ? " checked=\"checked\"" : "";
+			$ret .= "<tr><td nowrap=\"nowrap\" class=\"" . ($dark ? "darkline" : "brightline"); 
 
 			// Disabled HTML checkboxes send no value obviously, so we have to do it manually.
+			// If the field exists in the selection array, the box is checked.
 
-			if ($field instanceof IDField) $ret .= "<tr><td nowrap=\"nowrap\" class=\"" . ($dark ? "darkline" : "brightline") . "\"><input disabled=\"disabled\"" . $selected . " type=\"checkbox\"><input type=\"hidden\" name=\"" . $i . "\" value=\"" . $i . "\">" . $field->toString() . "</td></tr>";
-			else $ret .= "<tr><td nowrap=\"nowrap\" class=\"" . ($dark ? "darkline" : "brightline") . "\"><input type=\"checkbox\" name=\"" . $i . "\" value=\"" . $i . "\"" . $selected . ">" . $field->toString() . "</td></tr>";
+			if ($field instanceof IDField) $ret .= "\"><input disabled=\"disabled\"" 
+				. " type=\"checkbox\" checked=\"checked\"><input type=\"hidden\" name=\""; 
+			else $ret .= "\"><input type=\"checkbox\" name=\""
+				. ((isset($this->selection[$i])) ? " checked=\"checked\"" : ""); 
+
+			$ret .= $i . "\" value=\"" . $i . "\"" . ">" 
+				. $field->toString() . ((($field->optional) || ($field instanceof IDField)) ? "" : "<font color=\"red\">*</font>")
+				. "</td></tr>";
 			$dark = $dark ^ 1;
 		}
 	
-		$ret .= "</table>";
+		$ret .= "</table><br>";
 	
+		$ret .= "<font color=\"red\">*</font> Select to allow new entries.<br><br>";
+
 		return $ret;
 	}
 
@@ -103,7 +109,7 @@ class SelectFields extends WizardStep {
 
 	protected function previousButton() {
 
-		if ($this->previous) return "<a id=\"previous\"href=\"./wizard.php?dialog=" . $this->previous->name . "&back=true&context=" . $this->context->name ."\"><img src=\"../icons/previous.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"previous\"></a>";
+		if ($this->previous) return "<a id=\"previous\"href=\"./index.php?dialog=" . $this->previous->name . "&back=true&context=" . $this->context->name ."\"><img src=\"../icons/previous.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"previous\"></a>";
 		return "";
 	}
 
