@@ -1,4 +1,4 @@
-mescaline
+mescaline v0.4
 
 about:
 
@@ -20,5 +20,3 @@ installation:
 
 1) move the whole "mescaline" folder into the root of your webserver hierarchy.
 2) if you want to use the wizard for creating forms, you should assign the ownership of the "mescaline/context" directory to the web-server user.
-
-how to use
