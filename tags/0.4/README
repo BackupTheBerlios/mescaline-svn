@@ -1,0 +1,22 @@
+mescaline v0.4
+
+about:
+
+Mescaline is a php web application and framework which makes data stored in databases available to users. The interfaces for viewing and editing the data are created without requiring any coding or configfile editing using a wizard.
+
+license:
+
+GPL v3, see COPYING
+
+requirements:
+
+- It should work on pretty much every os, tested and developed on linux.
+- PHP5, not sure about oop support in php4.
+- MySQL, i guess most versions work.
+- A webserver, Apache maybe.
+- In case you want to use the wizard, the webservers needs the right to write files.
+
+installation:
+
+1) move the whole "mescaline" folder into the root of your webserver hierarchy.
+2) if you want to use the wizard for creating forms, you should assign the ownership of the "mescaline/context" directory to the web-server user.
