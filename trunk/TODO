@@ -1,2 +1,3 @@
 - Implement mysql authorization error.
-- Move CSS in seperate file
+- Move CSS in seperate file.
+- Handle inconsistent references.
