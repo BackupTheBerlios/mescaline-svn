@@ -1,0 +1,6 @@
+0.4.0.1: fixes
+
+- added documentation
+- included .htaccess files to protect "mescaline/context" & "mescaline/includes" directories.
+
+0.4: initial release
