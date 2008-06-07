@@ -68,7 +68,6 @@ class Database {
 
 		while($row = mysql_fetch_row($result)) $tables[] = new Table($row[0], $this);	
 
-
 		return $tables;
 	}
 

@@ -1,6 +1,11 @@
+0.5: 
+
+- implemented a more consequent MVC pattern.
+- id field isn't visible in the editor anymore.
+
 0.4.0.1: fixes
 
-- added documentation
+- added documentation.
 - included .htaccess files to protect "mescaline/context" & "mescaline/includes" directories.
 
 0.4: initial release
