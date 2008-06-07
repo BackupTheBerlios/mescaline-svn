@@ -15,11 +15,6 @@ class Field {
 
 		return $this->name . " (Default)";
 	}
-
-	function formatValue($value) {
-
-		return $value;
-	}
 }
 
 ?>

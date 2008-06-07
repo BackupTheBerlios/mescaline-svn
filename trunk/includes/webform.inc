@@ -1,17 +1,19 @@
 <?php
 
-require_once("idfield.inc");
-require_once("listfield.inc");
-require_once("boolfield.inc");
+require_once("webidfield.inc");
+require_once("weblistfield.inc");
+require_once("webboolfield.inc");
 
 class WebForm 
 {
 	public $id;
 	public $context;
+	public $webfields;
 
-	function __construct($context, $id=-1)
-	{
+	function __construct($context, $webfields, $id = -1) {
+
 		$this->context = $context;
+		$this->webfields = $webfields;
 		$this->id = $id;
 	} 
 
@@ -47,11 +49,11 @@ class WebForm
 
 	protected function buildForm() {
 
-		if ($this->id != -1) {
+		//if ($this->id != -1) {
 		
-			$this->context->database->buildRow($this->context->table, $this->id);
-			$row = $this->context->table->rows[0];
-		}
+			//$this->webcontext->context->database->buildRow($this->webcontext->context->table, $this->id);
+			//$row = $this->webcontext->context->table->rows[0];
+		//}
 
 		$ret .= "<form action=\"./index.php\">";
 
@@ -69,14 +71,26 @@ class WebForm
 
 		$dark = 1;
 
-		foreach ($this->context->table->fields as $i => $field) {
+		foreach ($this->webfields as $i => $webfield) {
+
+			// The field encoding is quite complicated, since php will transform html form variable names with special chars. Thus there is a hash which references to the correct field name.
+
+			$hash = md5($webfield->field->name);
+			$ret .= "<input type=\"hidden\" name=\"" . $hash . "\" value=\"" . $webfield->field->name . "\">";
 
 			$ret .= "<tr>";
 
+			$ret .= $webfield->renderFormName($dark);
+			$ret .= $webfield->renderFormField($hash);
+
+			$dark = $dark ^ 1;
+			
+			/*
+
 			// When in update mode get the value of the current field in the row. In insert mode set the value to empty.
 
-			if ($this->id != -1) $value = $row[$i];
-			else $value = "";
+			//if ($this->id != -1) $value = $row[$i];
+			//else $value = "";
 
 			$ret .= "<td nowrap=\"nowrap\" class=\"" . ($dark ? "darkline" : "brightline") . "\">" . $field->name . ((($field->optional) || ($field instanceof IDField)) ? "" : "<font color=\"red\">*</font>") . "</td><td>";
 			$dark = $dark ^ 1;
@@ -102,7 +116,7 @@ class WebForm
 
 				// Build list of listfield
 
-				$this->context->database->buildListField($field);
+				$this->webcontext->context->database->buildListField($field);
 
 				$ret .= "<select name=\"field:" . $hash . "\" >";
 
@@ -145,9 +159,12 @@ class WebForm
 			} else {
 
 				$ret .= "<input name=\"field:" . $hash . "\" value=\"" . $value ."\">";
-			}
+			} 
 
 			$ret .= "</td></tr>";
+
+			*/
+			$ret .= "</tr>";
 		}
 
 		$ret .= "</td></tr></table><br><input type=\"image\" src=\"./icons/ok.png\" alt=\"ok\"></form>";

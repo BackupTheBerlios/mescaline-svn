@@ -1,31 +1,16 @@
 <?php
 
-require_once("version.inc");
-require_once("table.inc");
-require_once("idfield.inc");
-require_once("listfield.inc");
-require_once("boolfield.inc");
+require_once("context.inc");
 require_once("webform.inc");
 require_once("webtable.inc");
-require_once("database.inc");
 
 class WebContext {
 
-	public $table;
-	public $name;
-	public $database;
-	public $version;
-	public $allownew;
+	public $context;
 
-	function __construct($name, $table, $database)
+	function __construct($context)
 	{
-		global $version;
-		$this->version = $version;
-
-		$this->name = $name;
-		$this->table = $table;
-		$this->database = $database;
-		$allownew = false;
+		$this->context = $context;
 	}
 
 	private function extractFields() {
@@ -49,48 +34,115 @@ class WebContext {
 
 		if (isset($_GET['remove'])) {
 	
-			$this->database->connect();
-			$this->database->remove($this->table, $_GET['id']);
-			$this->database->disconnect();
+			$this->context->database->connect();
+			$this->context->database->remove($this->context->table, $_GET['id']);
+			$this->context->database->disconnect();
 		
-			header("Location: ./index.php?context=" . $this->name);
+			header("Location: ./index.php?context=" . $this->context->name);
 		
 		} else if (isset($_GET['update'])) {
 			
-			$this->database->connect();	
-			$this->database->update($this->table, $this->extractFields());
-			$this->database->disconnect();
-		
-			header("Location: ./index.php?context=" . $this->name);
+			$this->context->database->connect();	
+			$this->context->database->update($this->context->table, $this->extractFields());
+			$this->context->database->disconnect();
+
+			header("Location: ./index.php?context=" . $this->context->name);
 		
 		} else if (isset($_GET['insert'])) {
 			
-			$this->database->connect();
-			$this->database->insert($this->table, $this->extractFields());
-			$this->database->disconnect();
+			$this->context->database->connect();
+			$this->context->database->insert($this->context->table, $this->extractFields());
+			$this->context->database->disconnect();
 		
-			header("Location: ./index.php?context=" . $this->name);
+			header("Location: ./index.php?context=" . $this->context->name);
 		
 		} else if (isset($_GET['edit'])) {
 		
 			// Show form
 		
-			$webform = new WebForm($this, $_GET['id']);
+			$id = $_GET['id'];
+
+			// Create webfield array.
+
+			$webfields = $this->createWebFields();
+
+			// Get Row.
+
+			$row = $this->context->database->buildRow($this->context->table, $id);
+
+			// Populate WebFields.
+
+			foreach ($row as $i => $value) $webfields[$i]->value = $value;
+
+			$webform = new WebForm($this->context, $webfields, $id);
 			$webform->printHTML();
 		
 		} else if (isset($_GET['new'])) {
 		
-			// Show form
+			// Show form.
 		
-			$webform = new WebForm($this);
+			// Create webfield array.
+
+			$webfields = $this->createWebFields();
+
+			$webform = new WebForm($this->context, $webfields);
 			$webform->printHTML();
 		
 		} else {
+
+			// Show table.
 		
-			if (isset($_GET['sort'])) $webtable = new WebTable($this, $_GET['sort']);
-			else $webtable = new WebTable($this);
+			// Check if sort is set.
+
+			$sort = null;
+        	if (isset($_GET['sort'])) $sort = $_GET['sort'];
+		
+			// Fetch rows from db.
+	
+			$rows = $this->context->database->buildTable($this->context->table, $sort);
+
+			if ($rows == false) {
+	
+				return "ERROR: table could not be build from query: " . $this->context->table->buildQuery($this->context->database);
+			}
+
+			// Create content array		.
+	
+			$content = array();
+
+			foreach ($rows as $i => $row) {
+
+				// Create webfield array.
+
+				$webfields = $this->createWebFields();
+
+				// Populate webfield array.
+
+				foreach ($row as $i => $value) $webfields[$i]->value = $value;
+
+				// Add webfield array to content array.
+
+				$content[] = $webfields;
+			}
+
+			$webtable = new WebTable($this->context, $content);
 			$webtable->printHTML();
 		}
+	}
+
+	protected function createWebFields() {
+
+		$webfields = array();
+
+		foreach ($this->context->table->fields as $i => $field) {
+
+			if ($field instanceof IDField) $webfields[$i] = new WebIDField($field);
+			else if ($field instanceof ListField) $webfields[$i] = new WebListField($field, $this->context->database);
+			else if ($field instanceof BoolField) $webfields[$i] = new WebBoolField($field);
+			else $webfields[$i] = new WebField($field);
+		} 
+
+		return $webfields;
 	}
 }
 

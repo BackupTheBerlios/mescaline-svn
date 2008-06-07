@@ -149,7 +149,8 @@ class Database {
 
 	function buildRow($table, $id) {
 
-		$this->buildTable($table, null, $id);
+		$rows = $this->buildTable($table, null, $id);
+		return $rows[0];
 	}
 
 	function buildTable($table, $sort = null, $id = null)
@@ -174,9 +175,7 @@ class Database {
 		$rows = array();
 		while($row = mysql_fetch_row($result)) $rows[] = $row;
 
-		$table->rows = $rows;
-
-		return true;
+		return $rows;
 	}
 	
 	function buildListField($listfield) {		
@@ -198,10 +197,10 @@ class Database {
 			return false;
 		}
 
-		$listfield->list = array();
-		while($row = mysql_fetch_row($result)) $listfield->list[] = $row;
+		$list = array();
+		while($row = mysql_fetch_row($result)) $list[] = $row;
 
-		return true;
+		return $list;
 	}
 }
 

@@ -1,18 +1,21 @@
 <?php
 
-require_once("table.inc");
-require_once("field.inc");
+require_once("context.inc");
+require_once("webfield.inc");
+require_once("webidfield.inc");
+require_once("weblistfield.inc");
+require_once("webboolfield.inc");
 
 class WebTable
 {
-
+	public $content;
 	public $context;
-	public $sort;
 
-	function __construct($context, $sort = null)
+	function __construct($context, $content)
 	{
 
 		$this->context = $context;
+		$this->content = $content;
 		$this->sort = $sort;
 	}
 
@@ -55,41 +58,38 @@ class WebTable
 
 	protected function buildTable() {
 
-		$ret = $this->context->database->buildTable($this->context->table, $this->sort);
-
-		if ($ret == false) {
-
-			return "ERROR: table could not be build from query: " . $this->context->table->buildQuery($this->context->database);
-		}
+      // build table
 
 		$ret = "<div id=\"inner\"><table border=0 cellspacing=0>";
 
 		// create header
 
-		$skipid = 1;
 		$ret .= "<tr class=\"darkline\">";
-		foreach ($this->context->table->fields as $i => $value) ($skipid ? $skipid = 0 : $ret .= "<td nowrap=\"nowrap\"><a href=\"./index.php?context=" . $this->context->name . "&sort=" . $value->name . "\">" . $value->name . "</a></td>");
+		foreach (reset($this->content) as $i => $webfield) $ret .= $webfield->renderTableHeader($this->context->name);
+		
+		// if allow new is set, paint new button.
+	
 		$ret .= "<td>" 
-			. (($this->context->allownew) ? "<a href=\"./index.php?context=" . $this->context->name . "&new=true\"><img src=\"./icons/new.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"new\"></a>" : "") . "</td></tr>";
+			. ($this->context->allownew ? 
+				"<a href=\"./index.php?context=" 
+				. $this->context->name 
+				. "&new=true\"><img src=\"./icons/new.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"new\"></a>" : ""
+				) 
+			. "</td></tr>";
 
 		$dark = 0;
 
-		foreach ($this->context->table->rows as $i => $row) {
+		foreach ($this->content as $i => $row) {
 
-			// The first field of each line (the id) is skipped. The last element is an edit link, which embedds the id to edit.
+			// The last element are edit & delete links, which embedd the id to edit.
 
-			$skipid = 1;
 			$ret .= "<tr class=\"" . ($dark ? "darkline" : "brightline") . "\">";
-			foreach ($row as $i => $value)
-				if (($this->context->table->fields[$i] instanceof IDField) == false)
-					$ret .= "<td nowrap=\"nowrap\">"
-						. $this->context->table->fields[$i]->formatValue($value)
-						. "</td>";
+			foreach ($row as $i => $webfield) $ret .= $webfield->renderTableField();			
 
 			// Get the id
-			$value = reset($row);
+			$id = reset($row)->value;
 
-			$ret .= "<td nowrap=\"nowrap\"><a href=\"./index.php?context=" . $this->context->name . "&edit=true&id=" . $value . "\"><img src=\"./icons/edit.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"edit\"></a><a onclick=\"return window.confirm('Do you want to delete the entry?')\" href=\"./index.php?context=" . $this->context->name . "&remove=true&id=" . $value . "\"><img src=\"./icons/remove.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"edit\"></a></td></tr>";
+			$ret .= "<td nowrap=\"nowrap\"><a href=\"./index.php?context=" . $this->context->name . "&edit=true&id=" . $id . "\"><img src=\"./icons/edit.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"edit\"></a><a onclick=\"return window.confirm('Do you want to delete the entry?')\" href=\"./index.php?context=" . $this->context->name . "&remove=true&id=" . $id . "\"><img src=\"./icons/remove.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"edit\"></a></td></tr>";
 			$dark = $dark ^ 1;
 		}
 

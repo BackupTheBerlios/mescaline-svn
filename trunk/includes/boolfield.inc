@@ -8,13 +8,6 @@ class BoolField extends Field {
 
 		return $this->name . " (Bool)";
 	}
-
-	function formatValue($value) {
-
-		if ($value == "") return "";
-		else if ($value == "0") return "No";
-		else return "Yes";
-	}
 }
 
 ?>

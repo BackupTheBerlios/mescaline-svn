@@ -1,4 +1,6 @@
-mescaline v0.4.0.1
+mescaline v0.4.0.1 
+
+magnus kulke 2008, magnus.kulke at radicalapproach.de
 
 about:
 
@@ -56,7 +58,7 @@ the manual creation requires you to write a php script on your own, which builds
   require_once('listfield.inc');
   require_once('reference.inc');
   require_once('database.inc');
-  require_once('webcontext.inc');
+  require_once('context.inc');
 
 1.2.1) create a table object.
 
@@ -138,7 +140,7 @@ add the listfield to the fields array.
 
 1.2.5) create context object and serialize it to the disk.
 
-  $context = new WebContext(<context name>, $table, $database);
+  $context = new Context(<context name>, $table, $database);
   $s = serialize($context);
   $fp = fopen($context->name . ".context", "w");
   fputs($fp, $s);

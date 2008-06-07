@@ -3,6 +3,7 @@
 ini_set('include_path', './includes/');
 
 require_once("version.inc");
+require_once("context.inc");
 require_once("webcontext.inc");
 
 if (isset($_GET['context'])) {
@@ -16,14 +17,15 @@ if (isset($_GET['context'])) {
 	}
 
 	$s = implode("", @file($contextfile));
-	$webcontext = unserialize($s);
+	$context = unserialize($s);
 
-	if ($webcontext->version != $version) {
+	if ($context->version != $version) {
 
-		print "ERROR: context is version " . $webcontext->version . ", while the app needs version " . $version . ".";
+		print "ERROR: context is version " . $context->version . ", while the app needs version " . $version . ".";
 		exit(1);
 	}
 
+	$webcontext = new WebContext($context);
 	$webcontext->start();
 
 } else {

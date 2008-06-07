@@ -6,7 +6,6 @@ class Table {
 	
 	public $name;
 	public $fields;	
-	public $rows;
 
 	function __construct($name) {
 
