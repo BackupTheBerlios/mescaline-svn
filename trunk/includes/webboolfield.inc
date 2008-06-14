@@ -12,7 +12,7 @@ class WebBoolField extends WebField
 
 		// If the field is optional, add a blank field on the top.
 
-		if ($this->field->optional) $ret .= "<option " . (($this->value == "") ? "selected=\"selected\" " : "") . "value=\"null\">NULL</<option>";
+		if ($this->field->optional) $ret .= "<option " . (($this->value == "") ? "selected=\"selected\" " : "") . "value=\"\">NULL</<option>";
 		$ret .= "<option " . (($this->value == "1") ? "selected=\"selected\" " : "") . "value=\"1\">Yes</option>";
 		$ret .= "<option " . (($this->value == "0") ? "selected=\"selected\" " : "") . "value=\"0\">No</option>";
 

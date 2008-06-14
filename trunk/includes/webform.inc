@@ -17,22 +17,6 @@ class WebForm
 		$this->id = $id;
 	} 
 
-	protected function CSS() {
-
-		return "<style type=\"text/css\">
-			#link { background-color: white; }
-			#footer { text-align: center; padding: 6px; }
-			table { background-color: white; padding: 3px; margin: 0px; border: 1px solid black; }
-			body { background: lightgray; }
-			a { color : #3c3; font-family : verdana, arial, helvetica, sans-serif; text-decoration : none; }
-			a:link { color : #3c3; }
-			a:visited { color : #3c3; }
-			a:hover { text-decoration : underline; }
-			.brightline { background-color: white; }
-			.darkline { background-color: lightgray; }
-		</style>";
-	}
-
 	function printHTML() {
 	
 		print "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">"
@@ -66,8 +50,6 @@ class WebForm
 		$ret .= "<table border=0 cellpadding=0 cellspacing=0>";
 
 		// Walk through the fields.
-
-		$dark = 1;
 
 		foreach ($this->webfields as $i => $webfield) {
 

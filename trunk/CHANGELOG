@@ -5,6 +5,7 @@
 - fixed display of big tables.
 - possible to hide fields.
 - cleaned up interface a bit.
+- fixed a bug where empty (NULL) optional fields where created with a value.
 
 0.4.0.1: fixes
 

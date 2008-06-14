@@ -26,7 +26,7 @@ class WebListField extends WebField
 		if ($this->field->optional) {
 	
 			$selected = ($this->value == "") ? "selected=\"selected\" " : "";
-			$ret .= "<option " . $selected . "value=\"null\">NULL</<option>";
+			$ret .= "<option " . $selected . "value=\"\">NULL</<option>";
 		}
 	
 		// Make the rows ID field the value of the option and display the name. Select the first entry, when creating new entries.

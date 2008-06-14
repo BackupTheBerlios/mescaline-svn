@@ -41,7 +41,7 @@ class WebContext {
 			header("Location: ./index.php?context=" . $this->context->name);
 		
 		} else if (isset($_GET['update'])) {
-			
+
 			$this->context->database->connect();	
 			$this->context->database->update($this->context->table, $this->extractFields());
 			$this->context->database->disconnect();
@@ -49,7 +49,7 @@ class WebContext {
 			header("Location: ./index.php?context=" . $this->context->name);
 		
 		} else if (isset($_GET['insert'])) {
-			
+
 			$this->context->database->connect();
 			$this->context->database->insert($this->context->table, $this->extractFields());
 			$this->context->database->disconnect();
@@ -129,6 +129,8 @@ class WebContext {
 			$webtable->printHTML();
 		}
 	}
+
+	// Build a *row* of webfields.
 
 	protected function createWebFields() {
 

@@ -79,7 +79,7 @@ class Database {
 		foreach ($valuepairs as $i => $pair) {
 
 			$col = mysql_real_escape_string($pair[0]); 
-			$value = (($pair[1] == "null") ? "NULL" : "'" . mysql_real_escape_string($pair[1]) . "'");
+			$value = (($pair[1] == "") ? "NULL" : "'" . mysql_real_escape_string($pair[1]) . "'");
 			$query .= "`" 
 				. $col . "` = " . $value . ",";
 		}
@@ -122,7 +122,7 @@ class Database {
 
 		foreach ($valuepairs as $i => $pair) {
 		
-			if (!$skipid) $query .= "'" . mysql_real_escape_string($pair[1]) . "',";
+			if (!$skipid) $query .= (($pair[1] == "") ? "NULL," : "'" . mysql_real_escape_string($pair[1]) . "',");
 			else $skipid = false;
 		}		
 
