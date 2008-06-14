@@ -10,33 +10,48 @@ class WebTable
 {
 	public $content;
 	public $context;
+	public $hidden;
+	public $sort;
 
 	function __construct($context, $content)
 	{
 
 		$this->context = $context;
 		$this->content = $content;
-		$this->sort = $sort;
+
+		if (!isset($_GET['hidden'])) $this->hidden = 0;
+		else $this->hidden = $_GET['hidden'];		
 	}
 
 	protected function CSS() {
 
 		return "<style type=\"text/css\">
-			#container { float: left; position: relative; left: 50%; margin-top: 1em; }
-			#inner { padding: 3px; position: relative; left: -50%; border: 1px solid black; }
-			#footer { clear: both; text-align: center; padding: 6px; }
+			#link { background-color: white; }
+			#footer { text-align: center; padding: 6px; }
+			table { background-color: white; padding: 3px; margin: 0px; border: 1px solid black; }
+			body { background: lightgray; }
 			a { color : #3c3; font-family : verdana, arial, helvetica, sans-serif; text-decoration : none; }
 			a:link { color : #3c3; }
 			a:visited { color : #3c3; }
 			a:hover { text-decoration : underline; }
-			.brightline { background-color:#FFFFFF; }
-			.darkline { background-color:#DDDDDD; }
+			.brightline { background-color: white; }
+			.darkline { background-color: lightgray; }
 		</style>";
 	}
 
 	protected function footer() {
 
-		return "<div id=\"footer\"><a href=\"http://mescaline.berlios.de\"><img width=\"100\" height=\"21\" border=\"0\" style=\"vertical-align:middle\" src=\"./icons/footer.png\"/ alt=\"mescaline\"/></a></div>";
+		return "<div id=\"footer\"><a href=\"http://mescaline.berlios.de\"><img id=\"link\" width=\"100\" height=\"21\" border=\"0\" style=\"vertical-align:middle\" src=\"./icons/footer.png\"/ alt=\"mescaline\"/></a></div>";
+	}
+
+	protected function toggleHidden($i) {
+
+		return $this->hidden ^ (1 << $i);
+	}
+
+	protected function isHidden($i) {
+
+		return ($this->hidden >> $i) & 1;
 	}
 
 	function printHTML() {
@@ -49,9 +64,7 @@ class WebTable
 				. "</head>
 				<body>";
 	
-		print "<div id=\"container\">";
 		print $this->buildTable();
-		print "</div>";
 		print $this->footer();
 		print "</body></html>";
 	}
@@ -60,13 +73,34 @@ class WebTable
 
       // build table
 
-		$ret = "<div id=\"inner\"><table border=0 cellspacing=0>";
+		$ret = "<div align=\"center\"><table border=0 cellspacing=0>";
 
 		// create header
 
 		$ret .= "<tr class=\"darkline\">";
-		foreach (reset($this->content) as $i => $webfield) $ret .= $webfield->renderTableHeader($this->context->name);
-		
+		foreach (reset($this->content) as $i => $webfield) {
+	
+			if (($webfield instanceof WebIDField) == false) {
+	
+			$ret .= "<td nowrap=\"nowrap\">"
+			. "<a href=\"./index.php?context="
+			. $this->context->name
+			. "&sort=" . $webfield->field->name 
+			. "&hidden=" . $this->hidden			
+			. "\">" 
+			. ((!$this->isHidden($i)) ? $webfield->field->name : "") 
+			. "</a>"		
+			. "<a href=\"./index.php?context="
+			. $this->context->name;
+			if (isset($_GET['sort'])) $ret .= "&sort=" . $_GET['sort'];
+			$ret .= "&hidden=" . $this->toggleHidden($i) 
+			. "\">"	
+			. (($this->isHidden($i)) ? "<img src=\"./icons/show.png\" width=\"14\" height=\"14\" border=\"0\" style=\"vertical-align:middle\" alt=\"show\">" : "<img src=\"./icons/hide.png\" width=\"14\" height=\"14\" style=\"vertical-align:middle\" border=\"0\" alt=\"hide\">") 
+			. "</a>" 
+			. "</td>";
+			}
+		}
+
 		// if allow new is set, paint new button.
 	
 		$ret .= "<td>" 
@@ -84,7 +118,11 @@ class WebTable
 			// The last element are edit & delete links, which embedd the id to edit.
 
 			$ret .= "<tr class=\"" . ($dark ? "darkline" : "brightline") . "\">";
-			foreach ($row as $i => $webfield) $ret .= $webfield->renderTableField();			
+			foreach ($row as $i => $webfield) {
+
+				if ($this->isHidden($i)) $ret .= "<td></td>";
+				else $ret .= $webfield->renderTableField();
+			}			
 
 			// Get the id
 			$id = reset($row)->value;

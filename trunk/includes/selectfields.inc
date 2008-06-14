@@ -97,7 +97,7 @@ class SelectFields extends WizardStep {
 	
 		$ret .= "</table><br>";
 	
-		$ret .= "<font color=\"red\">*</font> Select to allow new entries.<br><br>";
+		$ret .= "<font color=\"red\">*</font> Select to allow new entries.<br>";
 
 		return $ret;
 	}

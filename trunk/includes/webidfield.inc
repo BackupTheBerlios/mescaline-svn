@@ -15,7 +15,7 @@ class WebIDField extends WebField
 		return "";
 	}
 
-	function renderFormName($dark) {
+	function renderFormName() {
 
 		return "";
 	}

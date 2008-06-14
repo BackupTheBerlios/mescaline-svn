@@ -25,34 +25,27 @@ class EnterDBInfo extends WizardStep
 			$password = $context->database->password;
 			$contextname = $context->name;
 
-			unlink($contextfile);
+			unlink($this->wizardFilename());
 		}
-
-		$dark = 1;
 	
 		$ret .= $this->caption();
 		$ret .= "<form action=\"./index.php\">";
 		$ret .= "<table border=0 cellpadding=0 cellspacing=0>";
 		$ret .= "<input type=\"hidden\" name=\"dialog\" value=\"" . $this->next->name . "\">";
 		
-		$ret .= "<tr><td nowrap=\"nowrap\" class=\"" . ($dark ? "darkline" : "brightline") . "\">Context:</td>";
-		$dark = $dark ^ 1;
+		$ret .= "<tr><td nowrap=\"nowrap\">Context:</td>";
 		$ret .= "<td><input name=\"contextname\" value=\"" . $contextname ."\"></td></tr>";
 	
-		$ret .= "<tr><td nowrap=\"nowrap\" class=\"" . ($dark ? "darkline" : "brightline") . "\">Database:</td>";
-		$dark = $dark ^ 1;
+		$ret .= "<tr><td nowrap=\"nowrap\">Database:</td>";
 		$ret .= "<td><input name=\"databasename\" value=\"" .  $databasename . "\"></td></tr>";	
 	
-		$ret .= "<tr><td nowrap=\"nowrap\" class=\"" . ($dark ? "darkline" : "brightline") . "\">Hostname:</td>";
-		$dark = $dark ^ 1;
+		$ret .= "<tr><td nowrap=\"nowrap\">Hostname:</td>";
 		$ret .= "<td><input name=\"hostname\" value=\"" . $hostname . "\"></td></tr>";
 	
-		$ret .= "<tr><td nowrap=\"nowrap\" class=\"" . ($dark ? "darkline" : "brightline") . "\">User:</td>";
-		$dark = $dark ^ 1;
+		$ret .= "<tr><td nowrap=\"nowrap\">User:</td>";
 		$ret .= "<td><input name=\"user\" value=\"" . $user . "\"></td></tr>";
 	
-		$ret .= "<tr><td nowrap=\"nowrap\" class=\"" . ($dark ? "darkline" : "brightline") . "\">Password:</td>";
-		$dark = $dark ^ 1;
+		$ret .= "<tr><td nowrap=\"nowrap\">Password:</td>";
 		$ret .= "<td><input type=\"password\" name=\"password\" value=\"" . $password ."\"></td></tr>";
 	
 		$ret .= "</table>";

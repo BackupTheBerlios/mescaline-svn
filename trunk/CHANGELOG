@@ -2,6 +2,9 @@
 
 - implemented a more consequent MVC pattern.
 - id field isn't visible in the editor anymore.
+- fixed display of big tables.
+- possible to hide fields.
+- cleaned up interface a bit.
 
 0.4.0.1: fixes
 

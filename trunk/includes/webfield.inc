@@ -6,18 +6,12 @@ class WebField
 {
 	public $field;
 	public $value;
+	public $hidden;
 
 	function __construct($field) {
 
 		$this->field = $field;
-	}
-
-	function renderTableHeader($contextname) {
-
-		return "<td nowrap=\"nowrap\"><a href=\"./index.php?context="
-			. $contextname
-			. "&sort=" . $this->field->name . "\">" 
-			. $this->field->name . "</a></td>";
+		$this->hidden = false;
 	}
 
 	function renderTableField() {
@@ -32,10 +26,9 @@ class WebField
 		return "<td><input name=\"field:" . $hash . "\" value=\"" . $this->value ."\"></td>";
 	}
 
-	function renderFormName($dark) {
+	function renderFormName() {
 
-		return "<td nowrap=\"nowrap\" class=\"" 
-			. ($dark ? "darkline" : "brightline") . "\">"
+		return "<td nowrap=\"nowrap\">"
 			. $this->field->name . ($this->field->optional ? "" : "<font color=\"red\">*</font>") 
 			. "</td>";
 	}
