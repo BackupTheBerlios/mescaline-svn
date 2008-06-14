@@ -23,22 +23,6 @@ class WebTable
 		else $this->hidden = $_GET['hidden'];		
 	}
 
-	protected function CSS() {
-
-		return "<style type=\"text/css\">
-			#link { background-color: white; }
-			#footer { text-align: center; padding: 6px; }
-			table { background-color: white; padding: 3px; margin: 0px; border: 1px solid black; }
-			body { background: lightgray; }
-			a { color : #3c3; font-family : verdana, arial, helvetica, sans-serif; text-decoration : none; }
-			a:link { color : #3c3; }
-			a:visited { color : #3c3; }
-			a:hover { text-decoration : underline; }
-			.brightline { background-color: white; }
-			.darkline { background-color: lightgray; }
-		</style>";
-	}
-
 	protected function footer() {
 
 		return "<div id=\"footer\"><a href=\"http://mescaline.berlios.de\"><img id=\"link\" width=\"100\" height=\"21\" border=\"0\" style=\"vertical-align:middle\" src=\"./icons/footer.png\"/ alt=\"mescaline\"/></a></div>";
@@ -59,9 +43,10 @@ class WebTable
 		print "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">
 			<html>
 				<head>
-					<title>table</title>"
-					. $this->CSS()
-				. "</head>
+					<title>mescaline: table view</title>
+					<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">
+					<link rel=stylesheet type=\"text/css\" href=\"css/default.css\">
+				</head>
 				<body>";
 	
 		print $this->buildTable();
