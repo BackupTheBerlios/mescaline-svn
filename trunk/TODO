@@ -1,3 +1,3 @@
-- Implement mysql authorization error.
-- return to a sorted & correclty hidden list from editing.
+- Implement mysql errors in wizard
+- return to a sorted & correctly hidden list from editing.
 - Add restriction to length of text fields.

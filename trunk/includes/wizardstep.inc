@@ -57,13 +57,13 @@ class WizardStep {
 
 	protected function previousButton() {
 
-		if ($this->previous) return "<a id=\"previous\"href=\"./index.php?dialog=" . $this->previous->name . "\"><img src=\"../previous.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"previous\"></a>";
+		if ($this->previous) return "<a id=\"previous\" href=\"./index.php?dialog=" . $this->previous->name . "\"><img src=\"../previous.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"previous\"></a>";
 		return "";
 	}
 
 	protected function nextButton() {
 
-		if ($this->next) return "<a id=\"next\"href=\"./index.php?dialog=" . $this->next->name . "\"><img src=\"../icons/next.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"next\"></a>";
+		if ($this->next) return "<a id=\"next\" href=\"./index.php?dialog=" . $this->next->name . "\"><img src=\"../icons/next.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"next\"></a>";
 		return "";
 	}
 }

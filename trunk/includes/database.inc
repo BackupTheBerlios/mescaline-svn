@@ -93,7 +93,12 @@ class Database {
 			. mysql_real_escape_string($pair[0]) . "` = '" 
 			. mysql_real_escape_string($pair[1]) . "'";
 
-		mysql_query($query, $this->link) or die(mysql_error($this->link));
+		return mysql_query($query, $this->link);
+	}
+
+	function error() {
+
+		return mysql_error($this->link);
 	}
 
 	function insert($table, $valuepairs) {
@@ -132,7 +137,7 @@ class Database {
 
 		$query .= ")";
 
-		mysql_query($query, $this->link) or die(mysql_error($this->link));
+		return mysql_query($query, $this->link);
 	}
 
 	function remove($table, $id) {
@@ -143,7 +148,7 @@ class Database {
 			. mysql_real_escape_string($table->name) . "` WHERE `" 
 			. mysql_real_escape_string($value->name) . "` = '" . $id . "'";
 
-		mysql_query($query, $this->link) or die(mysql_error($this->link));
+		return mysql_query($query, $this->link);
 	}
 
 	function buildRow($table, $id) {
@@ -156,18 +161,13 @@ class Database {
 	{
 		$result = $this->connect();
 
-		if ($result == false) {
-
-			echo mysql_error();
-			return false;
-		}
+		if ($result == false) return false;
 
 		$result = mysql_query($table->buildQuery($this, $sort, $id), $this->link);
 
 		if ($result == false) {
 
 			$this->disconnect();
-			echo mysql_error();
 			return false;
 		}
 
@@ -181,18 +181,13 @@ class Database {
 		
 		$result = $this->connect();
 
-		if ($result == false) {
-
-			echo mysql_error();
-			return false;
-		}
+		if ($result == false) return false;
 
 		$result = mysql_query($listfield->query, $this->link);
 
 		if ($result == false) {
 
 			$this->disconnect();
-			echo mysql_error();
 			return false;
 		}
 

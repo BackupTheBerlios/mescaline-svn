@@ -3,6 +3,7 @@
 require_once("context.inc");
 require_once("webform.inc");
 require_once("webtable.inc");
+require_once("errormessage.inc");
 
 class WebContext {
 
@@ -32,30 +33,19 @@ class WebContext {
 
 	function start() {
 
-		if (isset($_GET['remove'])) {
-	
-			$this->context->database->connect();
-			$this->context->database->remove($this->context->table, $_GET['id']);
-			$this->context->database->disconnect();
-		
-			header("Location: ./index.php?context=" . $this->context->name);
-		
-		} else if (isset($_GET['update'])) {
-
-			$this->context->database->connect();	
-			$this->context->database->update($this->context->table, $this->extractFields());
-			$this->context->database->disconnect();
-
-			header("Location: ./index.php?context=" . $this->context->name);
-		
-		} else if (isset($_GET['insert'])) {
+		if ((isset($_GET['update'])) || (isset($_GET['insert'])) || (isset($_GET['remove']))) {
 
 			$this->context->database->connect();
-			$this->context->database->insert($this->context->table, $this->extractFields());
+			if (isset($_GET['update'])) $success = $this->context->database->update($this->context->table, $this->extractFields()); 	
+			else if (isset($_GET['insert'])) $success = $this->context->database->insert($this->context->table, $this->extractFields());
+			else $success = $this->context->database->remove($this->context->table, $_GET['id']);
+			if (!$success) {
+				
+				$errormessage = new ErrorMessage("SQL Error", $this->context->database->error(), "index.php?context=" . $this->context->name);
+				$errormessage->printHTML();
+			} 
+			else header("Location: ./index.php?context=" . $this->context->name);
 			$this->context->database->disconnect();
-		
-			header("Location: ./index.php?context=" . $this->context->name);
-		
 		} else if (isset($_GET['edit'])) {
 		
 			// Show form
@@ -103,30 +93,32 @@ class WebContext {
 
 			if ($rows == false) {
 	
-				return "ERROR: table could not be build from query: " . $this->context->table->buildQuery($this->context->database);
-			}
-
-			// Create content array		.
+				$errormessage = new ErrorMessage("Failure in SQL query", $this->context->table->buildQuery($this->context->database), "index.php");
+				$errormessage->printHTML();
+			} else {
+			
+				// Create content array		.
+		
+				$content = array();
 	
-			$content = array();
-
-			foreach ($rows as $i => $row) {
-
-				// Create webfield array.
-
-				$webfields = $this->createWebFields();
-
-				// Populate webfield array.
-
-				foreach ($row as $i => $value) $webfields[$i]->value = $value;
-
-				// Add webfield array to content array.
-
-				$content[] = $webfields;
+				foreach ($rows as $i => $row) {
+	
+					// Create webfield array.
+	
+					$webfields = $this->createWebFields();
+	
+					// Populate webfield array.
+	
+					foreach ($row as $i => $value) $webfields[$i]->value = $value;
+	
+					// Add webfield array to content array.
+	
+					$content[] = $webfields;
+				}
+	
+				$webtable = new WebTable($this->context, $content);
+				$webtable->printHTML();
 			}
-
-			$webtable = new WebTable($this->context, $content);
-			$webtable->printHTML();
 		}
 	}
 
