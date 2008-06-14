@@ -6,12 +6,10 @@ class WebField
 {
 	public $field;
 	public $value;
-	public $hidden;
 
 	function __construct($field) {
 
 		$this->field = $field;
-		$this->hidden = false;
 	}
 
 	function renderTableField() {

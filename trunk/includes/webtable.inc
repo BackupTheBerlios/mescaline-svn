@@ -82,23 +82,18 @@ class WebTable
 	
 			if (($webfield instanceof WebIDField) == false) {
 	
-			$ret .= "<td nowrap=\"nowrap\">"
-			. "<a href=\"./index.php?context="
-			. $this->context->name
-			. "&sort=" . $webfield->field->name 
-			. "&hidden=" . $this->hidden			
-			. "\">" 
-			. ((!$this->isHidden($i)) ? $webfield->field->name : "") 
-			. "</a>"		
-			. "<a href=\"./index.php?context="
-			. $this->context->name;
-			if (isset($_GET['sort'])) $ret .= "&sort=" . $_GET['sort'];
-			$ret .= "&hidden=" . $this->toggleHidden($i) 
-			. "\">"	
-			. (($this->isHidden($i)) ? "<img src=\"./icons/show.png\" width=\"14\" height=\"14\" border=\"0\" style=\"vertical-align:middle\" alt=\"show\">" : "<img src=\"./icons/hide.png\" width=\"14\" height=\"14\" style=\"vertical-align:middle\" border=\"0\" alt=\"hide\">") 
-			. "</a>" 
-			. "</td>";
-			}
+				$ret .= "<td nowrap=\"nowrap\"><a href=\"./index.php?context="
+					. $this->context->name
+					. "&sort=" . $webfield->field->name 
+					. "&hidden=" . $this->hidden			
+					. "\">" 
+					. ((!$this->isHidden($i)) ? $webfield->field->name : "") 
+					. "</a><a href=\"./index.php?context="
+					. $this->context->name
+					. ((isset($_GET['sort'])) ? ("&sort=" . $_GET['sort']) : "")
+					. "&hidden=" . $this->toggleHidden($i) 
+					. "\"><img src=\"./icons/" . (($this->isHidden($i)) ? "show" : "hide") . ".png\" width=\"14\" height=\"14\" border=\"0\" style=\"vertical-align:middle\" alt=\"show\"></a></td>";
+				}
 		}
 
 		// if allow new is set, paint new button.
