@@ -94,17 +94,19 @@ class WebTable
 
 		foreach ($this->content as $i => $row) {
 
+			// Get the id
+			$id = reset($row)->value;
+
 			// The last element are edit & delete links, which embedd the id to edit.
 
-			$ret .= "<tr class=\"" . ($dark ? "darkline" : "brightline") . "\">";
+			$ret .= "<tr id=\"" . $id ."\" class=\"" . ($dark ? "darkline" : "brightline") . "\">";
 			foreach ($row as $i => $webfield) {
 
 				if ($this->isHidden($i)) $ret .= "<td></td>";
 				else $ret .= $webfield->renderTableField();
 			}			
 
-			// Get the id
-			$id = reset($row)->value;
+        // paint the action links
 
 			$ret .= "<td nowrap=\"nowrap\">
 				<a href=\"./index.php?context=" 

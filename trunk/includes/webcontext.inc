@@ -5,6 +5,11 @@ require_once("webform.inc");
 require_once("webtable.inc");
 require_once("errormessage.inc");
 
+require_once("webidfield.inc");
+require_once("weblistfield.inc");
+require_once("webboolfield.inc");
+require_once("webstringfield.inc");
+
 class WebContext {
 
 	public $context;
@@ -37,7 +42,8 @@ class WebContext {
 
 			$link = "index.php?context=" . $this->context->name
 				. ((isset($_GET['sort'])) ? "&sort=" . $_GET['sort'] : "")
-				. ((isset($_GET['hidden'])) ? "&hidden=" . $_GET['hidden'] : "");
+				. ((isset($_GET['hidden'])) ? "&hidden=" . $_GET['hidden'] : "")
+				. ((isset($_GET['id'])) ? "#" . $_GET['id'] : "");
 
 			$this->context->database->connect();
 			if (isset($_GET['update'])) $success = $this->context->database->update($this->context->table, $this->extractFields()); 	
@@ -148,6 +154,7 @@ class WebContext {
 			if ($field instanceof IDField) $webfields[$i] = new WebIDField($field);
 			else if ($field instanceof ListField) $webfields[$i] = new WebListField($field, $this->context->database);
 			else if ($field instanceof BoolField) $webfields[$i] = new WebBoolField($field);
+			else if ($field instanceof StringField) $webfields[$i] = new WebStringField($field);
 			else $webfields[$i] = new WebField($field);
 		} 
 

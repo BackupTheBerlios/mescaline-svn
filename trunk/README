@@ -161,3 +161,23 @@ the forms are started by calling <host>/mescaline/index.php?context=<context nam
 - entry/row: an entry means a table row here.
 - idfield: a special column in a table which identifies a row. no value in this column should exist twice. usually the idfield is of type integer and increments itsself automatically.
 - reference: you can reference the content of other tables in a table. the referencing table has a column, which contains the idfields* of the referenced entries in the other table. the referenced entry is displayed in the table view and in the edit forms there appears a dropdown menu, which contains only the values stored in the referenced table.
+
+4) creating new field types.
+
+the following steps describe how to enhance mescaline by added custom fields. refer to ListField, BoolField & StringField implementations for examples.
+
+4.1) create the model class.
+
+create a class <custom name>Field with the filename "includes/<custom name>field.inc" derived from class Field. 
+
+4.2) autodetection.
+
+if you want the class to be autodetected in the wizard you have to put a handler for it in the class Database. Add "require_once("<custom name>field.inc");" to the top of "includes/database.inc". Add a handler to the Database::columns method.
+
+4.3) create the view class.
+
+create a class Web<custom name>Field with the filename "includes/web<custom name>field.inc" derived from class WebField. 
+
+4.4) handle it in the web context.
+
+put "require_once("web<custom name>field.inc");" to the top of "include/webcontext.inc". Add a line in the WebContext::createWebFields() method for your custom Field Class. 

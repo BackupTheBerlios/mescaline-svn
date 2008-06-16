@@ -1,9 +1,5 @@
 <?php
 
-require_once("webidfield.inc");
-require_once("weblistfield.inc");
-require_once("webboolfield.inc");
-
 class WebForm 
 {
 	public $id;
@@ -48,9 +44,13 @@ class WebForm
 
 		$ret .= ((isset($_GET['sort'])) ? "<input type=\"hidden\" name=\"sort\" value=\"" . $_GET['sort'] . "\">" : "");
 		$ret .= ((isset($_GET['hidden'])) ? "<input type=\"hidden\" name=\"hidden\" value=\"" . $_GET['hidden'] . "\">" : "");
+		
 
-		if ($this->id != -1) $ret .= "<input type=\"hidden\" name=\"update\" value=\"true\">";
-		else $ret .= "<input type=\"hidden\" name=\"insert\" value=\"true\">";
+		if ($this->id != -1) {
+
+			$ret .= "<input type=\"hidden\" name=\"id\" value=\"" . $this->id . "\">
+				<input type=\"hidden\" name=\"update\" value=\"true\">";
+		} else $ret .= "<input type=\"hidden\" name=\"insert\" value=\"true\">";
 
 		$ret .= "<table border=0 cellpadding=0 cellspacing=0>";
 

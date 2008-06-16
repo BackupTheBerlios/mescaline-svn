@@ -2,6 +2,7 @@
 
 require_once("boolfield.inc");
 require_once("field.inc");
+require_once("stringfield.inc");
 require_once("table.inc");
 
 class Database {
@@ -51,6 +52,11 @@ class Database {
 		while($row = mysql_fetch_row($result)) {
 
 			if ($row[1] == "tinyint(1)") $fields[] = new BoolField($row[0], ($row[2] == "YES"));
+			else if (strncmp($row[1], "varchar", 7) == 0) {
+
+				sscanf($row[1],"varchar(%d)", &$length);
+				$fields[] = new StringField($row[0], $length, ($row[2] == "YES"));
+			}
 			else $fields[] = new Field($row[0], ($row[2] == "YES"));
 		}
 

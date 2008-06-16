@@ -2,7 +2,3 @@
 
 - Put several contexts on the same page.
 - Implement mysql errors in wizard.
-
-0.5
-
-- Add restriction to length of text fields.
