@@ -35,16 +35,20 @@ class WebContext {
 
 		if ((isset($_GET['update'])) || (isset($_GET['insert'])) || (isset($_GET['remove']))) {
 
+			$link = "index.php?context=" . $this->context->name
+				. ((isset($_GET['sort'])) ? "&sort=" . $_GET['sort'] : "")
+				. ((isset($_GET['hidden'])) ? "&hidden=" . $_GET['hidden'] : "");
+
 			$this->context->database->connect();
 			if (isset($_GET['update'])) $success = $this->context->database->update($this->context->table, $this->extractFields()); 	
 			else if (isset($_GET['insert'])) $success = $this->context->database->insert($this->context->table, $this->extractFields());
 			else $success = $this->context->database->remove($this->context->table, $_GET['id']);
 			if (!$success) {
 				
-				$errormessage = new ErrorMessage("SQL Error", $this->context->database->error(), "index.php?context=" . $this->context->name);
+				$errormessage = new ErrorMessage("SQL Error", $this->context->database->error(), $link);
 				$errormessage->printHTML();
 			} 
-			else header("Location: ./index.php?context=" . $this->context->name);
+			else header("Location: ./" . $link);
 			$this->context->database->disconnect();
 		} else if (isset($_GET['edit'])) {
 		
@@ -58,14 +62,24 @@ class WebContext {
 
 			// Get Row.
 
-			$row = $this->context->database->buildRow($this->context->table, $id);
+			$row = array();
 
-			// Populate WebFields.
+			$return = $this->context->database->buildRow($this->context->table, $row, $id);
 
-			foreach ($row as $i => $value) $webfields[$i]->value = $value;
+			if ($return) { 
 
-			$webform = new WebForm($this->context, $webfields, $id);
-			$webform->printHTML();
+				// Populate WebFields.
+	
+				foreach ($row as $i => $value) $webfields[$i]->value = $value;
+	
+				$webform = new WebForm($this->context, $webfields, $id);
+				$webform->printHTML();
+			} else {
+
+				$link = "index.php?context=" . $this->context->name;
+				$errormessage = new ErrorMessage("SQL Error", $this->context->database->error(), $link);
+				$errormessage->printHTML();
+			}
 		
 		} else if (isset($_GET['new'])) {
 		
@@ -87,11 +101,12 @@ class WebContext {
 			$sort = null;
         	if (isset($_GET['sort'])) $sort = $_GET['sort'];
 		
-			// Fetch rows from db.
+			// Fetch rows from db, $rows is given to the function as reference.
 	
-			$rows = $this->context->database->buildTable($this->context->table, $sort);
+			$rows = array();
+			$result = $this->context->database->buildTable($this->context->table, $rows, $sort);
 
-			if ($rows == false) {
+			if ($result == false) {
 	
 				$errormessage = new ErrorMessage("Failure in SQL query", $this->context->table->buildQuery($this->context->database), "index.php");
 				$errormessage->printHTML();

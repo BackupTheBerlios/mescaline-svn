@@ -44,6 +44,11 @@ class WebForm
 		$ret .= "<input type=\"hidden\" name=\"context\" value=\"" . $this->context->name . "\">";
 		$ret .= "<input type=\"hidden\" name=\"table\" value=\"" . $this->context->table->name . "\">";
 
+		// To return to sorted lists, set sort and hidden if they are present.
+
+		$ret .= ((isset($_GET['sort'])) ? "<input type=\"hidden\" name=\"sort\" value=\"" . $_GET['sort'] . "\">" : "");
+		$ret .= ((isset($_GET['hidden'])) ? "<input type=\"hidden\" name=\"hidden\" value=\"" . $_GET['hidden'] . "\">" : "");
+
 		if ($this->id != -1) $ret .= "<input type=\"hidden\" name=\"update\" value=\"true\">";
 		else $ret .= "<input type=\"hidden\" name=\"insert\" value=\"true\">";
 

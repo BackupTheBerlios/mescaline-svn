@@ -2,7 +2,7 @@
 
 require_once("context.inc");
 require_once("webfield.inc");
-require_once("webidfield.inc");
+require_once("idfield.inc");
 require_once("weblistfield.inc");
 require_once("webboolfield.inc");
 
@@ -11,7 +11,6 @@ class WebTable
 	public $content;
 	public $context;
 	public $hidden;
-	public $sort;
 
 	function __construct($context, $content)
 	{
@@ -63,16 +62,16 @@ class WebTable
 		// create header
 
 		$ret .= "<tr class=\"darkline\">";
-		foreach (reset($this->content) as $i => $webfield) {
+		foreach ($this->context->table->fields as $i => $field) {
 	
-			if (($webfield instanceof WebIDField) == false) {
+			if (($field instanceof IDField) == false) {
 	
 				$ret .= "<td nowrap=\"nowrap\"><a href=\"./index.php?context="
 					. $this->context->name
-					. "&sort=" . $webfield->field->name 
+					. "&sort=" . $field->name 
 					. "&hidden=" . $this->hidden			
 					. "\">" 
-					. ((!$this->isHidden($i)) ? $webfield->field->name : "") 
+					. ((!$this->isHidden($i)) ? $field->name : "")
 					. "</a><a href=\"./index.php?context="
 					. $this->context->name
 					. ((isset($_GET['sort'])) ? ("&sort=" . $_GET['sort']) : "")
@@ -107,7 +106,21 @@ class WebTable
 			// Get the id
 			$id = reset($row)->value;
 
-			$ret .= "<td nowrap=\"nowrap\"><a href=\"./index.php?context=" . $this->context->name . "&edit=true&id=" . $id . "\"><img src=\"./icons/edit.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"edit\"></a><a onclick=\"return window.confirm('Do you want to delete the entry?')\" href=\"./index.php?context=" . $this->context->name . "&remove=true&id=" . $id . "\"><img src=\"./icons/remove.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"edit\"></a></td></tr>";
+			$ret .= "<td nowrap=\"nowrap\">
+				<a href=\"./index.php?context=" 
+					. $this->context->name . "&edit=true&id=" . $id
+					. ((isset($_GET['sort'])) ? "&sort=" . $_GET['sort'] : "")
+					. ((isset($_GET['hidden'])) ? "&hidden=" . $_GET['hidden'] : "")
+					. "\">
+					<img src=\"./icons/edit.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"edit\">
+				</a>
+				<a onclick=\"return window.confirm('Do you want to delete the entry?')\" href=\"./index.php?context=" . $this->context->name . "&remove=true&id=" . $id
+					. ((isset($_GET['sort'])) ? "&sort=" . $_GET['sort'] : "")
+					. ((isset($_GET['hidden'])) ? "&hidden=" . $_GET['hidden'] : "")
+					. "\">
+					<img src=\"./icons/remove.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"edit\">
+				</a>
+				</td></tr>";
 			$dark = $dark ^ 1;
 		}
 

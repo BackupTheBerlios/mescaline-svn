@@ -7,7 +7,7 @@ class WebIDField extends WebField
 {
 	function renderTableField() {
 
-		return "";
+		return "<a name=\"" . $this->value . "\"></a>";
 	}
 
 	function renderTableHeader($contextname) {

@@ -1,3 +1,8 @@
-- Implement mysql errors in wizard
-- return to a sorted & correctly hidden list from editing.
+0.6
+
+- Put several contexts on the same page.
+- Implement mysql errors in wizard.
+
+0.5
+
 - Add restriction to length of text fields.

@@ -49,7 +49,7 @@ class Database {
 		$fields = array();
 
 		while($row = mysql_fetch_row($result)) {
-	
+
 			if ($row[1] == "tinyint(1)") $fields[] = new BoolField($row[0], ($row[2] == "YES"));
 			else $fields[] = new Field($row[0], ($row[2] == "YES"));
 		}
@@ -151,13 +151,18 @@ class Database {
 		return mysql_query($query, $this->link);
 	}
 
-	function buildRow($table, $id) {
+	function buildRow($table, &$row, $id) {
 
-		$rows = $this->buildTable($table, null, $id);
-		return $rows[0];
+		$rows = array();
+		$result = $this->buildTable($table, $rows, null, $id);
+		if ($result) {
+		
+			return $row = $rows[0];	
+			return true;
+		} else return false;
 	}
 
-	function buildTable($table, $sort = null, $id = null)
+	function buildTable($table, &$rows, $sort = null, $id = null)
 	{
 		$result = $this->connect();
 
@@ -171,12 +176,11 @@ class Database {
 			return false;
 		}
 
-		$rows = array();
 		while($row = mysql_fetch_row($result)) $rows[] = $row;
 
-		return $rows;
+		return true;
 	}
-	
+
 	function buildListField($listfield) {		
 		
 		$result = $this->connect();
