@@ -13,7 +13,7 @@ class WebStringField extends WebField
 			. "\" value=\"" 
 			. $this->value 
 			. "\" size=\""
-			. ((($this->field->length <= 20) || (strlen($this->value) == 0)) ? $this->field->length : "20")
+			. ((($this->field->length > 20) || (strlen($this->value) == 0)) ? "20" : $this->field->length)
 			. "\" maxlength=\""
 			. $this->field->length
 			."\"></td>";
