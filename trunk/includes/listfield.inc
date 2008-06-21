@@ -22,7 +22,9 @@ class ListField extends Field {
 			. $this->reference->table->name . "`.`" 
 			. $this->reference->displayfield->name . "` FROM `" 
 			. $database->name . "`.`" 
-			. $this->reference->table->name . "`";
+			. $this->reference->table->name . "` ORDER BY `"
+			. $this->reference->table->name . "`.`" 
+			. $this->reference->displayfield->name . "`";
 	}
 
 	function toString() {
