@@ -6,9 +6,9 @@ require_once("boolfield.inc");
 class WebBoolField extends WebField
 {
 
-	function renderFormField($hash) {
+	function renderFormField($contextname, $hash) {
 
-		$ret = "<td><select name=\"field:" . $hash . "\" >";	
+		$ret = "<td><select name=\"field" . $hash . ":" . $contextname . "\" >";	
 
 		// If the field is optional, add a blank field on the top.
 

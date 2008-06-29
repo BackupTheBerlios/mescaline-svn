@@ -18,9 +18,9 @@ class WebIDField extends WebField
 		return "";
 	}
 
-	function renderFormField($hash) {
+	function renderFormField($contextname, $hash) {
 
-		return "<input type=\"hidden\" name=\"field:" . $hash . "\" value=\"" . $this->value ."\">";
+		return "<input type=\"hidden\" name=\"field" . $hash . ":" . $contextname . "\" value=\"" . $this->value ."\">";
 	}
 }
 

@@ -3,6 +3,15 @@
 	background-color: white; 
 }
 
+#test { 
+
+	float:left;
+	padding: 6px;
+	/*position:relative; */
+	/*top:35px; */
+	/*left:240px;*/
+}
+
 #footer { 
 
    clear: both;
@@ -30,7 +39,7 @@
 	background: white 
 }
 
-#previous, #next { 
+#previous, #next, #confirm { 
 
 	position: absolute; 
 	bottom: 0; 
@@ -44,7 +53,7 @@
 	left: 0; 
 }
 
-#next {
+#next, #confirm {
  
 	right: 0; 
 }
@@ -52,6 +61,13 @@
 #spacer { 
 
 	height: 10px; 
+}
+
+#error { 
+
+	background-color: white; 
+	padding: 3px; 
+	border: 1px solid black; 
 }
 
 table { 

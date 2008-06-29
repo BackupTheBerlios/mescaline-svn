@@ -6,10 +6,11 @@ require_once("stringfield.inc");
 class WebStringField extends WebField
 {
 
-	function renderFormField($hash) {
+	function renderFormField($contextname, $hash) {
 
-		return "<td><input name=\"field:" 
-			. $hash 
+		return "<td><input name=\"field" 
+			. $hash . ":"
+			. $contextname 
 			. "\" value=\"" 
 			. $this->value 
 			. "\" size=\""

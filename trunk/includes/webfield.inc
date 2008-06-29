@@ -19,9 +19,9 @@ class WebField
 			. "</td>";
 	}
 
-	function renderFormField($hash) {
+	function renderFormField($contextname, $hash) {
 
-		return "<td><input name=\"field:" . $hash . "\" value=\"" . $this->value ."\"></td>";
+		return "<td><input name=\"field" . $hash . ":" . $contextname  . "\" value=\"" . $this->value ."\"></td>";
 	}
 
 	function renderFormName() {

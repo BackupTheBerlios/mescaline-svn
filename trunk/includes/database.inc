@@ -79,6 +79,8 @@ class Database {
 
 	function update($table, $valuepairs) {
 
+		if ($this->connect() == false) return false;
+
 		$query = "UPDATE `" 
 			. mysql_real_escape_string($table->name) . "` SET ";
 
@@ -86,12 +88,11 @@ class Database {
 
 			$col = mysql_real_escape_string($pair[0]); 
 			$value = (($pair[1] == "") ? "NULL" : "'" . mysql_real_escape_string($pair[1]) . "'");
-			$query .= "`" 
-				. $col . "` = " . $value . ",";
+			$query .= "`" . $col . "` = " . $value . ",";
 		}
 		// Remove trailing comma.
 
-	  $query = substr($query , 0, strlen($query) - 1);
+		$query = substr($query , 0, strlen($query) - 1);
 
 		$pair = reset($valuepairs);
 
@@ -99,7 +100,12 @@ class Database {
 			. mysql_real_escape_string($pair[0]) . "` = '" 
 			. mysql_real_escape_string($pair[1]) . "'";
 
-		return mysql_query($query, $this->link);
+		$ret = mysql_query($query, $this->link);
+		if ($ret == false) return false;
+
+		$this->disconnect();
+
+		return $ret;
 	}
 
 	function error() {
@@ -108,6 +114,8 @@ class Database {
 	}
 
 	function insert($table, $valuepairs) {
+
+		if ($this->connect() == false) return false;
 
 		$query = "INSERT INTO `" 
 			. mysql_real_escape_string($table->name) . "` (";
@@ -139,14 +147,21 @@ class Database {
 
 		// Remove trailing comma.
 
-	  $query = substr($query , 0, strlen($query) - 1);
+		$query = substr($query , 0, strlen($query) - 1);
 
 		$query .= ")";
 
-		return mysql_query($query, $this->link);
+		$ret = mysql_query($query, $this->link);
+		if ($ret == false) return false;
+
+		$this->disconnect();
+
+		return $ret;
 	}
 
 	function remove($table, $id) {
+
+		if ($this->connect() == false) return false;
 
 		$value = reset($table->fields);
 
@@ -154,7 +169,12 @@ class Database {
 			. mysql_real_escape_string($table->name) . "` WHERE `" 
 			. mysql_real_escape_string($value->name) . "` = '" . $id . "'";
 
-		return mysql_query($query, $this->link);
+		$ret = mysql_query($query, $this->link);
+		if ($ret == false) return false;
+
+		$this->disconnect();
+
+		return $ret;
 	}
 
 	function buildRow($table, &$row, $id) {
@@ -178,6 +198,8 @@ class Database {
 
 		if ($result == false) {
 
+			print "ohweh!";
+			print mysql_error();
 			$this->disconnect();
 			return false;
 		}

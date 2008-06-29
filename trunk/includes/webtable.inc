@@ -1,30 +1,46 @@
 <?php
 
 require_once("context.inc");
+require_once("webwidget.inc");
 require_once("webfield.inc");
 require_once("idfield.inc");
 require_once("weblistfield.inc");
 require_once("webboolfield.inc");
 
-class WebTable
+class WebTable extends WebWidget
 {
 	public $content;
 	public $context;
 	public $hidden;
+	public $sort;
 
-	function __construct($context, $content)
+	function __construct($context, $arguments)
 	{
 
 		$this->context = $context;
-		$this->content = $content;
+		$this->content = $null;
+		$this->arguments = $arguments;
 
-		if (!isset($_GET['hidden'])) $this->hidden = 0;
-		else $this->hidden = $_GET['hidden'];		
+		$this->disassembleFlags();
 	}
 
-	protected function footer() {
+ 	protected function assembleFlags($hidden, $sort) {
+ 
+ 		return $hidden | ($sort << count($this->context->table->fields));
+ 	}
 
-		return "<div id=\"footer\"><a href=\"http://mescaline.berlios.de\"><img id=\"link\" width=\"100\" height=\"21\" border=\"0\" style=\"vertical-align:middle\" src=\"./icons/footer.png\"/ alt=\"mescaline\"/></a></div>";
+ 	protected function disassembleFlags() {
+ 
+		foreach ($this->arguments as $i => $argument) {
+
+			if (($argument->contextname == $this->context->name) && ($argument->name == "flags")) {
+ 
+				$flags = $argument->value;
+				$this->sort = $flags >> count($this->context->table->fields);
+				if ($this->sort == 0) $this->hidden = $flags;
+				else $this->hidden = $flags % ($this->sort << count($this->context->table->fields));
+			}
+		}
 	}
 
 	protected function toggleHidden($i) {
@@ -37,27 +53,11 @@ class WebTable
 		return ($this->hidden >> $i) & 1;
 	}
 
-	function printHTML() {
+	protected function buildContent() {
 
-		print "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">
-			<html>
-				<head>
-					<title>mescaline: table view</title>
-					<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">
-					<link rel=stylesheet type=\"text/css\" href=\"css/default.css\">
-				</head>
-				<body>";
-	
-		print $this->buildTable();
-		print $this->footer();
-		print "</body></html>";
-	}
+		// build table
 
-	protected function buildTable() {
-
-      // build table
-
-		$ret = "<div align=\"center\"><table border=0 cellspacing=0>";
+		$ret = "<table border=0 cellspacing=0>";
 
 		// create header
 
@@ -65,28 +65,38 @@ class WebTable
 		foreach ($this->context->table->fields as $i => $field) {
 	
 			if (($field instanceof IDField) == false) {
-	
-				$ret .= "<td nowrap=\"nowrap\"><a href=\"./index.php?context="
-					. $this->context->name
-					. "&sort=" . $field->name 
-					. "&hidden=" . $this->hidden			
+
+				// Remove flags argument, than put new flags argument for sorting and hiding into the link.
+
+				$stripped = $this->removeArgument($this->arguments, "flags", $this->context->name);
+				
+				$sortflags = $this->assembleFlags($this->hidden, $i);
+				$sortarguments = $this->addArgument($stripped, "flags", $this->context->name, $sortflags);
+				$hideflags = $this->assembleFlags($this->toggleHidden($i), $this->sort);
+				$hidearguments = $this->addArgument($stripped, "flags", $this->context->name, $hideflags);
+
+				$ret .= "<td nowrap=\"nowrap\">
+					<a href=\"./index.php"
+					. $this->assembleArguments($sortarguments)
 					. "\">" 
 					. ((!$this->isHidden($i)) ? $field->name : "")
-					. "</a><a href=\"./index.php?context="
-					. $this->context->name
-					. ((isset($_GET['sort'])) ? ("&sort=" . $_GET['sort']) : "")
-					. "&hidden=" . $this->toggleHidden($i) 
-					. "\"><img src=\"./icons/" . (($this->isHidden($i)) ? "show" : "hide") . ".png\" width=\"14\" height=\"14\" border=\"0\" style=\"vertical-align:middle\" alt=\"show\"></a></td>";
+					. "</a><a href=\"./index.php"
+					. $this->assembleArguments($hidearguments)
+					. "\"><img src=\"./icons/" . (($this->isHidden($i)) ? "show" : "hide") . ".png\" width=\"14\" height=\"14\" border=\"0\" style=\"vertical-align:middle\" alt=\"show\"></a>
+					</td>";
 				}
 		}
 
-		// if allow new is set, paint new button.
+		// iIf allow new is set, paint new button.
 	
+		$stripped = $this->removeArgument($this->arguments, "show", $this->context->name);
+		$newarguments = $this->addArgument($stripped, "new", $this->context->name, "true");
+
 		$ret .= "<td>" 
 			. ($this->context->allownew ? 
-				"<a href=\"./index.php?context=" 
-				. $this->context->name 
-				. "&new=true\"><img src=\"./icons/new.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"new\"></a>" : ""
+				"<a href=\"./index.php" 
+					. $this->assembleArguments($newarguments)
+					. "\"><img src=\"./icons/new.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"new\"></a>" : ""
 				) 
 			. "</td></tr>";
 
@@ -99,26 +109,31 @@ class WebTable
 
 			// The last element are edit & delete links, which embedd the id to edit.
 
-			$ret .= "<tr id=\"" . $id ."\" class=\"" . ($dark ? "darkline" : "brightline") . "\">";
+			$ret .= "<tr id=\"" . $this->context->name . ":" . $id ."\" class=\"" . ($dark ? "darkline" : "brightline") . "\">";
 			foreach ($row as $i => $webfield) {
 
 				if ($this->isHidden($i)) $ret .= "<td></td>";
 				else $ret .= $webfield->renderTableField();
 			}			
 
-        // paint the action links
+			// Paint the action links
+
+			// Remove the show argument for the edit command.
+
+			$stripped = $this->removeArgument($this->arguments, "show", $this->context->name);
+
+			$editarguments = $this->addArgument($stripped, "edit", $this->context->name, $id);
+
+			$removearguments = $this->addArgument($this->arguments, "remove", $this->context->name, $id);
 
 			$ret .= "<td nowrap=\"nowrap\">
-				<a href=\"./index.php?context=" 
-					. $this->context->name . "&edit=true&id=" . $id
-					. ((isset($_GET['sort'])) ? "&sort=" . $_GET['sort'] : "")
-					. ((isset($_GET['hidden'])) ? "&hidden=" . $_GET['hidden'] : "")
+				<a href=\"./index.php"
+					. $this->assembleArguments($editarguments)
 					. "\">
 					<img src=\"./icons/edit.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"edit\">
 				</a>
-				<a onclick=\"return window.confirm('Do you want to delete the entry?')\" href=\"./index.php?context=" . $this->context->name . "&remove=true&id=" . $id
-					. ((isset($_GET['sort'])) ? "&sort=" . $_GET['sort'] : "")
-					. ((isset($_GET['hidden'])) ? "&hidden=" . $_GET['hidden'] : "")
+				<a onclick=\"return window.confirm('Do you want to delete the entry?')\" href=\"./index.php"
+					. $this->assembleArguments($removearguments)
 					. "\">
 					<img src=\"./icons/remove.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"edit\">
 				</a>
@@ -126,7 +141,7 @@ class WebTable
 			$dark = $dark ^ 1;
 		}
 
-		$ret .= "</table></div>";
+		$ret .= "</table>";
 
 		return $ret;
 	}
