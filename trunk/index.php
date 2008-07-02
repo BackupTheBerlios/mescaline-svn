@@ -77,13 +77,8 @@ class Main {
 	}
 
 	function createEditor($contextname, $id, $new) {
-			
-		// Check whether config file exists
 
 		$contextfile = "./context/".$contextname.".context";
-
-		if (!file_exists($contextfile)) return new WebError("Context Error", "Context \"" . $contextname ."\" could not be found.", "index.php");
-
 		$s = implode("", @file($contextfile));
 		$context = unserialize($s);
 
@@ -111,12 +106,7 @@ class Main {
 
 	private function createTable($contextname) {
 
-		// Check whether config file exists
-
 		$contextfile = "./context/".$contextname.".context";
-
-		if (!file_exists($contextfile)) return new WebError("Context Error", "Context \"" . $contextname ."\" could not be found.", "index.php");
-
 		$s = implode("", @file($contextfile));
 		$context = unserialize($s);
 
@@ -148,12 +138,7 @@ class Main {
 
 	private function modifyData($contextname, $name, $value) {
 
-		// Check whether config file exists
-
 		$contextfile = "./context/".$contextname.".context";
-
-		if (!file_exists($contextfile)) return new WebError("Context Error", "Context \"" . $contextname ."\" could not be found.", "index.php");
-
 		$s = implode("", @file($contextfile));
 		$context = unserialize($s);
 
@@ -171,10 +156,10 @@ class Main {
 		
 			$error = $context->database->error();
 			$context->database->disconnect();
-			return new WebError("SQL Error", $error, "index.php");
+			return $error;
 		}
 
-		return $this->createTable($contextname);
+		return true;
 	}
 
 	public function run() {
@@ -190,14 +175,37 @@ class Main {
 
 		$widgets = array();
 
+		// Check if the contexts are present.
+
+		foreach($this->arguments as $i => $argument) {
+
+			$contextfile = "./context/".$argument->contextname.".context";
+
+			if (!file_exists($contextfile)) {
+				
+				$widgets[$argument->contextname] = new WebError("Context Error", "Context \"" . $argument->contextname ."\" could not be found.", "index.php");
+				unset($this->arguments[$i]);
+			}
+		}
+		
+		// Perform data operations.
+		
 		foreach($this->arguments as $i => $argument) {
 			
 			if (($argument->name == "update") || ($argument->name == "insert") || ($argument->name == "remove")) {
 
 				unset($this->arguments[$i]);
-				$this->arguments[] = new Argument("show", $argument->contextname, "true");	
-				$widgets[$argument->contextname] = $this->modifyData($argument->contextname, $argument->name, $argument->value);
-			} else if (($argument->name == "show") && ($argument->value == "true"))
+				$ret = $this->modifyData($argument->contextname, $argument->name, $argument->value);
+				if ($ret === true) $this->arguments[] = new Argument("show", $argument->contextname, "true");  
+				else $widgets[$argument->contextname] = new WebError("SQL Error", $ret, "index.php");
+			}
+		}
+
+		// Perform show and edit operations.
+
+		foreach($this->arguments as $i => $argument) {
+
+			if (($argument->name == "show") && ($argument->value == "true"))
 				$widgets[$argument->contextname] = $this->createTable($argument->contextname);
 			else if (($argument->name == "edit") || ($argument->name == "new"))
 				$widgets[$argument->contextname] = $this->createEditor($argument->contextname, $argument->value, ($argument->name == "new"));
@@ -205,10 +213,8 @@ class Main {
 
 		// show widgets
 
-		foreach($widgets as $i => $widget) {
-
-			print $widget->HTML();
-		}
+		ksort($widgets);
+		foreach($widgets as $i => $widget) print $widget->HTML();
 
 		$this->printFooter();
 	}
