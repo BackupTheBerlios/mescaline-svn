@@ -92,9 +92,9 @@ class Main {
 			// Get Row.
 			$row = array();
 
-			$return = $context->database->buildRow($context->table, $row, $id);
+			$row = $context->database->buildRow($context->table, $id);
 
-			if (!$return) return new WebError("SQL Error", $context->database->error(), "index.php");
+			if ($row === false) return new WebError("SQL Error", $context->database->error(), "index.php");
 
 			// Populate WebFields.
 			foreach ($row as $i => $value) $webfields[$i]->value = $value;
@@ -112,10 +112,9 @@ class Main {
 
 		$table = new WebTable($context, $this->arguments);
 
-		$rows = array();
-		$result = $context->database->buildTable($context->table, $rows, $table->sort);
+		$rows = $context->database->buildTable($context->table, $table->sort);
 
-		if ($result == false) return new WebError("SQL Error", $context->table->buildQuery($context->database), "index.php");
+		if ($rows === false) return new WebError("SQL Error", $context->table->buildQuery($context->database), "index.php");
 
 		// Create content array		.	
 		$content = array();

@@ -54,8 +54,8 @@ class Database {
 			if ($row[1] == "tinyint(1)") $fields[] = new BoolField($row[0], ($row[2] == "YES"));
 			else if (strncmp($row[1], "varchar", 7) == 0) {
 
-				sscanf($row[1],"varchar(%d)", &$length);
-				$fields[] = new StringField($row[0], $length, ($row[2] == "YES"));
+				$length = sscanf($row[1],"varchar(%d)");
+				$fields[] = new StringField($row[0], $length[0], ($row[2] == "YES"));
 			}
 			else $fields[] = new Field($row[0], ($row[2] == "YES"));
 		}
@@ -177,19 +177,18 @@ class Database {
 		return $ret;
 	}
 
-	function buildRow($table, &$row, $id) {
+	function buildRow($table, $id) {
 
 		$rows = array();
 		$result = $this->buildTable($table, $rows, null, $id);
-		if ($result) {
-		
-			return $row = $rows[0];	
-			return true;
-		} else return false;
+		if ($result) return $rows[0];	
+		else return false;
 	}
 
-	function buildTable($table, &$rows, $sort = null, $id = null)
+	function buildTable($table, $sort = null, $id = null)
 	{
+		$rows = array();
+
 		$result = $this->connect();
 
 		if ($result == false) return false;
@@ -198,7 +197,6 @@ class Database {
 
 		if ($result == false) {
 
-			print "ohweh!";
 			print mysql_error();
 			$this->disconnect();
 			return false;
@@ -206,7 +204,7 @@ class Database {
 
 		while($row = mysql_fetch_row($result)) $rows[] = $row;
 
-		return true;
+		return $rows;
 	}
 
 	function buildListField($listfield) {		
