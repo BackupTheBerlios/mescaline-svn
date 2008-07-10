@@ -14,6 +14,7 @@ class WebEditor extends WebWidget
 		$this->webfields = $webfields;
 		$this->id = $id;
 		$this->arguments = $arguments;
+		$this->domid = $context->name;
 	} 
 
 	protected function buildContent() {

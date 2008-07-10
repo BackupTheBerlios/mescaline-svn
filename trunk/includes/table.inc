@@ -6,13 +6,27 @@ class Table {
 	
 	public $name;
 	public $fields;	
+	public $hidden;
+	public $sort;
 
 	function __construct($name) {
 
 		$this->name = $name;
+		$this->hidden = 0;
+		$this->sort = 0;
 	}
 
-	function buildQuery($database, $sort = null, $id = null) {
+	public function toggleHidden($i) {
+
+		return $this->hidden ^ (1 << $i);
+	}
+
+	public function isHidden($i) {
+
+		return ($this->hidden >> $i) & 1;
+	}
+
+	public function buildQuery($database, $sort = null, $id = null) {
 
 		// Create lists of reference fields and used tables.
 
@@ -37,17 +51,19 @@ class Table {
 
 		foreach($this->fields as $i => $field) { 
 
-			if ($field instanceof ListField) {
-				
-				$query .= "`referencetable" 
-					. mysql_real_escape_string($tablecount) .  "`.`" 
-					. mysql_real_escape_string($field->reference->displayfield->name) . "` AS `" 
+			if (!$this->isHidden($i)) {
+
+				if ($field instanceof ListField) {
+					
+					$query .= "`referencetable" 
+						. mysql_real_escape_string($tablecount) .  "`.`" 
+						. mysql_real_escape_string($field->reference->displayfield->name) . "` AS `" 
+						. mysql_real_escape_string($field->name) . "`,";
+					$tablecount++;
+				} else $query .= "`" 
+					. mysql_real_escape_string($this->name) .  "`.`" 
 					. mysql_real_escape_string($field->name) . "`,";
-				$tablecount++;
 			}
-			else $query .= "`" 
-				. mysql_real_escape_string($this->name) .  "`.`" 
-				. mysql_real_escape_string($field->name) . "`,";
 		}
 
 		// Remove trailing comma.
@@ -63,16 +79,19 @@ class Table {
 
 		foreach($referencefields as $i => $field) {
 		
-			$query .= " LEFT JOIN `" 
-				. mysql_real_escape_string($database->name) . "`.`" 
-				. mysql_real_escape_string($field->reference->table->name) . "` AS `referencetable"
-				. mysql_real_escape_string($tablecount) . "` ON ( `" 
-				. mysql_real_escape_string($this->name) . "`.`" 
-				. mysql_real_escape_string($field->name) . "` = `referencetable" 
-				. mysql_real_escape_string($tablecount) . "`.`" 
-				. mysql_real_escape_string($field->reference->idfield->name) . "`)";	
+			if (!$this->isHidden($i)) {
 
-			$tablecount++;
+				$query .= " LEFT JOIN `" 
+					. mysql_real_escape_string($database->name) . "`.`" 
+					. mysql_real_escape_string($field->reference->table->name) . "` AS `referencetable"
+					. mysql_real_escape_string($tablecount) . "` ON ( `" 
+					. mysql_real_escape_string($this->name) . "`.`" 
+					. mysql_real_escape_string($field->name) . "` = `referencetable" 
+					. mysql_real_escape_string($tablecount) . "`.`" 
+					. mysql_real_escape_string($field->reference->idfield->name) . "`)";	
+
+				$tablecount++;
+			}
 		}
 
 		if ($id != null) $query .= " WHERE (`" 

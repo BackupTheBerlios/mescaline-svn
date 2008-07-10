@@ -11,8 +11,6 @@ class WebTable extends WebWidget
 {
 	public $content;
 	public $context;
-	public $hidden;
-	public $sort;
 
 	function __construct($context, $arguments)
 	{
@@ -36,9 +34,9 @@ class WebTable extends WebWidget
 			if (($argument->contextname == $this->context->name) && ($argument->name == "flags")) {
  
 				$flags = $argument->value;
-				$this->sort = $flags >> count($this->context->table->fields);
-				if ($this->sort == 0) $this->hidden = $flags;
-				else $this->hidden = $flags % ($this->sort << count($this->context->table->fields));
+				$this->context->table->sort = $flags >> count($this->context->table->fields);
+				if ($this->context->table->sort == 0) $this->context->table->hidden = $flags;
+				else $this->context->table->hidden = $flags % ($this->context->table->sort << count($this->context->table->fields));
 			}
 		}
 	}
@@ -70,19 +68,19 @@ class WebTable extends WebWidget
 
 				$stripped = $this->removeArgument($this->arguments, "flags", $this->context->name);
 				
-				$sortflags = $this->assembleFlags($this->hidden, $i);
+				$sortflags = $this->assembleFlags($this->context->table->hidden, $i);
 				$sortarguments = $this->addArgument($stripped, "flags", $this->context->name, $sortflags);
-				$hideflags = $this->assembleFlags($this->toggleHidden($i), $this->sort);
+				$hideflags = $this->assembleFlags($this->context->table->toggleHidden($i), $this->context->table->sort);
 				$hidearguments = $this->addArgument($stripped, "flags", $this->context->name, $hideflags);
 
 				$ret .= "<td nowrap=\"nowrap\">
 					<a href=\"./index.php"
 					. $this->assembleArguments($sortarguments)
 					. "\">" 
-					. ((!$this->isHidden($i)) ? $field->name : "")
+					. ((!$this->context->table->isHidden($i)) ? $field->name : "")
 					. "</a><a href=\"./index.php"
 					. $this->assembleArguments($hidearguments)
-					. "\"><img src=\"./icons/" . (($this->isHidden($i)) ? "show" : "hide") . ".png\" width=\"14\" height=\"14\" border=\"0\" style=\"vertical-align:middle\" alt=\"show\"></a>
+					. "\"><img src=\"./icons/" . (($this->context->table->isHidden($i)) ? "show" : "hide") . ".png\" width=\"14\" height=\"14\" border=\"0\" style=\"vertical-align:middle\" alt=\"show\"></a>
 					</td>";
 				}
 		}
@@ -110,9 +108,10 @@ class WebTable extends WebWidget
 			// The last element are edit & delete links, which embedd the id to edit.
 
 			$ret .= "<tr id=\"" . $this->context->name . ":" . $id ."\" class=\"" . ($dark ? "darkline" : "brightline") . "\">";
+
 			foreach ($row as $i => $webfield) {
 
-				if ($this->isHidden($i)) $ret .= "<td></td>";
+				if ($this->context->table->isHidden($i)) $ret .= "<td></td>";
 				else $ret .= $webfield->renderTableField();
 			}			
 

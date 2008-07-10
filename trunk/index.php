@@ -26,7 +26,7 @@ class Main {
 			<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">
 			<link rel=stylesheet type=\"text/css\" href=\"css/default.css\">
 			</head>
-			<body>";
+			<body>";			
 	}
 
 	private function printFooter() {
@@ -112,7 +112,7 @@ class Main {
 
 		$table = new WebTable($context, $this->arguments);
 
-		$rows = $context->database->buildTable($context->table, $table->sort);
+		$rows = $context->database->buildTable($context->table, $context->table->sort);
 
 		if ($rows === false) return new WebError("SQL Error", $context->table->buildQuery($context->database), "index.php");
 
@@ -125,7 +125,15 @@ class Main {
 			$webfields = $this->createWebFields($context);
 
 			// Populate webfield array.
-			foreach ($row as $i => $value) $webfields[$i]->value = $value;
+			foreach ($context->table->fields as $i => $field) {
+
+				if (!$context->table->isHidden($i)) {
+
+					$entry = each($row);
+					$webfields[$i]->value = $entry["value"];
+				}
+			}
+			//foreach ($row as $i => $value) 
 
 			// Add webfield array to content array.
 			$content[] = $webfields;
@@ -159,6 +167,23 @@ class Main {
 		}
 
 		return true;
+	}
+
+	private function ajax($widgets) {
+
+		print '<script type="text/javascript" src="dojo/dojo.js"></script>'
+			. '<script type="text/javascript">'
+				. 'dojo.require("dojo.dnd.Mover");'
+				. 'dojo.require("dojo.dnd.Moveable");'
+				. 'dojo.require("dojo.dnd.move");';
+
+		foreach($widgets as $id => $widget) print "var " . $id . ";";
+
+		print "var initDND = function(){";		
+
+		foreach($widgets as $id => $widget) print $id . ' = new dojo.dnd.Moveable("' .  $id . '");';
+
+		print "};dojo.addOnLoad(initDND);</script>";
 	}
 
 	public function run() {
@@ -209,6 +234,10 @@ class Main {
 			else if (($argument->name == "edit") || ($argument->name == "new"))
 				$widgets[$argument->contextname] = $this->createEditor($argument->contextname, $argument->value, ($argument->name == "new"));
 		}
+
+		// ajax magic
+		
+		//$this->ajax($widgets);
 
 		// show widgets
 

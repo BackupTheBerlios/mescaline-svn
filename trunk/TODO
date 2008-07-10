@@ -1,4 +1,5 @@
 0.6
-
-- Put several contexts on the same page.
-- Implement mysql errors in wizard.
+- fix: error message links
+- Implement mysql authorization error.
+- move contexts
+- implement hiding with js.                                                

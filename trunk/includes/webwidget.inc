@@ -5,10 +5,11 @@ require_once("argument.inc");
 class WebWidget {
 
 	public $arguments;
+	public $domid;
 
 	public function HTML() {
 	
-		return "<div id=\"test\">" . $this->buildContent() . $this->buildFooter() . "</div>";
+		return "<div id=\"" . $this->domid . "\" style=\"float:left;padding:6px;\">" . $this->buildContent() . $this->buildFooter() . "</div>";
 	}
 
 	protected function buildFooter() {
