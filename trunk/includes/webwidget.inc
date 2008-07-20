@@ -9,7 +9,7 @@ class WebWidget {
 
 	public function HTML() {
 	
-		return "<div id=\"" . $this->domid . "\" style=\"float:left;padding:6px;\">" . $this->buildContent() . $this->buildFooter() . "</div>";
+		return "<div style=\"float:left;padding:6px;\"><div id=\"" . $this->domid . "\" >" . $this->buildContent() . $this->buildFooter() . "</div></div>";
 	}
 
 	protected function buildFooter() {

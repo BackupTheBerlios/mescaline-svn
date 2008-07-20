@@ -14,7 +14,7 @@ class WebField
 
 	function renderTableField() {
 
-		return "<td nowrap=\"nowrap\">"
+		return "<td colspan=\"2\" nowrap=\"nowrap\">"
 			. $this->formatValue($this->value)
 			. "</td>";
 	}

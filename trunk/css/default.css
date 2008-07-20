@@ -3,19 +3,10 @@
 	background-color: white; 
 }
 
-#test { 
-
-	float:left;
-	padding: 6px;
-	/*position:relative; */
-	/*top:35px; */
-	/*left:240px;*/
-}
-
 #footer { 
 
-   clear: both;
-	text-align: center; 
+	clear: both;
+	text-align: center;
 	padding: 6px; 
 }
 		
@@ -78,14 +69,42 @@ table {
 	border: 1px solid black; 
 }
 
+td {
+	
+	padding: 2px;
+}
+
 body { 
 
+	font-size: 1em;
 	background: lightgray; 
 }
 
 a { 
 
 	color : #3c3; font-family : verdana, arial, helvetica, sans-serif; text-decoration : none; 
+}
+
+input.submitimg {
+
+	border: none;
+	vertical-align: middle;
+	padding: 0px;
+	margin: 0px;
+}
+
+input.submittext { 
+
+	margin: 0px;
+	padding: 0px;
+	border: none;
+	cursor: pointer;
+	cursor: hand;
+	font-size: 1em;
+	color : #3c3;
+	background-color: transparent;
+	font-family : verdana, arial, helvetica, sans-serif; text-decoration : none; 
+	vertical-align: middle;
 }
 
 a:link { 
@@ -111,4 +130,30 @@ a:hover {
 .darkline {
 	
 	background-color: lightgray; 
+}
+
+.tooltip {
+
+	position: relative;
+}
+
+.tooltip:hover {
+
+	background: transparent;
+	z-index: 100;
+}
+
+.tooltip span {
+
+	display: none;
+	text-decoration: none;
+}
+
+.tooltip:hover span {
+
+	display: block;
+	position: absolute;
+	background: white;
+	padding: 2px;
+	border: 1px solid black;
 }

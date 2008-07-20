@@ -18,6 +18,8 @@ class WebTable extends WebWidget
 		$this->context = $context;
 		$this->content = $null;
 		$this->arguments = $arguments;
+		
+		$this->domid = $context->name;
 
 		$this->disassembleFlags();
 	}
@@ -55,7 +57,7 @@ class WebTable extends WebWidget
 
 		// build table
 
-		$ret = "<table border=0 cellspacing=0>";
+		$ret = "<table border=\"0\" cellspacing=\"0\">";
 
 		// create header
 
@@ -74,27 +76,30 @@ class WebTable extends WebWidget
 				$hidearguments = $this->addArgument($stripped, "flags", $this->context->name, $hideflags);
 
 				$ret .= "<td nowrap=\"nowrap\">
-					<a href=\"./index.php"
-					. $this->assembleArguments($sortarguments)
-					. "\">" 
-					. ((!$this->context->table->isHidden($i)) ? $field->name : "")
-					. "</a><a href=\"./index.php"
-					. $this->assembleArguments($hidearguments)
-					. "\"><img src=\"./icons/" . (($this->context->table->isHidden($i)) ? "show" : "hide") . ".png\" width=\"14\" height=\"14\" border=\"0\" style=\"vertical-align:middle\" alt=\"show\"></a>
-					</td>";
+					<form action=\"./index.php\">"
+						. $this->assembleArgumentsPost($hidearguments)
+						. (($this->context->table->isHidden($i)) ? "<div class=\"tooltip\">" : "")
+						. "<input class=\"submitimg\" type=\"image\" src=\"./icons/" . (($this->context->table->isHidden($i)) ? "show" : "hide") . ".png\" width=\"14\" height=\"14\" alt=\"" . (($this->context->table->isHidden($i)) ? "show" : "hide") . "\">"
+						. (($this->context->table->isHidden($i)) ? "<span>" . $field->name . "</span></div>" : "")
+					. "</form></td>
+					<td nowrap=\"nowrap\">" . (($this->context->table->isHidden($i)) ? "" : "<form action=\"./index.php\">"
+						. $this->assembleArgumentsPost($sortarguments)	
+						. "<input class=\"submittext\" type=\"Submit\" name=\"\" value=\"" . $field->name . "\">"
+					. "</form>")
+					. "</td>";
 				}
 		}
 
-		// iIf allow new is set, paint new button.
+		// If allow new is set, paint new button.
 	
 		$stripped = $this->removeArgument($this->arguments, "show", $this->context->name);
 		$newarguments = $this->addArgument($stripped, "new", $this->context->name, "true");
 
 		$ret .= "<td>" 
-			. ($this->context->allownew ? 
-				"<a href=\"./index.php" 
-					. $this->assembleArguments($newarguments)
-					. "\"><img src=\"./icons/new.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"new\"></a>" : ""
+			. ($this->context->allownew ?
+				"<form action=\"./index.php\">"
+					. $this->assembleArgumentsPost($newarguments)
+					. "<input type=\"image\" src=\"./icons/new.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"new\"></form>" : ""
 				) 
 			. "</td></tr>";
 
@@ -111,7 +116,8 @@ class WebTable extends WebWidget
 
 			foreach ($row as $i => $webfield) {
 
-				if ($this->context->table->isHidden($i)) $ret .= "<td></td>";
+				//$ret .= "<td></td>";
+				if ($this->context->table->isHidden($i)) $ret .= "<td colspan=\"2\"></td>";
 				else $ret .= $webfield->renderTableField();
 			}			
 
@@ -125,18 +131,14 @@ class WebTable extends WebWidget
 
 			$removearguments = $this->addArgument($this->arguments, "remove", $this->context->name, $id);
 
-			$ret .= "<td nowrap=\"nowrap\">
-				<a href=\"./index.php"
-					. $this->assembleArguments($editarguments)
-					. "\">
-					<img src=\"./icons/edit.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"edit\">
-				</a>
-				<a onclick=\"return window.confirm('Do you want to delete the entry?')\" href=\"./index.php"
-					. $this->assembleArguments($removearguments)
-					. "\">
-					<img src=\"./icons/remove.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"edit\">
-				</a>
-				</td></tr>";
+			$ret .= "<td nowrap=\"nowrap\"><form style=\"float:left\" action=\"./index.php\">"
+					. $this->assembleArgumentsPost($editarguments)
+					. "<input type=\"image\" src=\"./icons/edit.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle;\" alt=\"edit\">
+				</form>
+				<form style=\"float:left\" action=\"./index.php\">"
+					. $this->assembleArgumentsPost($removearguments)
+					. "<input type=\"image\" src=\"./icons/remove.png\" margin=\"5\" width=\"20\" height=\"20\" style=\"vertical-align:middle;\" onclick=\"return window.confirm('Do you want to delete the entry?')\" alt=\"remove\">
+				</form></td></tr>";
 			$dark = $dark ^ 1;
 		}
 

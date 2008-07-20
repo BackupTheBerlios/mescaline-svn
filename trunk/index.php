@@ -177,11 +177,23 @@ class Main {
 				. 'dojo.require("dojo.dnd.Moveable");'
 				. 'dojo.require("dojo.dnd.move");';
 
-		foreach($widgets as $id => $widget) print "var " . $id . ";";
+		foreach($widgets as $id => $widget) {
 
+			print "var " . $id . ";";
+			print "var " . $id . "_top;";
+		}
+	
 		print "var initDND = function(){";		
 
-		foreach($widgets as $id => $widget) print $id . ' = new dojo.dnd.Moveable("' .  $id . '");';
+		foreach($widgets as $id => $widget) {
+
+			print $id . ' = new dojo.dnd.Moveable("' .  $id . '");';
+			/*print "dojo.connect(" . $id . ", \"onMoveStop\", function(mover){
+					var " . $id . "_top = document.getElementById(\"" . $id . "\").style.top;
+					alert(\"" . $id . " has top:\" +" . $id . "_top);
+			});";*/
+
+		}
 
 		print "};dojo.addOnLoad(initDND);</script>";
 	}

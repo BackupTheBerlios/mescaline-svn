@@ -1,5 +1,5 @@
 0.6
 - fix: error message links
 - Implement mysql authorization error.
-- move contexts
-- implement hiding with js.                                                
+- move contexts around
+- change to POST forms

@@ -1,5 +1,8 @@
 0.6:
 
+- added a tooltip for hidden fields
+- all interaction links are forms now
+- changed all elements t
 - list elements are sorted now
 - several contexts can be displayed on the same page
 
