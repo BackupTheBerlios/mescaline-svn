@@ -17,6 +17,8 @@ require_once("weberror.inc");
 
 class Main {
 
+	private $arguments;
+
 	private function printHeader() { 
 
 		print "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">
@@ -26,7 +28,8 @@ class Main {
 			<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">
 			<link rel=stylesheet type=\"text/css\" href=\"css/default.css\">
 			</head>
-			<body>";			
+			<body onload=\"onLoad();\">
+			<script type=\"text/javascript\" src=\"js/layout.js\"></script>";			
 	}
 
 	private function printFooter() {
@@ -169,40 +172,30 @@ class Main {
 		return true;
 	}
 
-	private function ajax($widgets) {
+	private function dojo($widgets) {
 
-		print '<script type="text/javascript" src="dojo/dojo.js"></script>'
-			. '<script type="text/javascript">'
-				. 'dojo.require("dojo.dnd.Mover");'
-				. 'dojo.require("dojo.dnd.Moveable");'
-				. 'dojo.require("dojo.dnd.move");';
-
-		foreach($widgets as $id => $widget) {
-
-			print "var " . $id . ";";
-			print "var " . $id . "_top;";
-		}
+		print "<script type=\"text/javascript\" src=\"js/dojo.js\"></script>
+			<script type=\"text/javascript\">
+			dojo.require(\"dojo.dnd.Mover\");
+			dojo.require(\"dojo.dnd.Moveable\");
+			dojo.require(\"dojo.dnd.move\");
 	
-		print "var initDND = function(){";		
+			var initDND = function(){";		
 
-		foreach($widgets as $id => $widget) {
-
-			print $id . ' = new dojo.dnd.Moveable("' .  $id . '");';
-			/*print "dojo.connect(" . $id . ", \"onMoveStop\", function(mover){
-					var " . $id . "_top = document.getElementById(\"" . $id . "\").style.top;
-					alert(\"" . $id . " has top:\" +" . $id . "_top);
-			});";*/
-
-		}
-
-		print "};dojo.addOnLoad(initDND);</script>";
+				print "var widgets = new Array(" . sizeof($widgets) . ");";
+				$i = 0;
+				foreach($widgets as $id => $widget) print "widgets[" . $i++ . "] = \"" . $id . "\";";
+				print "makeMoveable(widgets, \"./index.php" . WebWidget::assembleArguments($this->arguments) . "\");
+				
+			};
+			dojo.addOnLoad(initDND);
+		</script>";
 	}
 
 	public function run() {
 
 		$this->arguments = array();
 
-		$this->printHeader();
 		foreach($_GET as $key => $value) { 
 
 			$split = split(":", $key, 2);
@@ -247,14 +240,43 @@ class Main {
 				$widgets[$argument->contextname] = $this->createEditor($argument->contextname, $argument->value, ($argument->name == "new"));
 		}
 
-		// ajax magic
-		
-		//$this->ajax($widgets);
+		$this->printHeader();
+
+		// print "<div align=\"center\"><table><tr>";
+
+		// dojo magic
+
+		$this->dojo($widgets);
 
 		// show widgets
 
 		ksort($widgets);
 		foreach($widgets as $i => $widget) print $widget->HTML();
+
+		// Find out layouted and custom widgets
+
+		$positionArguments = array();
+		$layoutWidgets = array();
+
+		foreach($this->arguments as $i => $argument) if ($argument->name == "pos") $positionArguments[$argument->contextname] = $argument;
+		foreach($widgets as $id => $widget) if (!isset($positionArguments[$id])) $layoutWidgets[$id] = $widget;
+
+		print "<script type=\"text/javascript\">
+			function onLoad() {
+
+				var layoutWidgets = new Array(" . sizeof($layoutWidgets) . ");";
+				$i = 0;
+				foreach($layoutWidgets as $id => $widget) print "layoutWidgets[" . $i++ . "] = \"" . $id . "\";";
+				print "layout(layoutWidgets);";
+				foreach($positionArguments as $id => $argument) {
+
+					$split = split("x", $argument->value, 2);
+					$x = $split[0];
+					$y = $split[1];
+	
+					print "place(\"" . $id . "\"," . $x . "," . $y . ");";
+				}
+			print "}</script>";
 
 		$this->printFooter();
 	}

@@ -61,14 +61,6 @@
 	border: 1px solid black; 
 }
 
-table { 
-
-	background-color: white; 
-	padding: 3px; 
-	margin: 0px; 
-	border: 1px solid black; 
-}
-
 td {
 	
 	padding: 2px;
@@ -132,6 +124,14 @@ a:hover {
 	background-color: lightgray; 
 }
 
+.webwidget { 
+
+	background-color: white; 
+	padding: 3px; 
+	margin: 7px;
+	border: 1px solid black; 
+}
+
 .tooltip {
 
 	position: relative;
@@ -151,9 +151,12 @@ a:hover {
 
 .tooltip:hover span {
 
+	top: -13px;
+	left: 13px;
 	display: block;
 	position: absolute;
 	background: white;
-	padding: 2px;
+	padding: 1px;
 	border: 1px solid black;
+	color: black;
 }

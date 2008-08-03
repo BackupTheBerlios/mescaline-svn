@@ -1,5 +1,8 @@
 0.6
 - fix: error message links
 - Implement mysql authorization error.
-- move contexts around
-- change to POST forms
+- change to POST forms (partially).
+- add maximum lines
+- fix: impossible to move when moving to a negative y
+- add non js fallback
+- better layout

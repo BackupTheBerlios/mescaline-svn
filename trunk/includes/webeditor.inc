@@ -19,7 +19,7 @@ class WebEditor extends WebWidget
 
 	protected function buildContent() {
 
-		$ret .= "<form action=\"./index.php#" . $this->context->name . ":" . $this->id . "\">";
+		$ret .= "<div class=\"webwidget\" id=\"" . $this->domid . "\"><form action=\"./index.php#" . $this->context->name . ":" . $this->id . "\">";
 
 		if ($this->id != -1) {
 
@@ -52,7 +52,7 @@ class WebEditor extends WebWidget
 			$ret .= "</tr>";
 		}
 
-		$ret .= "</td></tr><tr><td colspan=\"2\"><hr size=\"1\" color=\"black\"></td></tr><tr><td align=\"right\" colspan=\"2\"><input type=\"image\" src=\"./icons/ok.png\" alt=\"ok\"></td></tr></table></form>";
+		$ret .= "</td></tr><tr><td colspan=\"2\"><hr size=\"1\" color=\"black\"></td></tr><tr><td align=\"right\" colspan=\"2\"><input type=\"image\" src=\"./icons/ok.png\" alt=\"ok\"></td></tr></table></form></div>";
 
 		return $ret;
 	}

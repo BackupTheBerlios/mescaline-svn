@@ -9,12 +9,13 @@ class WebWidget {
 
 	public function HTML() {
 	
-		return "<div style=\"float:left;padding:6px;\"><div id=\"" . $this->domid . "\" >" . $this->buildContent() . $this->buildFooter() . "</div></div>";
+		return $this->buildContent();
+		//return "<div id=\"" . $this->domid . "\" >" . $this->buildContent() . $this->buildFooter() . "</div>";
 	}
 
 	protected function buildFooter() {
 
-		return "<div id=\"footer\"><a href=\"http://mescaline.berlios.de\"><img id=\"link\" width=\"100\" height=\"21\" border=\"0\" style=\"vertical-align:middle\" src=\"./icons/footer.png\"/ alt=\"mescaline\"/></a></div>";
+		return "<div id=\"footer\"><a href=\"http://mescaline.berlios.de\"><img id=\"link\" width=\"100\" height=\"21\" border=\"0\" style=\"vertical-align:middle;\" src=\"./icons/footer.png\"/ alt=\"mescaline\"/></a></div>";
 	}
 
 	public function assembleArguments($arguments) {

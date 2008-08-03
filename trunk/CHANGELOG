@@ -1,8 +1,9 @@
 0.6:
 
+- contexts can be moved around (javascript required)
+- hidden fields aren't fetched from sql server anymore
 - added a tooltip for hidden fields
 - all interaction links are forms now
-- changed all elements t
 - list elements are sorted now
 - several contexts can be displayed on the same page
 
