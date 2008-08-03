@@ -3,5 +3,6 @@
 - Implement mysql authorization error.
 - change to POST forms (partially).
 - add maximum lines
-- add non js fallback
-- better layout
+- better js layout
+- change wizard to webwidget
+- weberror movable

@@ -3,6 +3,7 @@
 ini_set('include_path', './includes/');
 
 require_once("argument.inc");
+require_once("contextattribute.inc");
 require_once("version.inc");
 require_once("context.inc");
 
@@ -180,9 +181,9 @@ class Main {
 			dojo.require(\"dojo.dnd.Moveable\");
 			dojo.require(\"dojo.dnd.move\");
 	
-			var initDND = function(){";		
+			var initDND = function(){		
 
-				print "var widgets = new Array(" . sizeof($widgets) . ");";
+				var widgets = new Array(" . sizeof($widgets) . ");";
 				$i = 0;
 				foreach($widgets as $id => $widget) print "widgets[" . $i++ . "] = \"" . $id . "\";";
 				print "makeMoveable(widgets, \"./index.php" . WebWidget::assembleArguments($this->arguments) . "\");
@@ -192,57 +193,7 @@ class Main {
 		</script>";
 	}
 
-	public function run() {
-
-		$this->arguments = array();
-
-		foreach($_GET as $key => $value) { 
-
-			$split = split(":", $key, 2);
-			if (count($split) > 1) $this->arguments[] = new Argument($split[0], $split[1], $value);
-		}
-
-		$widgets = array();
-
-		// Check if the contexts are present.
-
-		foreach($this->arguments as $i => $argument) {
-
-			$contextfile = "./context/".$argument->contextname.".context";
-
-			if (!file_exists($contextfile)) {
-				
-				$widgets[$argument->contextname] = new WebError("Context Error", "Context \"" . $argument->contextname ."\" could not be found.", "index.php");
-				unset($this->arguments[$i]);
-			}
-		}
-		
-		// Perform data operations.
-		
-		foreach($this->arguments as $i => $argument) {
-			
-			if (($argument->name == "update") || ($argument->name == "insert") || ($argument->name == "remove")) {
-
-				unset($this->arguments[$i]);
-				$ret = $this->modifyData($argument->contextname, $argument->name, $argument->value);
-				if ($ret === true) $this->arguments[] = new Argument("show", $argument->contextname, "true");  
-				else $widgets[$argument->contextname] = new WebError("SQL Error", $ret, "index.php");
-			}
-		}
-
-		// Perform show and edit operations.
-
-		foreach($this->arguments as $i => $argument) {
-
-			if (($argument->name == "show") && ($argument->value == "true"))
-				$widgets[$argument->contextname] = $this->createTable($argument->contextname);
-			else if (($argument->name == "edit") || ($argument->name == "new"))
-				$widgets[$argument->contextname] = $this->createEditor($argument->contextname, $argument->value, ($argument->name == "new"));
-		}
-
-		$this->printHeader();
-
-		// print "<div align=\"center\"><table><tr>";
+	private function layoutJS($widgets) {
 
 		// dojo magic
 
@@ -273,12 +224,104 @@ class Main {
 					$split = split("x", $argument->value, 2);
 					$x = $split[0];
 					$y = $split[1];
-	
+
 					print "place(\"" . $id . "\"," . $x . "," . $y . ");";
 				}
-			print "}</script>";
+			print "}
+		</script>";
+	}
 
-		$this->printFooter();
+	private function layoutNoJS($widgets) {
+
+		print "<div align=\"center\"><table><tr>";
+
+		// show widgets
+
+		ksort($widgets);
+		foreach($widgets as $i => $widget) {
+		
+			$widget->moveable = false;
+			print "<td style=\"vertical-align:top\">" . $widget->HTML() . "</td>";
+		}
+
+		print "</tr></table></div>";
+	}
+
+	public function run() {
+
+		$this->arguments = array();
+
+		foreach($_GET as $key => $value) { 
+
+			$split = split(":", $key, 2); 
+			if (count($split) > 1) $this->arguments[] = new ContextAttribute($split[0], $split[1], $value);
+			else $this->arguments[] = new Argument($key, $value);
+		}
+
+		$widgets = array();
+
+		// Check if the contexts are present.
+
+		foreach($this->arguments as $i => $argument) {
+
+			if ($argument instanceof ContextAttribute) {
+		
+				$contextfile = "./context/".$argument->contextname.".context";
+
+				if (!file_exists($contextfile)) {
+					
+					$widgets[$argument->contextname] = new WebError("Context Error", "Context \"" . $argument->contextname ."\" could not be found.", "index.php");
+					unset($this->arguments[$i]);
+				}
+			}
+		}
+		
+		// Perform data operations.
+		
+		foreach($this->arguments as $i => $argument) {
+			
+			if (($argument->name == "update") || ($argument->name == "insert") || ($argument->name == "remove")) {
+
+				unset($this->arguments[$i]);
+				$ret = $this->modifyData($argument->contextname, $argument->name, $argument->value);
+				if ($ret === true) $this->arguments[] = new ContextAttribute("show", $argument->contextname, "true");  
+				else $widgets[$argument->contextname] = new WebError("SQL Error", $ret, "index.php");
+			}
+		}
+
+		// Perform show and edit operations.
+
+		foreach($this->arguments as $i => $argument) {
+
+			if (($argument->name == "show") && ($argument->value == "true"))
+				$widgets[$argument->contextname] = $this->createTable($argument->contextname);
+			else if (($argument->name == "edit") || ($argument->name == "new"))
+				$widgets[$argument->contextname] = $this->createEditor($argument->contextname, $argument->value, ($argument->name == "new"));
+		}
+
+		$this->printHeader();
+
+		// Check js.
+
+		$jsEnabled = "unknown";
+		foreach($this->arguments as $i => $argument) if ($argument->name == "js") $jsEnabled = $argument->value;
+
+		// If js argument is not set, refresh the page with js argument via js.
+
+		if ($jsEnabled == "unknown") {
+
+			$this->arguments[] = new Argument("js", "true");
+
+			print "<script type=\"text/javascript\">
+			window.location.replace(\"./index.php" . WebWidget::assembleArguments($this->arguments) . "\");
+			</script>";
+
+			$this->layoutNoJS($widgets);
+
+		} else if ($jsEnabled == "true") $this->layoutJS($widgets);
+		else $this->layoutNoJS($widgets);
+
+		$this->printFooter();	
 	}
 }
 

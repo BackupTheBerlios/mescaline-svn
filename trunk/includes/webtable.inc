@@ -15,6 +15,7 @@ class WebTable extends WebWidget
 	function __construct($context, $arguments)
 	{
 
+		$this->moveable = true;
 		$this->context = $context;
 		$this->content = $null;
 		$this->arguments = $arguments;
@@ -99,8 +100,8 @@ class WebTable extends WebWidget
 					"<a href=\"./index.php" 
 					. $this->assembleArguments($newarguments)
 					. "\"><img src=\"./icons/new.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"new\"></a>" : "") 
-			. " <img id=\"" . $this->context->name . "_handle\" src=\"./icons/move.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"move\">
-			</td></tr>";
+			. ($this->moveable ? " <img id=\"" . $this->context->name . "_handle\" src=\"./icons/move.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"move\">" : "")
+			. "</td></tr>";
 
 		$dark = 0;
 

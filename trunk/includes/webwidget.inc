@@ -1,11 +1,12 @@
 <?php
 
-require_once("argument.inc");
+require_once("contextattribute.inc");
 
 class WebWidget {
 
 	public $arguments;
 	public $domid;
+	public $moveable;
 
 	public function HTML() {
 	
@@ -24,8 +25,8 @@ class WebWidget {
 
 		foreach($arguments as $i => $argument) {
 			
-			if ($ret == "") $ret = "?" . $argument->name . ":" . $argument->contextname . "=" . $argument->value;
-			else $ret .= "&" . $argument->name . ":" . $argument->contextname . "=" . $argument->value;
+			if ($ret == "") $ret = "?" . $argument->key() . "=" . $argument->value;
+			else $ret .= "&" . $argument->key() . "=" . $argument->value;
 		}
 		
 		return $ret;
@@ -37,11 +38,8 @@ class WebWidget {
 
 		$ret = "";
 
-		foreach ($arguments as $i => $argument) { 
-			$ret .= "<input type=\"hidden\" 
-				name=\"" . $argument->name . ":" . $argument->contextname 
-				. "\" value=\"" . $argument->value . "\">";
-		}
+		foreach ($arguments as $i => $argument)
+			$ret .= "<input type=\"hidden\" name=\"" . $argument->key() . "\" value=\"" . $argument->value . "\">";
 	
 		return $ret;
 	}
@@ -62,7 +60,7 @@ class WebWidget {
 
 		$arguments;
 
-		$arguments[] = new Argument($name, $contextname, $value);
+		$arguments[] = new ContextAttribute($name, $contextname, $value);
 
 		return $arguments;
 	}
