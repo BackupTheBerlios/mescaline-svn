@@ -35,6 +35,8 @@ class WebEditor extends WebWidget
 
 		$ret .= "<table border=0 cellpadding=0 cellspacing=0>";
 
+		$ret .= "<tr class=\"darkline\"><td colspan=\"2\"><img align=\"right\" id=\"" . $this->context->name . "_handle\" src=\"./icons/move.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"move\"></td><tr>";
+
 		// Walk through the fields.
 
 		foreach ($this->webfields as $i => $webfield) {
