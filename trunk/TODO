@@ -1,9 +1,8 @@
 0.6
-- fix: error message links
 - Implement mysql authorization error.
 - change to POST forms (partially).
 - add maximum lines
 - better js layout
 - change wizard to webwidget
-- weberror movable
 - readd footer (?)
+- fix: sort, then hide (on berlios server, see jpg)

@@ -98,7 +98,7 @@ class Main {
 
 			$row = $context->database->buildRow($context->table, $id);
 
-			if ($row === false) return new WebError("SQL Error", $context->database->error(), "index.php");
+			if ($row === false) return new WebError("SQL Error", $context->name, $context->database->error(), "index.php" . WebWidget::assembleArguments($this->arguments));
 
 			// Populate WebFields.
 			foreach ($row as $i => $value) $webfields[$i]->value = $value;
@@ -118,7 +118,7 @@ class Main {
 
 		$rows = $context->database->buildTable($context->table, $context->table->sort);
 
-		if ($rows === false) return new WebError("SQL Error", $context->table->buildQuery($context->database), "index.php");
+		if ($rows === false) return new WebError("SQL Error", $context->name, $context->table->buildQuery($context->database), "index.php" . WebWidget::assembleArguments($this->arguments));
 
 		// Create content array		.	
 		$content = array();
@@ -270,8 +270,8 @@ class Main {
 
 				if (!file_exists($contextfile)) {
 					
-					$widgets[$argument->contextname] = new WebError("Context Error", "Context \"" . $argument->contextname ."\" could not be found.", "index.php");
 					unset($this->arguments[$i]);
+					$widgets[$argument->contextname] = new WebError("Context Error", $argument->contextname, "Context \"" . $argument->contextname ."\" could not be found.", "index.php" . WebWidget::assembleArguments($this->arguments));
 				}
 			}
 		}
@@ -285,7 +285,7 @@ class Main {
 				unset($this->arguments[$i]);
 				$ret = $this->modifyData($argument->contextname, $argument->name, $argument->value);
 				if ($ret === true) $this->arguments[] = new ContextAttribute("show", $argument->contextname, "true");  
-				else $widgets[$argument->contextname] = new WebError("SQL Error", $ret, "index.php");
+				else $widgets[$argument->contextname] = new WebError("SQL Error", $argument->contextname, $ret, "index.php" . WebWidget::assembleArguments($this->arguments));
 			}
 		}
 
