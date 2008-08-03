@@ -60,7 +60,7 @@ function updateArguments(widgets, argumentString){
 		// 	Ensure that the handle does not move out of the browser window.
 
 		if (y < 0) y = 0;
-		if (x < (0 - width)) x = 20 - width;
+		if (x < (0 - width + 20)) x = 20 - width;
 
 		if (arguments.match(regexp)) arguments = arguments.replace(regexp,"pos:" + widgets[i] + "=" + x + "x" + y);
 		else arguments = arguments + "&pos:" + widgets[i] + "=" + x + "x" + y;
