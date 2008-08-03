@@ -3,6 +3,5 @@
 - Implement mysql authorization error.
 - change to POST forms (partially).
 - add maximum lines
-- fix: impossible to move when moving to a negative y
 - add non js fallback
 - better layout

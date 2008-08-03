@@ -32,10 +32,9 @@ function makeMoveable(widgets, argumentString){
 
  	for (var i = 0; i < widgets.length; i++) {
  
-		var handle = widgets[i] + "_handle";
- 		var widget = new dojo.dnd.Moveable(widgets[i]);
+ 		var widget = new dojo.dnd.Moveable(widgets[i], {handle: widgets[i] + "_handle"});
 		widget.skip = true;
-		widget.handle = handle;
+
  		dojo.connect(widget, "onMoveStop", function(mover){
  
  			var arguments = updateArguments(widgets, argumentString);
@@ -54,19 +53,17 @@ function updateArguments(widgets, argumentString){
 
 		var widget = document.getElementById(widgets[i]);
 
-		if (arguments.match(regexp)) { 
-			arguments = arguments.replace(regexp,"pos:" + widgets[i] + "="
-				+ widget.style.left.replace("px", "")
-				+ "x"
-				+ widget.style.top.replace("px", ""));
-		}
-		else {
-			arguments = arguments 
-				+ "&pos:" + widgets[i] + "=" 
-				+ widget.style.left.replace("px", "")
-				+ "x"
-				+ widget.style.top.replace("px", "");
-		}
+		var x = widget.style.left.replace("px", "");
+		var y = widget.style.top.replace("px", "");
+		var width = widget.offsetWidth;
+
+		// 	Ensure that the handle does not move out of the browser window.
+
+		if (y < 0) y = 0;
+		if (x < (0 - width)) x = 20 - width;
+
+		if (arguments.match(regexp)) arguments = arguments.replace(regexp,"pos:" + widgets[i] + "=" + x + "x" + y);
+		else arguments = arguments + "&pos:" + widgets[i] + "=" + x + "x" + y;
 	}
 
 	return arguments;
