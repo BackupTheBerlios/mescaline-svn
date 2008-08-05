@@ -21,15 +21,14 @@ class WebError extends WebWidget {
 	
 		$ret = "";
 
-		$ret .= "<table id=\"" . $this->domid . "\" class=\"webwidget\" border=0 cellpadding=0 cellspacing=0>";
+		$ret .= "<table id=\"" . $this->domid . "\" class=\"webwidget\" border=0 cellpadding=0 cellspacing=0>
+			<tr class=\"darkline\">
+				<td>" . $this->caption . "</td><td>" . ($this->moveable ? "<img align=\"right\" id=\"" . $this->domid . "_handle\" src=\"./icons/move.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"move\">" : "") . "</td></tr>";
 
-		if ($this->moveable) $ret .= "<tr class=\"darkline\"><td colspan=\"2\"><img align=\"right\" id=\"" . $this->domid . "_handle\" src=\"./icons/move.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"move\"></td><tr>";
-
-		$ret .= "<tr><td>" . $this->caption . "</td></tr>"
-			. "<tr><td><br></td></tr>"
-			. "<tr><td>" . "<i>" . $this->error . "</i>" . "</td></tr>"
-			. "<tr><td><hr size=\"1\" color=\"black\"></td></tr>"
-			. "<tr><td align=\"right\"><a href=\"" . $this->link . "\"><img src=\"./icons/ok.png\" style=\"vertical-align:middle\" alt=\"confirm\" border=\"0\" alt=\"ok\"></a></td></tr>
+		$ret .=	"<tr><td colspan=\"2\"><br></td></tr>"
+			. "<tr><td colspan=\"2\">" . "<i>" . $this->error . "</i>" . "</td></tr>"
+			. "<tr><td colspan=\"2\"><hr size=\"1\" color=\"black\"></td></tr>"
+			. "<tr><td colspan=\"2\" align=\"right\"><a href=\"" . $this->link . "\"><img src=\"./icons/ok.png\" style=\"vertical-align:middle\" alt=\"confirm\" border=\"0\" alt=\"ok\"></a></td></tr>
 			</table>";
 
 		return $ret;

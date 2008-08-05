@@ -100,6 +100,7 @@ class Table {
 			. mysql_real_escape_string($id) ."')";
 
 		if ($sort != null) $query .= " ORDER BY `" 
+			. mysql_real_escape_string($this->name) .  "`.`" 
 			. mysql_real_escape_string($this->fields[$sort]->name) . "`";
 
 		return $query;

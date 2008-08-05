@@ -12,6 +12,7 @@ class Database {
 	public $hostname;
 	public $user;
 	public $password;
+	public $error;
 
 	function __construct($name, $hostname, $user, $password)
 	{
@@ -21,6 +22,11 @@ class Database {
 		$this->password = $password;
 	}
 	
+	public function lastError() {
+
+		return $this->error;
+	}
+
 	function connect() {
 		
 		$this->link = mysql_connect($this->hostname,$this->user,$this->password);
@@ -41,7 +47,7 @@ class Database {
 
 	function columns($table) {
 
-		$query = "SHOW COLUMNS FROM " . "`" 
+		$query = "SHOW COLUMNS FROM `" 
 			. mysql_real_escape_string($this->name) . "`.`" 
 			. mysql_real_escape_string($table->name) . "`";
 
@@ -187,11 +193,13 @@ class Database {
 	{
 		if ($this->connect() == false) return false;
 
+		//print "<b>query: </b>" . $table->buildQuery($this, $sort, $id) . "<br>";
+
 		$result = mysql_query($table->buildQuery($this, $sort, $id), $this->link);
 
 		if ($result == false) {
 
-			print mysql_error();
+			$this->error = mysql_error();
 			$this->disconnect();
 			return false;
 		}

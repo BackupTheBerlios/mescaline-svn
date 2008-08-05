@@ -1,7 +1,6 @@
 <?php
 
 require_once("wizardstep.inc");
-require_once("webcontext.inc");
 
 class FinishedContext extends WizardStep {
 

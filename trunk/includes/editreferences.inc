@@ -6,7 +6,6 @@ require_once("idfield.inc");
 require_once("listfield.inc");
 require_once("wizardstep.inc");
 require_once("database.inc");
-require_once("webcontext.inc");
 
 class EditReferences extends WizardStep {
 

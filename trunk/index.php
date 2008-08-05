@@ -118,7 +118,7 @@ class Main {
 
 		$rows = $context->database->buildTable($context->table, $context->table->sort);
 
-		if ($rows === false) return new WebError("SQL Error", $context->name, $context->table->buildQuery($context->database), "index.php" . WebWidget::assembleArguments($this->arguments));
+		if ($rows === false) return new WebError("SQL Error", $context->name, $context->database->lastError(), "index.php" . WebWidget::assembleArguments($this->arguments));
 
 		// Create content array		.	
 		$content = array();

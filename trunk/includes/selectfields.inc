@@ -5,7 +5,6 @@ require_once("field.inc");
 require_once("idfield.inc");
 require_once("wizardstep.inc");
 require_once("database.inc");
-require_once("webcontext.inc");
 
 class SelectFields extends WizardStep {
 
