@@ -39,7 +39,7 @@ class Table {
 		foreach($this->fields as $i => $field) if ($field instanceof ListField) {
 		
 			$tables[] = $field->reference->table;
-			$referencefields[] = $field;
+			$referencefields[$i] = $field; // set to $i because of the isHidden function below.
 			$tablecount++;
 		}
 		
@@ -78,7 +78,7 @@ class Table {
 		$tablecount = 1;
 
 		foreach($referencefields as $i => $field) {
-		
+
 			if (!$this->isHidden($i)) {
 
 				$query .= " LEFT JOIN `" 

@@ -33,7 +33,6 @@ function makeMoveable(widgets, argumentString){
  	for (var i = 0; i < widgets.length; i++) {
  
  		var widget = new dojo.dnd.Moveable(widgets[i], {handle: widgets[i] + "_handle"});
-		widget.skip = true;
 
  		dojo.connect(widget, "onMoveStop", function(mover){
  
