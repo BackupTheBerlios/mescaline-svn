@@ -1,6 +1,10 @@
 <?php
 
+session_start();
+print session_id() . "<br>";
+
 ini_set('include_path', './includes/');
+
 
 require_once("argument.inc");
 require_once("contextattribute.inc");
@@ -114,7 +118,7 @@ class Main {
 		$s = implode("", @file($contextfile));
 		$context = unserialize($s);
 
-		$table = new WebTable($context, $this->arguments);
+		$table = new WebTable($context, $this->arguments, isset($_SESSION["flags"][$contextname]) ? $_SESSION["flags"][$contextname] : 0);
 
 		$rows = $context->database->buildTable($context->table, $context->table->sort);
 
@@ -209,8 +213,11 @@ class Main {
 		$positionArguments = array();
 		$layoutWidgets = array();
 
-		foreach($this->arguments as $i => $argument) if ($argument->name == "pos") $positionArguments[$argument->contextname] = $argument;
-		foreach($widgets as $id => $widget) if (!isset($positionArguments[$id])) $layoutWidgets[$id] = $widget;
+ 		foreach($widgets as $id => $widget) {
+
+			if (!isset($_SESSION["pos"][$id])) $layoutWidgets[$id] = $widget;
+			else $positionArguments[$id] = new ContextAttribute($id, "pos", $_SESSION["pos"][$id]);
+		}
 
 		print "<script type=\"text/javascript\">
 			function onLoad() {
@@ -247,18 +254,62 @@ class Main {
 		print "</tr></table></div>";
 	}
 
+	private function setContextAttribute($contextname, $key, $value) {
+
+		if (!isset($_SESSION[$key])) $_SESSION[$key] = array();
+		$_SESSION[$key][$contextname] = $value;
+
+		print 'set $_SESSION['.$key.']['.$contextname.'] = '. $value . '<br>';
+	}
+
+	private function setArgument($key, $value) {
+
+		$_SESSION[$key] = $value;
+
+		print 'set $_SESSION['.$key.'] = '. $value . '<br>';
+	}
+
 	public function run() {
 
 		$this->arguments = array();
+		$widgets = array();
+
+		if ($_GET["new_session"] == "true") {
+
+			session_unset();
+			unset($_GET["new_session"]);
+		}
 
 		foreach($_GET as $key => $value) { 
 
 			$split = split(":", $key, 2); 
-			if (count($split) > 1) $this->arguments[] = new ContextAttribute($split[0], $split[1], $value);
-			else $this->arguments[] = new Argument($key, $value);
-		}
 
-		$widgets = array();
+			if ($split[0] == "pos") {
+
+				$contextname = $split[1];
+				print "contextattribute (SESSION): " . $split[0] . "," . $split[1] . "," . $value ."<br>";
+
+				$this->setContextAttribute($contextname, $split[0], $value);
+			}
+			else if ($split[0] == "flags") {
+
+				$contextname = $split[1];
+				print "contextattribute (SESSION): " . $split[0] . "," . $split[1] . "," . $value ."<br>";
+
+				$this->setContextAttribute($contextname, $split[0], $value);
+			}
+			else if ($key == "js") {
+
+				print "contextattribute (SESSION): " . $key . "," . $value ."<br>";
+
+				$this->setArgument($key, $value);
+			}
+ 			else if (count($split) > 1) {
+					
+				print "contextattribute: " .$split[0] . "," . $split[1] . "," . $value ."<br>";
+				$this->arguments[] = new ContextAttribute($split[0], $split[1], $value);
+			}
+		}
 
 		// Check if the contexts are present.
 
@@ -293,8 +344,11 @@ class Main {
 
 		foreach($this->arguments as $i => $argument) {
 
-			if (($argument->name == "show") && ($argument->value == "true"))
-				$widgets[$argument->contextname] = $this->createTable($argument->contextname);
+			if ($argument->name == "show") {
+
+				if ($argument->value == "true") $widgets[$argument->contextname] = $this->createTable($argument->contextname);
+				else unset($this->arguments[$i]);
+			}
 			else if (($argument->name == "edit") || ($argument->name == "new"))
 				$widgets[$argument->contextname] = $this->createEditor($argument->contextname, $argument->value, ($argument->name == "new"));
 		}
@@ -303,8 +357,8 @@ class Main {
 
 		// Check js.
 
-		$jsEnabled = "unknown";
-		foreach($this->arguments as $i => $argument) if ($argument->name == "js") $jsEnabled = $argument->value;
+		if (!isset($_SESSION["js"])) $jsEnabled = "unknown";
+		else $jsEnabled = $_SESSION["js"];
 
 		// If js argument is not set, refresh the page with js argument via js.
 

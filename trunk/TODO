@@ -1,8 +1,9 @@
 0.6
 - Implement mysql authorization error.
-- change to POST forms (partially).
+- change to POST forms for delete.
 - add maximum lines
 - better js layout
 - change wizard to webwidget
 - readd footer (?)
-- fix: sort, then hide (on berlios server, see jpg)
+- change to sessions
+- fix: too big edit forms in konqueror

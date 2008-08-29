@@ -12,17 +12,17 @@ class WebTable extends WebWidget
 	public $content;
 	public $context;
 
-	function __construct($context, $arguments)
+	function __construct($context, $arguments, $flags = 0)
 	{
 
 		$this->moveable = true;
 		$this->context = $context;
 		$this->content = $null;
 		$this->arguments = $arguments;
-		
+
 		$this->domid = $context->name;
 
-		$this->disassembleFlags();
+		$this->disassembleFlags($flags);
 	}
 
  	protected function assembleFlags($hidden, $sort) {
@@ -30,18 +30,11 @@ class WebTable extends WebWidget
  		return $hidden | ($sort << count($this->context->table->fields));
  	}
 
- 	protected function disassembleFlags() {
+ 	protected function disassembleFlags($flags) {
  
-		foreach ($this->arguments as $i => $argument) {
-
-			if (($argument->contextname == $this->context->name) && ($argument->name == "flags")) {
- 
-				$flags = $argument->value;
-				$this->context->table->sort = $flags >> count($this->context->table->fields);
-				if ($this->context->table->sort == 0) $this->context->table->hidden = $flags;
-				else $this->context->table->hidden = $flags % ($this->context->table->sort << count($this->context->table->fields));
-			}
-		}
+		$this->context->table->sort = $flags >> count($this->context->table->fields);
+		if ($this->context->table->sort == 0) $this->context->table->hidden = $flags;
+		else $this->context->table->hidden = $flags % ($this->context->table->sort << count($this->context->table->fields));
 	}
 
 	protected function toggleHidden($i) {
