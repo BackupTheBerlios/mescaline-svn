@@ -62,20 +62,20 @@ class WebTable extends WebWidget
 
 				// Remove flags argument, than put new flags argument for sorting and hiding into the link.
 
-				$stripped = $this->removeArgument($this->arguments, "flags", $this->context->name);
+				//$stripped = $this->removeArgument($this->arguments, "flags", $this->context->name);
 				
-				$sortflags = $this->assembleFlags($this->context->table->hidden, $i);
-				$sortarguments = $this->addArgument($stripped, "flags", $this->context->name, $sortflags);
-				$hideflags = $this->assembleFlags($this->context->table->toggleHidden($i), $this->context->table->sort);
-				$hidearguments = $this->addArgument($stripped, "flags", $this->context->name, $hideflags);
+ 				$sortflags = $this->assembleFlags($this->context->table->hidden, $i);
+// 				$sortarguments = $this->addArgument($stripped, "flags", $this->context->name, $sortflags);
+ 				$hideflags = $this->assembleFlags($this->context->table->toggleHidden($i), $this->context->table->sort);
+// 				$hidearguments = $this->addArgument($stripped, "flags", $this->context->name, $hideflags);
 
 				$ret .= "<td nowrap=\"nowrap\">"
-					. "<a href=\"./index.php" . $this->assembleArguments($sortarguments) . "\">"
+					. "<a href=\"./index.php?flags" . $this->domid . "=" . $sortflags . "\">"
 						. ((!$this->context->table->isHidden($i)) ? $field->name : "")
 					. "</a>
 					<a " 
 						. (($this->context->table->isHidden($i)) ? "class=\"tooltip\"" : "")
-						. "href=\"./index.php" . $this->assembleArguments($hidearguments) . "\">"
+						. "href=\"./index.php?flags:" . $this->domid . "=" . $hideflags . "\">"
 						. (($this->context->table->isHidden($i)) ? "<span>" . $field->name . "</span>" : "")
 						. "<img src=\"./icons/" . (($this->context->table->isHidden($i)) ? "show" : "hide") . ".png\" width=\"14\" height=\"14\" border=\"0\" style=\"vertical-align:middle\" alt=\"show\">
 					</a>
@@ -85,13 +85,12 @@ class WebTable extends WebWidget
 
 		// If allow new is set, paint new button.
 	
-		$stripped = $this->removeArgument($this->arguments, "show", $this->context->name);
-		$newarguments = $this->addArgument($stripped, "new", $this->context->name, "true");
+// 		$stripped = $this->removeArgument($this->arguments, "show", $this->context->name);
+// 		$newarguments = $this->addArgument($stripped, "new", $this->context->name, "true");
 
 		$ret .= "<td nowrap=\"nowrap\">" 
 			. ($this->context->allownew ?
-					"<a href=\"./index.php" 
-					. $this->assembleArguments($newarguments)
+					"<a href=\"./index.php?new:" . $this->domid . "=true"
 					. "\"><img src=\"./icons/new.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"new\"></a>" : "") 
 			. "</td></tr>";
 
@@ -116,24 +115,20 @@ class WebTable extends WebWidget
 
 			// Remove the show argument for the edit command.
 
-			$stripped = $this->removeArgument($this->arguments, "show", $this->context->name);
+// 			$stripped = $this->removeArgument($this->arguments, "show", $this->context->name);
+// 
+// 			$editarguments = $this->addArgument($stripped, "edit", $this->context->name, $id);
+// 
+// 			$removearguments = $this->addArgument($this->arguments, "remove", $this->context->name, $id);
 
-			$editarguments = $this->addArgument($stripped, "edit", $this->context->name, $id);
-
-			$removearguments = $this->addArgument($this->arguments, "remove", $this->context->name, $id);
-
-                        $ret .= "<td nowrap=\"nowrap\">
-                                <a href=\"./index.php"
-                                        . $this->assembleArguments($editarguments)
-                                        . "\">
-                                        <img src=\"./icons/edit.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"edit\">
-                                </a>
-                                <a onclick=\"return window.confirm('Do you want to delete the entry?')\" href=\"./index.php"
-                                        . $this->assembleArguments($removearguments)
-                                        . "\">
-                                        <img src=\"./icons/remove.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"edit\">
-                                </a>
-                                </td></tr>";
+			$ret .= "<td nowrap=\"nowrap\">
+				<a href=\"./index.php?edit:" . $this->domid . "=" . $id . "\">
+					<img src=\"./icons/edit.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"edit\">
+				</a>
+				<a onclick=\"return window.confirm('Do you want to delete the entry?')\" href=\"./index.php?remove:" . $this->domid . "=" . $id . "\">
+					<img src=\"./icons/remove.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"edit\">
+				</a>
+				</td></tr>";
 
 			$dark = $dark ^ 1;
 		}

@@ -53,17 +53,17 @@ class WebWidget {
 		return $ret;
 	}
 
-	protected function removeArgument($arguments, $name, $contextname) {
-
-		$arguments;
-
-		foreach ($arguments as $i => $argument) {
-
-			if (($argument->contextname == $contextname) && ($argument->name == $name)) unset($arguments[$i]);
-		}
-
-		return $arguments;
-	}
+// 	protected function removeArgument($arguments, $name, $contextname) {
+// 
+// 		$arguments;
+// 
+// 		foreach ($arguments as $i => $argument) {
+// 
+// 			if (($argument->contextname == $contextname) && ($argument->name == $name)) unset($arguments[$i]);
+// 		}
+// 
+// 		return $arguments;
+// 	}
 
 	protected function addArgument($arguments, $name, $contextname, $value) {
 

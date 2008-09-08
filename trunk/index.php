@@ -112,7 +112,7 @@ class Main {
 		$s = implode("", @file($contextfile));
 		$context = unserialize($s);
 
-		$id = $_GET['edit:' . $context->name];
+		//$id = $_GET['edit:' . $context->name];
 
 		// Create webfield array.
 		$webfields = $this->createWebFields($context);
@@ -124,14 +124,14 @@ class Main {
 
 			$row = $context->database->buildRow($context->table, $id);
 
-			if ($row === false) return new WebError("SQL Error", $context->name, $context->database->error(), "index.php" . WebWidget::assembleArguments($this->arguments));
+			if ($row === false) return new WebError("SQL Error", $context->name, $context->database->error(), "./index.php");
 
 			// Populate WebFields.
 			foreach ($row as $i => $value) $webfields[$i]->value = $value;
 
-			return new WebEditor($context, $webfields, $this->arguments, $id);
+			return new WebEditor($context, $webfields, $id);
 		}
-		else return new WebEditor($context, $webfields, $this->arguments);
+		else return new WebEditor($context, $webfields);
 	}
 
 	private function createTable($contextname) {
@@ -321,7 +321,7 @@ class Main {
 
 				$this->setContextAttribute($contextname, $split[0], $value);
 			}
-			else if ($split[0] == "show") {
+			else if (($split[0] == "show") || ($split[0] == "edit") || ($split[0] == "new")) {
 
 				$contextname = $split[1];
 // 				print "contextattribute (SESSION): " . $split[0] . "," . $split[1] . "," . $value ."<br>";
@@ -365,8 +365,13 @@ class Main {
 
 				unset($this->arguments[$i]);
 				$ret = $this->modifyData($argument->contextname, $argument->name, $argument->value);
-				if ($ret === true) $this->arguments[] = new ContextAttribute("show", $argument->contextname, "true");  
-				else $widgets[$argument->contextname] = new WebError("SQL Error", $argument->contextname, $ret, "index.php" . WebWidget::assembleArguments($this->arguments));
+				if ($ret === true) {
+
+					if ($argument->name == "update") unset($_SESSION["edit"][$argument->contextname]);
+					else if ($argument->name == "insert") unset($_SESSION["new"][$argument->contextname]);
+					$_SESSION["show"][$argument->contextname] = "true";  
+				}
+				else $widgets[$argument->contextname] = new WebError("SQL Error", $argument->contextname, $ret, "./index.php");
 			}
 		}
 
@@ -383,12 +388,20 @@ class Main {
 // 				$widgets[$argument->contextname] = $this->createEditor($argument->contextname, $argument->value, ($argument->name == "new"));
 // 		}
 
+		print "<div style=\"position:absolute;right:0px;top:0px;text-align:right;\">";
+		foreach ($_SESSION as $key => $value) foreach ($value as $key2 => $value2) print $key . ":" . $key2 . "=" . $value2 . "<br>";
+		print "</div>";
+
 		foreach ($_SESSION as $key => $array) {
 
 			if ($key == "show") foreach ($array as $contextname => $value) {
 
 				if ($value == "true") $widgets[$contextname] = $this->createTable($contextname);
 				else unset($_SESSION["show"][$contextname]);
+			}
+			else if (($key == "edit") || ($key == "new")) foreach ($array as $contextname => $value) {
+
+				$widgets[$contextname] = $this->createEditor($contextname, $value, ($key == "new"));
 			}
 		}
 

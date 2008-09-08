@@ -8,7 +8,7 @@ class WebEditor extends WebWidget
 	public $context;
 	public $webfields;
 
-	function __construct($context, $webfields, $arguments, $id = -1) {
+	function __construct($context, $webfields, $id = -1) {
 
 		$this->moveable = true;
 		$this->context = $context;
@@ -22,17 +22,19 @@ class WebEditor extends WebWidget
 
 		$ret .= "<form action=\"./index.php#" . $this->context->name . ":" . $this->id . "\">";
 
-		if ($this->id != -1) {
+// 		if ($this->id != -1) {
+// 
+// 			$stripped = $this->removeArgument($this->arguments, "edit", $this->context->name);
+// 			$updatearguments = $this->addArgument($stripped, "update", $this->context->name, $this->id);
+// 		} else {
+// 			
+// 			$stripped = $this->removeArgument($this->arguments, "new", $this->context->name);
+// 			$updatearguments = $this->addArgument($stripped, "insert", $this->context->name, $this->id);
+// 		}
+// 
+// 		$ret .= $this->assembleArgumentsPost($updatearguments);
 
-			$stripped = $this->removeArgument($this->arguments, "edit", $this->context->name);
-			$updatearguments = $this->addArgument($stripped, "update", $this->context->name, $this->id);
-		} else {
-			
-			$stripped = $this->removeArgument($this->arguments, "new", $this->context->name);
-			$updatearguments = $this->addArgument($stripped, "insert", $this->context->name, $this->id);
-		}
-
-		$ret .= $this->assembleArgumentsPost($updatearguments);
+		$ret .= "<input type=\"hidden\" name=\"" . (($this->id == -1) ? "insert" : "update") . ":" . $this->domid .  "\" value=\"" .  $this->id . "\">";
 
 		$ret .= "<table border=0 cellpadding=0 cellspacing=0>";
 	
