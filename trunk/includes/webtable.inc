@@ -51,7 +51,7 @@ class WebTable extends WebWidget
 
 		// build table
 
-		$ret = "<table id=\"" . $this->domid . "\" class=\"webwidget\" border=\"0\" cellspacing=\"0\">";
+		$ret = "<table border=\"0\" cellspacing=\"0\">";
 
 		// create header
 
@@ -93,7 +93,6 @@ class WebTable extends WebWidget
 					"<a href=\"./index.php" 
 					. $this->assembleArguments($newarguments)
 					. "\"><img src=\"./icons/new.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"new\"></a>" : "") 
-			. ($this->moveable ? " <img id=\"" . $this->context->name . "_handle\" src=\"./icons/move.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"move\">" : "")
 			. "</td></tr>";
 
 		$dark = 0;

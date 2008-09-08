@@ -7,11 +7,20 @@ class WebWidget {
 	public $arguments;
 	public $domid;
 	public $moveable;
+	public $hidden;
 
 	public function HTML() {
 	
-		return $this->buildContent();
-		//return "<div id=\"" . $this->domid . "\" >" . $this->buildContent() . $this->buildFooter() . "</div>";
+		return "<div class=\"webwidget\" id=\"" . $this->domid . "\" >"
+			. $this->buildHandle() 
+			. "<div class=\"webwidget_content\">" . $this->buildContent() . "</div>"
+			. "</div>";
+	}
+
+	protected function buildHandle() {
+
+		return "<div class=\"webwidget_handle\"><div id=\"" . $this->domid . "_handle\">" . $this->domid . "</div>"
+			.  "<a href=\"./index.php?show:" . $this->domid . "=false\"><img class=\"webwidget_icon\" src=\"./icons/move.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"move\"/></a></div>";
 	}
 
 	protected function buildFooter() {

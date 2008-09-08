@@ -22,8 +22,7 @@ class WebError extends WebWidget {
 		$ret = "";
 
 		$ret .= "<table id=\"" . $this->domid . "\" class=\"webwidget\" border=0 cellpadding=0 cellspacing=0>
-			<tr class=\"darkline\">
-				<td>" . $this->caption . "</td><td>" . ($this->moveable ? "<img align=\"right\" id=\"" . $this->domid . "_handle\" src=\"./icons/move.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"move\">" : "") . "</td></tr>";
+			<tr><td>" . $this->caption . "</td></tr>";
 
 		$ret .=	"<tr><td colspan=\"2\"><br></td></tr>"
 			. "<tr><td colspan=\"2\">" . "<i>" . $this->error . "</i>" . "</td></tr>"

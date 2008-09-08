@@ -122,9 +122,40 @@ a:visited {
 .webwidget { 
 
 	background-color: white; 
-	padding: 3px; 
 	margin: 7px;
+}
+
+.webwidget_handle { 
+	
+	padding: 2px;
+ 	border-top: 1px solid black;
+	border-left: 1px solid black;
+	border-right: 1px solid black;
+}
+
+.webwidget_icon { 
+	
+	padding: 2px;
+ 	border-top: 1px solid black;
+	border-left: 1px solid black;
+	border-right: 1px solid black;
+	top: 0px;
+	right: 0px;
+	position: absolute;
+}
+
+.webwidget_content { 
+
+ 	border: 1px solid black;  
+}
+
+.contextbar {
+
 	border: 1px solid black; 
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	background-color: white;
 }
 
 .tooltip {

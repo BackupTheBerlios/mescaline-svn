@@ -20,7 +20,7 @@ class WebEditor extends WebWidget
 
 	protected function buildContent() {
 
-		$ret .= "<div class=\"webwidget\" id=\"" . $this->domid . "\"><form action=\"./index.php#" . $this->context->name . ":" . $this->id . "\">";
+		$ret .= "<form action=\"./index.php#" . $this->context->name . ":" . $this->id . "\">";
 
 		if ($this->id != -1) {
 
@@ -35,8 +35,6 @@ class WebEditor extends WebWidget
 		$ret .= $this->assembleArgumentsPost($updatearguments);
 
 		$ret .= "<table border=0 cellpadding=0 cellspacing=0>";
-
-		if ($this->moveable) $ret .= "<tr class=\"darkline\"><td colspan=\"2\"><img align=\"right\" id=\"" . $this->context->name . "_handle\" src=\"./icons/move.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"move\"></td><tr>";
 	
 		// Walk through the fields.
 
@@ -55,7 +53,7 @@ class WebEditor extends WebWidget
 			$ret .= "</tr>";
 		}
 
-		$ret .= "</td></tr><tr><td colspan=\"2\"><hr size=\"1\" color=\"black\"></td></tr><tr><td align=\"right\" colspan=\"2\"><input type=\"image\" src=\"./icons/ok.png\" alt=\"ok\"></td></tr></table></form></div>";
+		$ret .= "</td></tr><tr><td colspan=\"2\"><hr size=\"1\" color=\"black\"></td></tr><tr><td align=\"right\" colspan=\"2\"><input type=\"image\" src=\"./icons/ok.png\" alt=\"ok\"></td></tr></table></form>";
 
 		return $ret;
 	}

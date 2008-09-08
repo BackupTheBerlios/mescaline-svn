@@ -4,7 +4,7 @@ function layout(widgets){
 
 		var currentWidget = document.getElementById(widgets[i]);
 		currentWidget.style.position = "absolute";
-		currentWidget.style.top = 0 + "px";
+		currentWidget.style.top = 31 + "px";
 
 		if (i == 0) {
 			
@@ -28,7 +28,7 @@ function place(id, x, y){
 	currentWidget.style.left = x + "px";
 }
 
-function makeMoveable(widgets, argumentString){
+function makeMoveable(widgets){
 
  	for (var i = 0; i < widgets.length; i++) {
  
@@ -50,7 +50,7 @@ function makeMoveable(widgets, argumentString){
 			if (y < 0) y = 0;
 			if (x < (0 - width + 20)) x = 20 - width;
 
-			window.location.replace(argumentString + "&pos:" + mover.node.id + "=" + x + "x" + y);
+			window.location.replace("./index.php?pos:" + mover.node.id + "=" + x + "x" + y);
 		});
 	}
 }
