@@ -22,7 +22,13 @@ class FinishedContext extends WizardStep {
 
 			return "<b>Finished</b><br><br>
 				Context <i>" . $this->context->name . "</i> is available";
+			
 		}
+
+		protected function nextButton() {
+
+		  return "<a href=\"../index.php\"><img src=\"../icons/ok.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"ok\"/></a></form>";
+	}
 }
 
 ?>

@@ -1,10 +1,8 @@
 <?php
 
 session_start();
-//print session_id() . "<br>";
 
 ini_set('include_path', './includes/');
-
 
 require_once("argument.inc");
 require_once("contextattribute.inc");
@@ -44,7 +42,10 @@ class Main {
 
 	private function printContextbar() {
 
-		print "<div class=\"contextbar\"><table><tr>";
+		print "<div class=\"contextbar\"><div class=\"contextbar_item\">
+		  <a href=\"./wizard/index.php\">
+		  <img src=\"./icons/new.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"new\"></div>
+		  </a>";
 		if ($handle = opendir('./context')) {
 
 			while (false !== ($file = readdir($handle))) {
@@ -55,13 +56,14 @@ class Main {
 
 					if ($_SESSION["show"][$contextname] != "true") {
 
-						print "<td><a href=\"./index.php?show:" . $contextname . "=true\">" . $contextname . "</a></td>";
+						print "<div class=\"contextbar_item\">|</div>
+						  <div class=\"contextbar_item\"><a href=\"./index.php?show:" . $contextname . "=true\">" . $contextname . "</a></div>";
 					}
 				}
 			}
 		}
 		closedir($handle);
-		print "</tr></table></div>";
+		print "</div>";
 	}
 
 	private function createWebFields($context) {
@@ -341,6 +343,19 @@ class Main {
 			}
 		}
 
+		// Currently only delete, insert & update arrives as POST.
+
+		foreach($_POST as $key => $value) { 
+
+			$split = split(":", $key, 2);
+
+			if (count($split) > 1) {
+					
+// 				print "contextattribute: " .$split[0] . "," . $split[1] . "," . $value ."<br>";
+				$this->arguments[] = new ContextAttribute($split[0], $split[1], $value);
+			}
+		}
+
 		// Check if the contexts are present.
 
 		foreach($this->arguments as $i => $argument) {
@@ -375,35 +390,35 @@ class Main {
 			}
 		}
 
-		// Perform show and edit operations.
+		// Below is DEBUG output on the page! 
 
-// 		foreach($this->arguments as $i => $argument) {
-// 
-// 			if ($argument->name == "show") {
-// 
-// 				if ($argument->value == "true") $widgets[$argument->contextname] = $this->createTable($argument->contextname);
-// 				else unset($this->arguments[$i]);
-// 			}
-// 			else if (($argument->name == "edit") || ($argument->name == "new"))
-// 				$widgets[$argument->contextname] = $this->createEditor($argument->contextname, $argument->value, ($argument->name == "new"));
-// 		}
+		if (false) 
+		{
+		  print "<div style=\"position:absolute;right:0px;top:0px;text-align:right;\">";
+		  foreach ($_SESSION as $key => $value) foreach ($value as $key2 => $value2) print $key . ":" . $key2 . "=" . $value2 . "<br>";
+		  print "</div>";
+		}
 
-		print "<div style=\"position:absolute;right:0px;top:0px;text-align:right;\">";
-		foreach ($_SESSION as $key => $value) foreach ($value as $key2 => $value2) print $key . ":" . $key2 . "=" . $value2 . "<br>";
-		print "</div>";
+		// Display widgets.
 
 		foreach ($_SESSION as $key => $array) {
 
 			if ($key == "show") foreach ($array as $contextname => $value) {
 
 				if ($value == "true") $widgets[$contextname] = $this->createTable($contextname);
-				else unset($_SESSION["show"][$contextname]);
+				else {
+
+				  unset($_SESSION["show"][$contextname]);
+				  unset($_SESSION["edit"][$contextname]);
+				}
 			}
 			else if (($key == "edit") || ($key == "new")) foreach ($array as $contextname => $value) {
 
 				$widgets[$contextname] = $this->createEditor($contextname, $value, ($key == "new"));
 			}
 		}
+
+		// Print HTML header.
 
 		$this->printHeader();
 

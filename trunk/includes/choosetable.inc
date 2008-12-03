@@ -35,6 +35,7 @@ class ChooseTable extends WizardStep
 			$this->context = new Context($contextname, null, $database); 
 		
 			$s = serialize($this->context);
+
 			$fp = fopen("../context/" . $this->context->name . ".wizard", "w");
 
 			if (!$fp) exit(1);

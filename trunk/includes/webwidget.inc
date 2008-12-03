@@ -19,8 +19,13 @@ class WebWidget {
 
 	protected function buildHandle() {
 
-		return "<div class=\"webwidget_handle\"><div id=\"" . $this->domid . "_handle\">" . $this->domid . "</div>"
-			.  "<a href=\"./index.php?show:" . $this->domid . "=false\"><img class=\"webwidget_icon\" src=\"./icons/move.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"move\"/></a></div>";
+		return "<div class=\"webwidget_bar\">
+			  <div id=\"" . $this->domid . "_handle\">" . $this->domid . "</div>
+			  <div class=\"webwidget_icon\"><a href=\"./index.php?show:" . $this->domid . "=false\">
+				<img src=\"./icons/close.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"close\"/>
+			      </a>
+			  </div>
+			</div>";
 	}
 
 	protected function buildFooter() {

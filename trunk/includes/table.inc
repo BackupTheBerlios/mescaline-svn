@@ -1,6 +1,8 @@
 <?php
 
 require_once("listfield.inc");
+require_once("whereclause.inc");
+require_once("wherecombination.inc");
 
 class Table {
 	
@@ -8,12 +10,14 @@ class Table {
 	public $fields;	
 	public $hidden;
 	public $sort;
+	public $whereclause;
 
 	function __construct($name) {
 
 		$this->name = $name;
 		$this->hidden = 0;
 		$this->sort = 0;
+		$this->whereclause = null;
 	}
 
 	public function toggleHidden($i) {
@@ -94,10 +98,11 @@ class Table {
 			}
 		}
 
-		if ($id != null) $query .= " WHERE (`" 
-			. mysql_real_escape_string($this->name) .  "`.`" 
-			. mysql_real_escape_string($this->fields[0]->name) . "` = '" 
-			. mysql_real_escape_string($id) ."')";
+ 		if ($id != null) $query .= " WHERE (`" 
+ 			. mysql_real_escape_string($this->name) .  "`.`" 
+ 			. mysql_real_escape_string($this->fields[0]->name) . "` = '" 
+ 			. mysql_real_escape_string($id) ."')";
+		else if ($this->whereclause != null) $query .= " WHERE (" . $this->whereclause->toString() . ")";
 
 		if ($sort != null) $query .= " ORDER BY `" 
 			. mysql_real_escape_string($this->name) .  "`.`" 

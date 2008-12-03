@@ -1,9 +1,7 @@
 0.6
 - Implement mysql authorization error.
-- change to POST forms for delete.
 - add maximum lines
 - better js layout
-- change wizard to webwidget
+- change wizard to webwidget / REWRITE
 - readd footer (?)
-- change to sessions
-
+- problems with contextnames containing spaces

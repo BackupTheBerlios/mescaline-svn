@@ -193,7 +193,7 @@ class Database {
 	{
 		if ($this->connect() == false) return false;
 
-		//print "<b>query: </b>" . $table->buildQuery($this, $sort, $id) . "<br>";
+		// print "<b>query: </b>" . $table->buildQuery($this, $sort, $id) . "<br/>";
 
 		$result = mysql_query($table->buildQuery($this, $sort, $id), $this->link);
 

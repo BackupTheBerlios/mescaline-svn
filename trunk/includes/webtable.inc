@@ -51,7 +51,7 @@ class WebTable extends WebWidget
 
 		// build table
 
-		$ret = "<table border=\"0\" cellspacing=\"0\">";
+		$ret = "<table border=\"0\" cellspacing=\"0\"><form action=\"./index.php\" method=\"post\">";
 
 		// create header
 
@@ -70,7 +70,7 @@ class WebTable extends WebWidget
 // 				$hidearguments = $this->addArgument($stripped, "flags", $this->context->name, $hideflags);
 
 				$ret .= "<td nowrap=\"nowrap\">"
-					. "<a href=\"./index.php?flags" . $this->domid . "=" . $sortflags . "\">"
+					. "<a href=\"./index.php?flags:" . $this->domid . "=" . $sortflags . "\">"
 						. ((!$this->context->table->isHidden($i)) ? $field->name : "")
 					. "</a>
 					<a " 
@@ -123,17 +123,17 @@ class WebTable extends WebWidget
 
 			$ret .= "<td nowrap=\"nowrap\">
 				<a href=\"./index.php?edit:" . $this->domid . "=" . $id . "\">
-					<img src=\"./icons/edit.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"edit\">
+					<img src=\"./icons/edit.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle;\" alt=\"edit\">
 				</a>
-				<a onclick=\"return window.confirm('Do you want to delete the entry?')\" href=\"./index.php?remove:" . $this->domid . "=" . $id . "\">
-					<img src=\"./icons/remove.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"edit\">
-				</a>
-				</td></tr>";
+				<input type=\"hidden\" name=\"remove:" . $this->domid ."\" value=\"" . $id . "\"/>
+				<input onclick=\"return window.confirm('Do you want to delete the entry?')\" type=\"image\" src=\"./icons/remove.png\" alt=\"remove\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\"/>"
+				. "</td>
+				</tr>";
 
 			$dark = $dark ^ 1;
 		}
 
-		$ret .= "</table>";
+		$ret .= "</form></table>";
 
 		return $ret;
 	}

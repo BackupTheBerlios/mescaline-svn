@@ -20,24 +20,10 @@ class WebEditor extends WebWidget
 
 	protected function buildContent() {
 
-		$ret .= "<form action=\"./index.php#" . $this->context->name . ":" . $this->id . "\">";
-
-// 		if ($this->id != -1) {
-// 
-// 			$stripped = $this->removeArgument($this->arguments, "edit", $this->context->name);
-// 			$updatearguments = $this->addArgument($stripped, "update", $this->context->name, $this->id);
-// 		} else {
-// 			
-// 			$stripped = $this->removeArgument($this->arguments, "new", $this->context->name);
-// 			$updatearguments = $this->addArgument($stripped, "insert", $this->context->name, $this->id);
-// 		}
-// 
-// 		$ret .= $this->assembleArgumentsPost($updatearguments);
-
+		$ret .= "<table border=0 cellpadding=0 cellspacing=0>";
+		$ret .= "<form action=\"./index.php#" . $this->context->name . ":" . $this->id . "\" method=\"post\">";
 		$ret .= "<input type=\"hidden\" name=\"" . (($this->id == -1) ? "insert" : "update") . ":" . $this->domid .  "\" value=\"" .  $this->id . "\">";
 
-		$ret .= "<table border=0 cellpadding=0 cellspacing=0>";
-	
 		// Walk through the fields.
 
 		foreach ($this->webfields as $i => $webfield) {
@@ -55,7 +41,11 @@ class WebEditor extends WebWidget
 			$ret .= "</tr>";
 		}
 
-		$ret .= "</td></tr><tr><td colspan=\"2\"><hr size=\"1\" color=\"black\"></td></tr><tr><td align=\"right\" colspan=\"2\"><input type=\"image\" src=\"./icons/ok.png\" alt=\"ok\"></td></tr></table></form>";
+		$ret .= "</td></tr><tr><td colspan=\"2\"><hr size=\"1\" color=\"black\"></td></tr>
+		  <tr><td style=\"text-align:right;\" colspan=\"2\">
+		  <input type=\"image\" src=\"./icons/ok.png\" alt=\"ok\" width=\"20\" height=\"20\" border=\"0\" />
+		  </td></tr>
+		</form></table>";
 
 		return $ret;
 	}
