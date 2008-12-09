@@ -205,9 +205,9 @@ class Main {
 
 	private function modifyData($contextname, $name, $value) {
 
-		$contextfile = $this->getContextFilename($contextname);
-		$s = implode("", @file($contextfile));
-		$context = unserialize($s);
+		$context = $this->loadContext($contextname);
+
+		if ($context == null) return $this->createError("ContextError", $contextname, "Could not load context. Possible cause could be file corruption or wrong version.");
 
 		$success = true;
 		if (($name == "update") || ($name == "insert")) {
