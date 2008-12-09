@@ -17,7 +17,7 @@ class WebTable extends WebWidget
 
 		$this->moveable = true;
 		$this->context = $context;
-		$this->content = $null;
+		$this->content = null;
 		$this->arguments = $arguments;
 
 		$this->domid = $context->name;
@@ -89,7 +89,7 @@ class WebTable extends WebWidget
 // 		$newarguments = $this->addArgument($stripped, "new", $this->context->name, "true");
 
 		$ret .= "<td nowrap=\"nowrap\">" 
-			. ($this->context->allownew ?
+			. ($this->context->allow_new ?
 					"<a href=\"./index.php?new:" . $this->domid . "=true"
 					. "\"><img src=\"./icons/new.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"new\"></a>" : "") 
 			. "</td></tr>";
@@ -121,14 +121,12 @@ class WebTable extends WebWidget
 // 
 // 			$removearguments = $this->addArgument($this->arguments, "remove", $this->context->name, $id);
 
-			$ret .= "<td nowrap=\"nowrap\">
-				<a href=\"./index.php?edit:" . $this->domid . "=" . $id . "\">
+			$ret .= "<td nowrap=\"nowrap\">" . ($this->context->allow_edit ? 
+				"<a href=\"./index.php?edit:" . $this->domid . "=" . $id . "\">
 					<img src=\"./icons/edit.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle;\" alt=\"edit\">
-				</a>
-				<input type=\"hidden\" name=\"remove:" . $this->domid ."\" value=\"" . $id . "\"/>
-				<input onclick=\"return window.confirm('Do you want to delete the entry?')\" type=\"image\" src=\"./icons/remove.png\" alt=\"remove\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\"/>"
-				. "</td>
-				</tr>";
+				</a>" : "") . ($this->context->allow_delete ?
+				"<input type=\"hidden\" name=\"remove:" . $this->domid ."\" value=\"" . $id . "\"/>
+				<input onclick=\"return window.confirm('Do you want to delete the entry?')\" type=\"image\" src=\"./icons/remove.png\" alt=\"remove\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\"/>" : "" ) . "</td></tr>";
 
 			$dark = $dark ^ 1;
 		}

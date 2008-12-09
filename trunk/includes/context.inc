@@ -10,7 +10,9 @@ class Context {
 	public $name;
 	public $database;
 	public $version;
-	public $allownew;
+	public $allow_new;
+	public $allow_edit;
+	public $allow_delete;
 
 	function __construct($name, $table, $database)
 	{
@@ -20,7 +22,9 @@ class Context {
 		$this->name = $name;
 		$this->table = $table;
 		$this->database = $database;
-		$allownew = false;
+		$this->allow_new = true;
+		$this->allow_edit = true;
+		$this->allow_delete = true;
 	}
 }
 

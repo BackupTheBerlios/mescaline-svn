@@ -14,6 +14,9 @@ require_once("weblistfield.inc");
 require_once("webboolfield.inc");
 require_once("webstringfield.inc");
 
+require_once("singlewebeditor.inc");
+require_once("singlewebtable.inc");
+require_once("singleweberror.inc");
 require_once("webtable.inc");
 require_once("webeditor.inc");
 require_once("weberror.inc");
@@ -21,6 +24,7 @@ require_once("weberror.inc");
 class Main {
 
 	private $arguments;
+	private $multiple;
 
 	private function printHeader() { 
 
@@ -54,7 +58,7 @@ class Main {
 
 					$contextname = substr($file, 0, -8);
 
-					if ($_SESSION["show"][$contextname] != "true") {
+					if ((!isset($_SESSION["show"][$contextname])) || ($_SESSION["show"][$contextname] != "true")) {
 
 						print "<div class=\"contextbar_item\">|</div>
 						  <div class=\"contextbar_item\"><a href=\"./index.php?show:" . $contextname . "=true\">" . $contextname . "</a></div>";
@@ -108,11 +112,30 @@ class Main {
 		return $options;
 	}
 
+	private function loadContext($contextname) {
+
+	  global $version;
+
+	  if ($this->multiple == true) $filename = "./context/".$contextname.".context";
+	  else $filename = "./context";
+
+	  $s = implode("", @file($filename));
+	  $context = unserialize($s);
+
+	  if (($context->version != $version) || ($context == FALSE)) return null;
+	  else return $context;
+	}
+
+	function createError($caption, $domid, $error) {
+
+	  if ($this->multiple) return new WebError($caption, $domid, $error, "./index.php");
+	  else return new SingleWebError($caption, $domid, $error, "./index.php");
+	}
+
 	function createEditor($contextname, $id, $new) {
 
-		$contextfile = "./context/".$contextname.".context";
-		$s = implode("", @file($contextfile));
-		$context = unserialize($s);
+		$context = $this->loadContext($contextname);
+		if ($context == null) return $this->createError("ContextError", $contextname, "Could not load context. Possible cause could be file corruption or wrong version.");
 
 		//$id = $_GET['edit:' . $context->name];
 
@@ -126,27 +149,32 @@ class Main {
 
 			$row = $context->database->buildRow($context->table, $id);
 
-			if ($row === false) return new WebError("SQL Error", $context->name, $context->database->error(), "./index.php");
+// 			if ($row === false) return WcreateError("SQL Error", $context->name, $context->database->error());
 
 			// Populate WebFields.
 			foreach ($row as $i => $value) $webfields[$i]->value = $value;
 
-			return new WebEditor($context, $webfields, $id);
+			if ($this->multiple) return new WebEditor($context, $webfields, $id);
+			else return new SingleWebEditor($context, $webfields, $id);
 		}
-		else return new WebEditor($context, $webfields);
+		else {
+		
+		  if ($this->multiple) return new WebEditor($context, $webfields);
+		  else return new SingleWebEditor($context, $webfields);
+		}
 	}
 
 	private function createTable($contextname) {
 
-		$contextfile = "./context/".$contextname.".context";
-		$s = implode("", @file($contextfile));
-		$context = unserialize($s);
+		$context = $this->loadContext($contextname);
+		if ($context == null) return $this->createError("ContextError", $contextname, "Could not load context. Possible cause could be file corruption or wrong version.");
 
-		$table = new WebTable($context, $this->arguments, isset($_SESSION["flags"][$contextname]) ? $_SESSION["flags"][$contextname] : 0);
+		if ($this->multiple) $table = new WebTable($context, $this->arguments, isset($_SESSION["flags"][$contextname]) ? $_SESSION["flags"][$contextname] : 0);
+		else $table = new SingleWebTable($context, $this->arguments, isset($_SESSION["flags"][$contextname]) ? $_SESSION["flags"][$contextname] : 0);
 
 		$rows = $context->database->buildTable($context->table, $context->table->sort);
 
-		if ($rows === false) return new WebError("SQL Error", $context->name, $context->database->lastError(), "index.php" . WebWidget::assembleArguments($this->arguments));
+		if ($rows === false) return $this->createError("SQL Error", $context->name, $context->database->lastError());
 
 		// Create content array		.	
 		$content = array();
@@ -170,14 +198,14 @@ class Main {
 			// Add webfield array to content array.
 			$content[] = $webfields;
 		}
-			
+
 		$table->content = $content;
 		return $table;
 	}
 
 	private function modifyData($contextname, $name, $value) {
 
-		$contextfile = "./context/".$contextname.".context";
+		$contextfile = $this->getContextFilename($contextname);
 		$s = implode("", @file($contextfile));
 		$context = unserialize($s);
 
@@ -299,7 +327,7 @@ class Main {
 		$this->arguments = array();
 		$widgets = array();
 
-		if ($_GET["new_session"] == "true") {
+		if ((isset($_GET["new_session"])) && ($_GET["new_session"] == "true")) {
 
 			session_unset();
 			unset($_GET["new_session"]);
@@ -356,22 +384,36 @@ class Main {
 			}
 		}
 
+		// Check whether multiple contexts are available.
+
+		if (is_dir("./context")) $this->multiple = true;
+		else if (is_file("./context")) {
+
+		  $this->multiple = false;
+		  $found = false;
+
+		  $contextfile = "./context";
+		  $s = implode("", @file($contextfile));
+		  $context = unserialize($s);
+
+		  foreach($this->arguments as $i => $argument) if ($argument->contextname == $context->name) $found = true;
+		  if (!$found) $this->arguments[] = new ContextAttribute("show", $context->name, "true");
+		}
+
 		// Check if the contexts are present.
 
 		foreach($this->arguments as $i => $argument) {
 
 			if ($argument instanceof ContextAttribute) {
-		
-				$contextfile = "./context/".$argument->contextname.".context";
 
-				if (!file_exists($contextfile)) {
+				if ($this->loadContext($argument->contextname) == null) {
 					
 					unset($this->arguments[$i]);
-					$widgets[$argument->contextname] = new WebError("Context Error", $argument->contextname, "Context \"" . $argument->contextname ."\" could not be found.", "index.php" . WebWidget::assembleArguments($this->arguments));
+					$widgets[$argument->contextname] = $this->createError("Context Error", $argument->contextname, "Context \"" . $argument->contextname ."\" could not be found.");
 				}
 			}
 		}
-		
+
 		// Perform data operations.
 		
 		foreach($this->arguments as $i => $argument) {
@@ -386,8 +428,8 @@ class Main {
 					else if ($argument->name == "insert") unset($_SESSION["new"][$argument->contextname]);
 					$_SESSION["show"][$argument->contextname] = "true";  
 				}
-				else $widgets[$argument->contextname] = new WebError("SQL Error", $argument->contextname, $ret, "./index.php");
-			}
+				else $widgets[$argument->contextname] = $this->createError("SQL Error", $argument->contextname, $ret);
+			  }
 		}
 
 		// Below is DEBUG output on the page! 
@@ -399,7 +441,7 @@ class Main {
 		  print "</div>";
 		}
 
-		// Display widgets.
+		// Create widgets.
 
 		foreach ($_SESSION as $key => $array) {
 
@@ -439,10 +481,11 @@ class Main {
 
 			$this->layoutNoJS($widgets);
 
-		} else if ($jsEnabled == "true") $this->layoutJS($widgets);
-		else $this->layoutNoJS($widgets);
+		} 
+		else if (($this->multiple == false) || ($jsEnabled != "true")) $this->layoutNoJS($widgets);
+		else $this->layoutJS($widgets);
 
-		$this->printContextbar();
+		if ($this->multiple) $this->printContextbar();
 
 		$this->printFooter();	
 	}

@@ -6,7 +6,7 @@
 	require_once("whereclause.inc");
 	require_once("wherecombination.inc");
 
-	$FILENAME = "reserve_machine.context";
+	$FILENAME = "reserve.context";
 
 	$s = implode("", @file($FILENAME));
 	$context = unserialize($s);
@@ -15,6 +15,8 @@
 	$machinesdev = new WhereClause("`machines`.`Development` = '1'");
 	//$context->table->whereclause = new WhereClause("`machines`.`Test` = '1'");
 	$context->table->whereclause = new WhereCombination($machinestest, "OR", $machinesdev);
+
+	$context->allow_delete = false;
 
 	$s = serialize($context);
 	$fp = fopen($FILENAME, "w");

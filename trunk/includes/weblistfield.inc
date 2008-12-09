@@ -15,7 +15,7 @@ class WebListField extends WebField
 
 // Build list of listfield
 
-	function renderFormField($contextname, $hash) {
+	function renderFormField($contextname, $hash, $new = false) {
 
 		$list = $this->database->buildListField($this->field);
 	
@@ -31,7 +31,7 @@ class WebListField extends WebField
 	
 		// Make the rows ID field the value of the option and display the name. Select the first entry, when creating new entries.
 	
-		if ($this->id != -1) {
+		if (!$new) {
 	
 			foreach ($list as $i => $listrow) {
 	

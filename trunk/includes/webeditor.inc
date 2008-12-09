@@ -14,13 +14,12 @@ class WebEditor extends WebWidget
 		$this->context = $context;
 		$this->webfields = $webfields;
 		$this->id = $id;
-		$this->arguments = $arguments;
 		$this->domid = $context->name;
 	} 
 
 	protected function buildContent() {
 
-		$ret .= "<table border=0 cellpadding=0 cellspacing=0>";
+		$ret = "<table border=0 cellpadding=0 cellspacing=0>";
 		$ret .= "<form action=\"./index.php#" . $this->context->name . ":" . $this->id . "\" method=\"post\">";
 		$ret .= "<input type=\"hidden\" name=\"" . (($this->id == -1) ? "insert" : "update") . ":" . $this->domid .  "\" value=\"" .  $this->id . "\">";
 
@@ -36,7 +35,7 @@ class WebEditor extends WebWidget
 			$ret .= "<tr>";
 
 			$ret .= $webfield->renderFormName();
-			$ret .= $webfield->renderFormField($this->context->name, $hash);
+			$ret .= $webfield->renderFormField($this->context->name, $hash, ($this->id == -1));
 			
 			$ret .= "</tr>";
 		}

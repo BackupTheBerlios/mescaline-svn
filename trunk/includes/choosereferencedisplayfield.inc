@@ -41,7 +41,7 @@ class ChooseReferenceDisplayField extends ChooseIDField {
 
 		$dark = 1;
 
-		$ret .= $this->caption();
+		$ret = $this->caption();
 		$ret .= "<form action=\"./index.php\">";
 		$ret .= "<table border=0 cellpadding=0 cellspacing=0>";
 		$ret .= "<input type=\"hidden\" name=\"context\" value=\"" . $this->context->name . "\">";	

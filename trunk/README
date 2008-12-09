@@ -181,3 +181,36 @@ create a class Web<custom name>Field with the filename "includes/web<custom name
 4.4) handle it in the web context.
 
 put "require_once("web<custom name>field.inc");" to the top of "include/webcontext.inc". Add a line in the WebContext::createWebFields() method for your custom Field Class. 
+
+5) advanced context customizing
+
+5.1) general
+
+you can edit a context in php if you deserialize the context, change some attributes, which are not supported in the wizard yet and write it back to disk. 
+
+	$FILENAME = "my.context"
+	$s = implode("", @file($FILENAME));
+	$context = unserialize($s);
+
+	[... manipulate context ...]
+
+	$s = serialize($context);
+	$fp = fopen($FILENAME, "w");
+	fputs($fp, $s);
+	fclose($fp);
+
+5.2) add a where clause
+
+where clauses to the context tables can be added by using a context's table "whereclause" member. complex AND/OR combinations are done with "WhereCombination" objects, 
+which are created with two subelements, which can be either a "WhereClause" holding a string, or another "WhereCombination". Both elements are combined by either "AND" or "OR" strings.
+
+	$machinestest = new WhereClause("`machines`.`Test` = '1'");
+	$machinesdev = new WhereClause("`machines`.`Development` = '1'");
+	$context->table->whereclause = new WhereCombination($machinestest, "OR", $machinesdev);
+
+5.3) defining right for the table.
+
+by default the user can create new entries (the wizard might turn this off, if not all necessary fields are in the context), edit entries or delete them. a context's "allow_new", "allow_edit", "allow_delete" members can be customized.
+
+	$context->allow_delete = false;
+

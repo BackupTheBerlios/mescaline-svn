@@ -5,3 +5,4 @@
 - change wizard to webwidget / REWRITE
 - readd footer (?)
 - problems with contextnames containing spaces
+- suplement a fields "optional" member with an "auto-fill" member.

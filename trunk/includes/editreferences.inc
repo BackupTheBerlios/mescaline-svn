@@ -70,7 +70,7 @@ class EditReferences extends WizardStep {
 			}
 		} else {
 
-			// Put fields which were into selection array, if a non-optional field was selected
+			// Put fields which were into selection array, if a non-optional field was deselected
 			// disable new entry functionality.
 	
 			$selection = array();
@@ -81,7 +81,7 @@ class EditReferences extends WizardStep {
 				else if ($field->optional == false) $allownew = false;
 			}
 			$this->context->table->fields = $selection;
-			$this->context->allownew = $allownew;
+			$this->context->allow_new = $allownew;
 		}
 
 		// Write context to disk.
@@ -93,7 +93,7 @@ class EditReferences extends WizardStep {
 
 		$dark = 1;
 	
-		$ret .= $this->caption();
+		$ret = $this->caption();
 		$ret .= "<form action=\"./index.php\">";
 		$ret .= "<table border=0 cellpadding=0 cellspacing=0>";
 		$ret .= "<input type=\"hidden\" name=\"context\" value=\"" . $this->context->name . "\">";	
