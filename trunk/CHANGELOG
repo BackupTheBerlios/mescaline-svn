@@ -1,5 +1,6 @@
 0.6:
 
+- app is session based
 - contexts can be moved around (javascript required)
 - hidden fields aren't fetched from sql server anymore
 - added a tooltip for hidden fields

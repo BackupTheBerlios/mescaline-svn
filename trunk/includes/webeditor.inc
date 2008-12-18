@@ -19,32 +19,26 @@ class WebEditor extends WebWidget
 
 	protected function buildContent() {
 
-		$ret = "<table border=0 cellpadding=0 cellspacing=0>";
-		$ret .= "<form action=\"./index.php#" . $this->context->name . ":" . $this->id . "\" method=\"post\">";
-		$ret .= "<input type=\"hidden\" name=\"" . (($this->id == -1) ? "insert" : "update") . ":" . $this->domid .  "\" value=\"" .  $this->id . "\">";
+		// The field encoding is quite complicated, since php will transform html form variable names with special chars. Thus there is an md5 hash which references to the correct field name.
 
-		// Walk through the fields.
+		$ret = "<form style=\"display: inline;\" action=\"./index.php#" . $this->context->name . ":" . $this->id . "\" method=\"post\">";
+		$ret .= "<table border=0 cellpadding=0 cellspacing=0>";
 
-		foreach ($this->webfields as $i => $webfield) {
+		// create the hidden fields
 
-			// The field encoding is quite complicated, since php will transform html form variable names with special chars. Thus there is a hash which references to the correct field name.
+		$arguments = array(new ContextAttribute(($this->id == -1) ? "insert" : "update", $this->domid, $this->id));
+		foreach ($this->webfields as $i => $webfield) $arguments[] = new ContextAttribute(md5($webfield->field->name), $this->context->name, $webfield->field->name);
+		$ret .= $this->compileFormArguments($arguments);
 
-			$hash = md5($webfield->field->name);
-			$ret .= "<input type=\"hidden\" name=\"" . $hash . ":" . $this->context->name . "\" value=\"" . $webfield->field->name . "\">";
+		// Walk through the fields and print them.
 
-			$ret .= "<tr>";
-
-			$ret .= $webfield->renderFormName();
-			$ret .= $webfield->renderFormField($this->context->name, $hash, ($this->id == -1));
-			
-			$ret .= "</tr>";
-		}
+		foreach ($this->webfields as $i => $webfield) $ret .= "<tr>" . $webfield->renderFormName() . $webfield->renderFormField($this->context->name, md5($webfield->field->name), ($this->id == -1)) . "</tr>";
 
 		$ret .= "</td></tr><tr><td colspan=\"2\"><hr size=\"1\" color=\"black\"></td></tr>
 		  <tr><td style=\"text-align:right;\" colspan=\"2\">
 		  <input type=\"image\" src=\"./icons/ok.png\" alt=\"ok\" width=\"20\" height=\"20\" border=\"0\" />
 		  </td></tr>
-		</form></table>";
+		</table></form>";
 
 		return $ret;
 	}

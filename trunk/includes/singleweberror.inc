@@ -5,13 +5,9 @@ require_once("weberror.inc");
 class SingleWebError extends WebError
 {
 
-	function __construct($caption, $domid, $error, $link) {
+	function __construct($caption, $domid, $error, $argument = null) {
 
-		$this->moveable = true;
-		$this->caption = $caption;
-		$this->domid = $domid;
-		$this->error = $error;
-		$this->link = $link;
+		parent::__construct($caption, $domid, $error, $argument);
 	}
 
 	protected function buildHandle() {}

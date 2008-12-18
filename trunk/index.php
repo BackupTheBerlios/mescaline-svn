@@ -35,8 +35,7 @@ class Main {
 			<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">
 			<link rel=stylesheet type=\"text/css\" href=\"css/default.css\">
 			</head>
-			<body onload=\"onLoad();\">
-			<script type=\"text/javascript\" src=\"js/layout.js\"></script>";			
+			<body " . ($this->multiple ? " onload=\"onLoad();\">" : "") ."<script type=\"text/javascript\" src=\"js/layout.js\"></script>";			
 	}
 
 	private function printFooter() {
@@ -61,7 +60,7 @@ class Main {
 					if ((!isset($_SESSION["show"][$contextname])) || ($_SESSION["show"][$contextname] != "true")) {
 
 						print "<div class=\"contextbar_item\">|</div>
-						  <div class=\"contextbar_item\"><a href=\"./index.php?show:" . $contextname . "=true\">" . $contextname . "</a></div>";
+						  <div class=\"contextbar_item\"><a href=\"./index.php?" . session_name() . "=" . session_id() . "&show:" . $contextname . "=true\">" . $contextname . "</a></div>";
 					}
 				}
 			}
@@ -120,7 +119,7 @@ class Main {
 	  else $filename = "./context";
 
 	  $s = implode("", @file($filename));
-	  $context = unserialize($s);
+	  $context = unserialize($s); // TODO: Proper error when file missing.
 
 	  if (($context->version != $version) || ($context == FALSE)) return null;
 	  else return $context;
@@ -128,8 +127,8 @@ class Main {
 
 	function createError($caption, $domid, $error) {
 
-	  if ($this->multiple) return new WebError($caption, $domid, $error, "./index.php");
-	  else return new SingleWebError($caption, $domid, $error, "./index.php");
+	  if ($this->multiple) return new WebError($caption, $domid, $error);
+	  else return new SingleWebError($caption, $domid, $error);
 	}
 
 	function createEditor($contextname, $id, $new) {

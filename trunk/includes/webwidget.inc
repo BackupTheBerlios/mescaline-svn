@@ -21,7 +21,7 @@ class WebWidget {
 
 		return "<div class=\"webwidget_bar\">
 			  <div id=\"" . $this->domid . "_handle\">" . $this->domid . "</div>
-			  <div class=\"webwidget_icon\"><a href=\"./index.php?show:" . $this->domid . "=false\">
+			  <div class=\"webwidget_icon\"><a href=\"./index.php" . $this->compileHrefArguments(array(new ContextAttribute("show", $this->domid, "false"))) . "\">
 				<img src=\"./icons/close.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"close\"/>
 			      </a>
 			  </div>
@@ -58,25 +58,37 @@ class WebWidget {
 		return $ret;
 	}
 
-// 	protected function removeArgument($arguments, $name, $contextname) {
-// 
-// 		$arguments;
-// 
-// 		foreach ($arguments as $i => $argument) {
-// 
-// 			if (($argument->contextname == $contextname) && ($argument->name == $name)) unset($arguments[$i]);
-// 		}
-// 
-// 		return $arguments;
-// 	}
+	protected function compileFormArguments($arguments) {
 
-	protected function addArgument($arguments, $name, $contextname, $value) {
+		$ret = "<input type=\"hidden\" name=\"" . session_name() . "\" value=\"" . session_id() . "\"/>";
 
-		$arguments;
+		foreach ($arguments as $i => $argument) {
 
-		$arguments[] = new ContextAttribute($name, $contextname, $value);
+			$ret .= "<input type=\"hidden\" name=\"";
+			
+			if ($argument instanceof ContextAttribute) $ret .= $argument->name . ":" . $argument->contextname;
+			else $ret .= $argument->name;
 
-		return $arguments;
+			$ret .= "\" value=\"" . $argument->value . "\"/>";
+		}
+		
+		return $ret;	
+	}
+
+	protected function compileHrefArguments($arguments) {
+
+		$ret = "?" . session_name() . "=" . session_id();
+
+		foreach ($arguments as $i => $argument) {
+
+			$ret .= "&";
+			
+			if ($argument instanceof ContextAttribute) 
+				$ret .= $argument->name . ":". $argument->contextname . "=" . $argument->value;
+			else $ret .= $argument->name . "=" . $argument->value;
+		}
+		
+		return $ret;	
 	}
 }
 
