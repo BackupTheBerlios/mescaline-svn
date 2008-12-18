@@ -28,7 +28,7 @@ function place(id, x, y){
 	currentWidget.style.left = x + "px";
 }
 
-function makeMoveable(widgets){
+function makeMoveable(sessionString, widgets){
 
  	for (var i = 0; i < widgets.length; i++) {
  
@@ -37,9 +37,6 @@ function makeMoveable(widgets){
  		dojo.connect(widget, "onMoveStop", function(mover){
 
 			var pos = dojo.coords(mover.node);
-			//console.log(mover.node.id);
-			//console.log(pos.left);
-			//console.log(mover.node.style.left.replace("px", ""));
 
 			var x = mover.node.style.left.replace("px", "");
 			var y = mover.node.style.top.replace("px", "");
@@ -50,34 +47,8 @@ function makeMoveable(widgets){
 			if (y < 0) y = 0;
 			if (x < (0 - width + 20)) x = 20 - width;
 
-			window.location.replace("./index.php?pos:" + mover.node.id + "=" + x + "x" + y);
+			window.location.replace("./index.php?" + sessionString + "&pos:" + mover.node.id + "=" + x + "x" + y);
 		});
 	}
 }
 
-// function updateArguments(widgets, argumentString){
-// 
-// 	var arguments = argumentString;
-// 
-// 	for (var i = 0; i < widgets.length; i++) {
-// 
-// 		var regexp = new RegExp("pos:" + widgets[i] + "=(\\\d+)x(\\\d+)");
-// 
-// 		var widget = document.getElementById(widgets[i]);
-// 
-// 		var x = widget.style.left.replace("px", "");
-// 		var y = widget.style.top.replace("px", "");
-// 		var width = widget.offsetWidth;
-// 
-// 		// 	Ensure that the handle does not move out of the browser window.
-// 
-// 		if (y < 0) y = 0;
-// 		if (x < (0 - width + 20)) x = 20 - width;
-// 
-// 		//if (arguments.match(regexp)) arguments = arguments.replace(regexp,"pos:" + widgets[i] + "=" + x + "x" + y);
-// 		//else arguments = arguments + "&pos:" + widgets[i] + "=" + x + "x" + y;
-// 		arguments = arguments + "&pos:" + widgets[i] + "=" + x + "x" + y;
-// 	}
-// 
-// 	return arguments;
-// }

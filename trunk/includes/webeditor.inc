@@ -21,7 +21,7 @@ class WebEditor extends WebWidget
 
 		// The field encoding is quite complicated, since php will transform html form variable names with special chars. Thus there is an md5 hash which references to the correct field name.
 
-		$ret = "<form style=\"display: inline;\" action=\"./index.php#" . $this->context->name . ":" . $this->id . "\" method=\"post\">";
+		$ret = "<form style=\"display: inline;\" action=\"./index.php" . (($this->id != -1) ? "#" . $this->context->name . ":" . $this->id : "") . "\" method=\"post\">";
 		$ret .= "<table border=0 cellpadding=0 cellspacing=0>";
 
 		// create the hidden fields

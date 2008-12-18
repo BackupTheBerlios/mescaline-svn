@@ -241,8 +241,7 @@ class Main {
 				var widgets = new Array(" . sizeof($widgets) . ");";
 				$i = 0;
 				foreach($widgets as $id => $widget) print "widgets[" . $i++ . "] = \"" . $id . "\";";
-				print "makeMoveable(widgets);
-				
+				print "makeMoveable(\"" . session_name() . "=" . session_id() . "\", widgets);		
 			};
 			dojo.addOnLoad(initDND);
 		</script>";
