@@ -25,6 +25,7 @@ class Main {
 
 	private $arguments;
 	private $multiple;
+	private $create_contexts;
 
 	private function printHeader() { 
 
@@ -45,24 +46,27 @@ class Main {
 
 	private function printContextbar() {
 
-		print "<div class=\"contextbar\"><div class=\"contextbar_item\">
+		print "<div class=\"contextbar\">" . ($this->create_contexts ? "<div class=\"contextbar_item\">
 		  <a href=\"./wizard/index.php\">
-		  <img src=\"./icons/new.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"new\"></div>
-		  </a>";
+		  <img src=\"./icons/new.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"new\"></a></div>" : "" );
 		if ($handle = opendir('./context')) {
+
+			$contextarray = array();
 
 			while (false !== ($file = readdir($handle))) {
 
 				if (substr($file, -8) == ".context") {
 
 					$contextname = substr($file, 0, -8);
+					if ((!isset($_SESSION["show"][$contextname])) || ($_SESSION["show"][$contextname] != "true")) $contextarray[] = $contextname;
 
-					if ((!isset($_SESSION["show"][$contextname])) || ($_SESSION["show"][$contextname] != "true")) {
-
-						print "<div class=\"contextbar_item\">|</div>
-						  <div class=\"contextbar_item\"><a href=\"./index.php?" . session_name() . "=" . session_id() . "&show:" . $contextname . "=true\">" . $contextname . "</a></div>";
-					}
 				}
+			}
+
+			foreach($contextarray as $i => $contextname) {
+			
+				print "<div class=\"contextbar_item\"><a href=\"./index.php?" . session_name() . "=" . session_id() . "&show:" . $contextname . "=true\">" . $contextname . "</a></div>";
+				 if (end($contextarray) != $contextname) print "<div class=\"contextbar_item\">|</div>";	
 			}
 		}
 		closedir($handle);
@@ -384,10 +388,14 @@ class Main {
 
 		// Check whether multiple contexts are available.
 
-		if (is_dir("./context")) $this->multiple = true;
-		else if (is_file("./context")) {
+		$this->create_contexts = false;
 
-		  $this->multiple = false;
+		if (is_dir("./context")) {
+			$this->multiple = true;
+			if (is_writable("./context")) $this->create_contexts = true;
+		}
+		else if (is_file("./context")) {
+		  
 		  $found = false;
 
 		  $contextfile = "./context";
@@ -397,6 +405,7 @@ class Main {
 		  foreach($this->arguments as $i => $argument) if ($argument->contextname == $context->name) $found = true;
 		  if (!$found) $this->arguments[] = new ContextAttribute("show", $context->name, "true");
 		}
+		
 
 		// Check if the contexts are present.
 
