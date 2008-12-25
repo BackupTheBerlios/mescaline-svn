@@ -29,9 +29,9 @@ usage:
 
 0) terms with an attached * are explained in 3) glossary.
 
-1) creation of contexts.
+1) creating and accessing contexts.
 
-mescaline build its tables and forms with the information stored in context files. the context files can be created using the wizard or manually in a script. 
+mescaline build its tables and forms with the information stored in context files. the context files can be created using the wizard or manually in a script. The contexts are ussually stored in the subdir "./context". If the directory is not writable the wizard for creating will be disabled. you can name a certain context *file* "./context", then mescaline will appear in single-table mode, using the context file.    
 
 1.1) using the wizard.
 
