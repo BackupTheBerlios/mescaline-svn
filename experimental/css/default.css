@@ -1,0 +1,189 @@
+#link { 
+
+	background-color: white; 
+}
+
+#footer { 
+
+	clear: both;
+	text-align: center;
+	padding: 6px; 
+}
+		
+#container { 
+
+	float: left; 
+	position: relative; 
+	left: 50%; 
+	margin-top: 1em; 
+}
+
+#inner { 
+
+	position: relative; 
+	left: -50%; 
+	padding-left: 3px; 
+	padding-right: 3px; 
+	padding-top: 3px; 
+	padding-bottom: 1em; 
+	border: 1px solid black; 
+	background: white 
+}
+
+#previous, #next, #confirm { 
+
+	position: absolute; 
+	bottom: 0; 
+	padding-left: 3px; 
+	padding-right: 3px; 
+	padding-bottom: 3px; 
+}
+
+#previous { 
+
+	left: 0; 
+}
+
+#next, #confirm {
+ 
+	right: 0; 
+}
+	
+#spacer { 
+
+	height: 10px; 
+}
+
+#error { 
+
+	background-color: white; 
+	padding: 3px; 
+	border: 1px solid black; 
+}
+
+td {
+	
+	padding: 2px;
+}
+
+body { 
+
+	font-size: 1em;
+	background: lightgray; 
+}
+
+a { 
+
+	color : #3c3; font-family : verdana, arial, helvetica, sans-serif; text-decoration : none; 
+}
+
+input.submitimg {
+
+	border: none;
+	vertical-align: middle;
+	padding: 0px;
+	margin: 0px;
+}
+
+input.submittext { 
+
+	margin: 0px;
+	padding: 0px;
+	border: none;
+	cursor: pointer;
+	cursor: hand;
+	font-size: 1em;
+	color : #3c3;
+	background-color: transparent;
+	font-family : verdana, arial, helvetica, sans-serif; text-decoration : none; 
+	vertical-align: middle;
+}
+
+a:link { 
+
+	color : #3c3; 
+}
+			
+a:visited { 
+	
+	color : #3c3; 
+}
+			
+.brightline { 
+
+	background-color: white; 
+}
+
+.darkline {
+	
+	background-color: lightgray; 
+}
+
+.webwidget { 
+
+	background-color: white; 
+	margin: 7px;
+}
+
+.webwidget_bar { 
+
+	border-top: 1px solid black;
+	border-left: 1px solid black;
+	border-right: 1px solid black;
+	padding: 2px;
+}
+
+.webwidget_icon { 
+	
+	top: 0px;
+	right: 2px;
+	position: absolute;
+}
+
+.webwidget_content { 
+
+ 	border: 1px solid black;  
+}
+
+.contextbar {
+
+	margin-left:auto; margin-right:auto;
+	border: 1px solid black;
+	display: table;
+	background-color: white;
+}
+
+.contextbar_item {
+
+	float: left;
+	padding: 2px;
+}
+
+.tooltip {
+
+	position: relative;
+}
+
+.tooltip:hover {
+
+	background: transparent;
+	z-index: 100;
+}
+
+.tooltip span {
+
+	display: none;
+	text-decoration: none;
+}
+
+.tooltip:hover span {
+
+	top: -13px;
+	left: 13px;
+	display: block;
+	position: absolute;
+	background: white;
+	padding: 1px;
+	border: 1px solid black;
+	color: black;
+}

@@ -1,0 +1,21 @@
+0.6:
+
+- app is session based
+- contexts can be moved around (javascript required)
+- hidden fields aren't fetched from sql server anymore
+- added a tooltip for hidden fields
+- all interaction links are forms now
+- list elements are sorted now
+- several contexts can be displayed on the same page
+
+0.5: 
+
+- implemented a more consequent MVC pattern.
+- id field isn't visible in the editor anymore.
+
+0.4.0.1: fixes
+
+- added documentation.
+- included .htaccess files to protect "mescaline/context" & "mescaline/includes" directories.
+
+0.4: initial release

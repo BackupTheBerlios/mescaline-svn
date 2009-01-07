@@ -1,0 +1,8 @@
+0.6
+- Implement mysql authorization error.
+- add maximum lines
+- better js layout
+- change wizard to webwidget / REWRITE
+- readd footer (?)
+- problems with contextnames containing spaces
+- suplement a fields "optional" member with an "auto-fill" member.
