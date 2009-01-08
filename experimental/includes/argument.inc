@@ -1,6 +1,6 @@
 <?php
 
-class Argument {
+class Argument { // TODO: remove.
 
 	public $name;
 	public $value;

@@ -4,7 +4,6 @@ session_start();
 
 ini_set('include_path', './includes/');
 
-require_once("argument.inc");
 require_once("contextattribute.inc");
 require_once("version.inc");
 require_once("context.inc");
@@ -23,25 +22,26 @@ require_once("weberror.inc");
 
 class Main {
 
+	private $contexts; // TODO: check class members.
 	private $arguments;
 	private $multiple;
 	private $create_contexts;
 
-	private function printHeader() { 
+	private function buildHeader() { 
 
-		print "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">
+		return "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">
 			<html>
 			<head>
 			<title>mescaline: table view</title>
 			<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">
 			<link rel=stylesheet type=\"text/css\" href=\"css/default.css\">
 			</head>
-			<body " . ($this->multiple ? " onload=\"onLoad();\">" : "") ."<script type=\"text/javascript\" src=\"js/layout.js\"></script>";			
+			<body " . ($this->multiple ? " onload=\"onLoad();\">" : "") ."<script type=\"text/javascript\" src=\"js/layout.js\"></script>";	// TODO: get rid of this->multiple here.
 	}
 
-	private function printFooter() {
+	private function buildFooter() {
 
-		print "</body></html>";
+		return "</body></html>";
 	}
 
 	private function printContextbar() {
@@ -89,26 +89,58 @@ class Main {
 		return $webfields;
 	}
 
-	private function extractFieldArguments($contextname) {
+// 	private function extractFieldArguments($contextname) {
+// 
+// 		// Extract options from parameters. The information arrives in the format: "<hash>:$contextname=$name ... field<hash>:contextname=$value".
+// 
+// 		$options = array();
+// 
+// 		foreach ($this->arguments as $i => $argument) {
+// 
+// 			if ((strncmp($argument->name, "field", 5) == 0) && ($argument->contextname == $contextname)) {
+// 		
+// 				$hash = substr($argument->name,5);
+// 				foreach ($this->arguments as $j => $argument2) {
+// 				
+// 					if ($argument2->name == $hash) {
+// 
+// 						$options[] = array($argument2->value, $argument->value);
+// 						unset($this->arguments[$j]);
+// 					} 
+// 				}
+// 				unset($this->arguments[$i]);
+// 			}
+// 		}
+// 
+// 		return $options;
+// 	}
 
-		// Extract options from parameters. The information arrives in the format: "<hash>:$contextname=$name ... field<hash>:contextname=$value".
+	private function extractFieldArguments($context) {
 
+		// Extract options from parameters. The information arrives in the format: "<hash>=$contextname,$name ... ptr:<hash>=$value".
+	
 		$options = array();
 
-		foreach ($this->arguments as $i => $argument) {
+		foreach ($_POST as $key => $value) {
 
-			if ((strncmp($argument->name, "field", 5) == 0) && ($argument->contextname == $contextname)) {
-		
-				$hash = substr($argument->name,5);
-				foreach ($this->arguments as $j => $argument2) {
-				
-					if ($argument2->name == $hash) {
+			// Find an argument with a "ptr:" prefix as key.
 
-						$options[] = array($argument2->value, $argument->value);
-						unset($this->arguments[$j]);
-					} 
+			if (strncmp($key, "ptr:", 4) == 0) {
+			
+				$hash = substr($key,4);
+
+				// Now find the fitting argument.
+
+				foreach ($_POST as $key2 => $value2) if ($key2 == $hash) {
+
+					$splitValue2 = split(",", $value2, 2);
+					$contextName = $splitValue2[0];
+					$name = $splitValue2[1];
+
+					// When the name fits the context add a pair in options.
+
+					if ($contextName == $context->name) $options[] = array($name, $value);
 				}
-				unset($this->arguments[$i]);
 			}
 		}
 
@@ -117,63 +149,48 @@ class Main {
 
 	private function loadContext($contextname) {
 
-	  global $version;
+		global $version;
 
-	  if ($this->multiple == true) $filename = "./context/".$contextname.".context";
-	  else $filename = "./context";
+		if ($this->multiple == true) $filename = "./context/".$contextname.".context";
+		else $filename = "./context";
 
-	  $s = implode("", @file($filename));
-	  $context = unserialize($s); // TODO: Proper error when file missing.
+		$s = implode("", @file($filename));
+		$context = unserialize($s); // TODO: Proper error when file missing.
 
-	  if (($context->version != $version) || ($context == FALSE)) return null;
-	  else return $context;
+		if (($context->version != $version) || ($context == FALSE)) return null;
+		else return $context;
 	}
 
 	function createError($caption, $domid, $error) {
 
-	  if ($this->multiple) return new WebError($caption, $domid, $error);
-	  else return new SingleWebError($caption, $domid, $error);
+		if ($this->multiple) return new WebError($caption, $domid, $error);
+		else return new SingleWebError($caption, $domid, $error);
 	}
 
-	function createEditor($contextname, $id, $new) {
-
-		$context = $this->loadContext($contextname);
-		if ($context == null) return $this->createError("ContextError", $contextname, "Could not load context. Possible cause could be file corruption or wrong version.");
-
-		//$id = $_GET['edit:' . $context->name];
+	function createEditor($context, $id) {
 
 		// Create webfield array.
 		$webfields = $this->createWebFields($context);
 
-		if (!$new) {
+		if ($id != "new") {
 
 			// Get Row.
 			$row = array();
 
 			$row = $context->database->buildRow($context->table, $id);
 
-// 			if ($row === false) return WcreateError("SQL Error", $context->name, $context->database->error());
-
 			// Populate WebFields.
 			foreach ($row as $i => $value) $webfields[$i]->value = $value;
-
-			if ($this->multiple) return new WebEditor($context, $webfields, $id);
-			else return new SingleWebEditor($context, $webfields, $id);
 		}
-		else {
 		
-		  if ($this->multiple) return new WebEditor($context, $webfields);
-		  else return new SingleWebEditor($context, $webfields);
-		}
+		if ($this->multiple) return new WebEditor($context, $webfields, $id);
+		else return new SingleWebEditor($context, $webfields, $id);
 	}
 
-	private function createTable($contextname) {
+	private function createTable($context, $flags = 0) {
 
-		$context = $this->loadContext($contextname);
-		if ($context == null) return $this->createError("ContextError", $contextname, "Could not load context. Possible cause could be file corruption or wrong version.");
-
-		if ($this->multiple) $table = new WebTable($context, $this->arguments, isset($_SESSION["flags"][$contextname]) ? $_SESSION["flags"][$contextname] : 0);
-		else $table = new SingleWebTable($context, $this->arguments, isset($_SESSION["flags"][$contextname]) ? $_SESSION["flags"][$contextname] : 0);
+		if ($this->multiple) $table = new WebTable($context, $this->arguments, $flags);
+		else $table = new SingleWebTable($context, $this->arguments, $flags);
 
 		$rows = $context->database->buildTable($context->table, $context->table->sort);
 
@@ -253,6 +270,8 @@ class Main {
 
 	private function layoutJS($widgets) {
 
+		$html = "";
+
 		// dojo magic
 
 		$this->dojo($widgets);
@@ -260,7 +279,7 @@ class Main {
 		// show widgets
 
 		ksort($widgets);
-		foreach($widgets as $i => $widget) print $widget->HTML();
+		foreach($widgets as $i => $widget) $html .= $widget->HTML();
 
 		// Find out layouted and custom widgets
 
@@ -273,28 +292,32 @@ class Main {
 			else $positionArguments[$id] = new ContextAttribute($id, "pos", $_SESSION["pos"][$id]);
 		}
 
-		print "<script type=\"text/javascript\">
+		$html .= "<script type=\"text/javascript\">
 			function onLoad() {
 
 				var layoutWidgets = new Array(" . sizeof($layoutWidgets) . ");";
 				$i = 0;
-				foreach($layoutWidgets as $id => $widget) print "layoutWidgets[" . $i++ . "] = \"" . $id . "\";";
-				print "layout(layoutWidgets);";
+				foreach($layoutWidgets as $id => $widget) $html .= "layoutWidgets[" . $i++ . "] = \"" . $id . "\";";
+				$html .= "layout(layoutWidgets);";
 				foreach($positionArguments as $id => $argument) {
 
 					$split = split("x", $argument->value, 2);
 					$x = $split[0];
 					$y = $split[1];
 
-					print "place(\"" . $id . "\"," . $x . "," . $y . ");";
+					$html .= "place(\"" . $id . "\"," . $x . "," . $y . ");";
 				}
-			print "}
+			$html .= "}
 		</script>";
+
+		return $html;
 	}
 
 	private function layoutNoJS($widgets) {
 
-		print "<div align=\"center\"><table><tr>";
+		$html = "";
+
+		$html .= "<div align=\"center\"><table><tr>";
 
 		// show widgets
 
@@ -302,18 +325,40 @@ class Main {
 		foreach($widgets as $i => $widget) {
 		
 			$widget->moveable = false;
-			print "<td style=\"vertical-align:top\">" . $widget->HTML() . "</td>";
+			$html .= "<td style=\"vertical-align:top\">" . $widget->HTML() . "</td>"; // TODO: rename HTML function to buildHTML
 		}
 
-		print "</tr></table></div>";
+		$html .= "</tr></table></div>";
+
+		return $html;
 	}
 
-	private function setContextAttribute($contextname, $key, $value) {
+	protected function getContextAttribute($context, $key) {
+
+		if (!isset($_SESSION[$key][$context->name])) return null;
+		else return $_SESSION[$key][$context->name];
+	}
+
+	protected function getAttribute($key) {
+
+		if (!isset($_SESSION[$key])) return null;
+		else return $_SESSION[$key];
+	}
+
+	protected function setContextAttribute($context, $key, $value) {
 
 		if (!isset($_SESSION[$key])) $_SESSION[$key] = array();
-		$_SESSION[$key][$contextname] = $value;
+		$_SESSION[$key][$context->name] = $value;
+	}
 
-// 		print 'set $_SESSION['.$key.']['.$contextname.'] = '. $value . '<br>';
+	protected function removeContextAttribute($context, $key) {
+
+		unset($_SESSION[$key][$context->name]);
+	}
+
+	protected function setAttribute($key, $value) {
+
+		$_SESSION[$key] = $value;
 	}
 
 	private function setArgument($key, $value) {
@@ -337,7 +382,23 @@ class Main {
 
 		foreach($_GET as $key => $value) { 
 
-			$split = split(":", $key, 2); 
+			print $key . "=" . $value . "<br>";
+
+			$splittedArguments = split(",", $value, 2);
+
+			if (count($splittedArguments) == 2) {
+
+				$contextName = $splittedArguments[0];
+				$function = $key;
+				$argument = $splittedArguments[1];
+				//$context = $this->loadContext($contextName);
+				
+				//$context->$function($argument);
+
+				print $contextName . "->" . $function . "(" . $argument . ");<br>";
+			}
+
+			/*$split = split(":", $key, 2); 
 
 			if ($split[0] == "pos") {
 
@@ -370,7 +431,7 @@ class Main {
 					
 // 				print "contextattribute: " .$split[0] . "," . $split[1] . "," . $value ."<br>";
 				$this->arguments[] = new ContextAttribute($split[0], $split[1], $value);
-			}
+			} */
 		}
 
 		// Currently only delete, insert & update arrives as POST.
@@ -393,17 +454,16 @@ class Main {
 		if (is_dir("./context")) {
 			$this->multiple = true;
 			if (is_writable("./context")) $this->create_contexts = true;
-		}
-		else if (is_file("./context")) {
-		  
-		  $found = false;
+		} else if (is_file("./context")) {
+			
+			$found = false;
 
-		  $contextfile = "./context";
-		  $s = implode("", @file($contextfile));
-		  $context = unserialize($s);
+			$contextfile = "./context";
+			$s = implode("", @file($contextfile));
+			$context = unserialize($s);
 
-		  foreach($this->arguments as $i => $argument) if ($argument->contextname == $context->name) $found = true;
-		  if (!$found) $this->arguments[] = new ContextAttribute("show", $context->name, "true");
+			foreach($this->arguments as $i => $argument) if ($argument->contextname == $context->name) $found = true;
+			if (!$found) $this->arguments[] = new ContextAttribute("show", $context->name, "true");
 		}
 		
 
@@ -441,7 +501,7 @@ class Main {
 
 		// Below is DEBUG output on the page! 
 
-		if (false) 
+		if (true) 
 		{
 		  print "<div style=\"position:absolute;right:0px;top:0px;text-align:right;\">";
 		  foreach ($_SESSION as $key => $value) foreach ($value as $key2 => $value2) print $key . ":" . $key2 . "=" . $value2 . "<br>";
@@ -469,7 +529,7 @@ class Main {
 
 		// Print HTML header.
 
-		$this->printHeader();
+		print $this->buildHeader();
 
 		// Check js.
 
@@ -494,11 +554,140 @@ class Main {
 
 		if ($this->multiple) $this->printContextbar();
 
-		$this->printFooter();	
+		print $this->buildFooter();	
+	}
+
+	protected function loadContexts() {
+
+		$contexts = array();
+		
+		$handle = opendir("./context"); // TODO: error handling.
+		while (false !== ($file = readdir($handle))) {
+
+			if (substr($file, -8) == ".context") { // TODO: get rid of .context suffix.
+
+				$s = implode("", @file("./context/" . $file));
+				$contexts[] = unserialize($s); // TODO: error handling.
+			}
+		}
+		closedir($handle);
+
+		return $contexts;
+	}
+
+	protected function getContextByName($name) {
+
+		foreach($this->contexts as $i => $context) if ($context->name == $name) return $context;
+		return null;
+	}
+
+	protected function processHTTPArguments() {
+
+		$httpArguments = array_merge($_GET, $_POST);
+
+		foreach($httpArguments as $key => $value) { 
+
+			//print $key . "=" . $value . "<br>"; 
+
+			$splitArguments = split(",", $value, 2);
+
+			if (count($splitArguments) == 2) {
+
+				$contextName = $splitArguments[0];
+				$argument = $splitArguments[1];
+
+				$context = $this->getContextByName($contextName);
+
+				if ($key == "setVisible") $this->setContextAttribute($context, "visible", $argument);
+				else if ($key == "setFlags") $this->setContextAttribute($context, "flags", $argument);
+				else if ($key == "edit") {
+
+					$this->setContextAttribute($context, "visible", "false");
+					$this->setContextAttribute($context, "edit", $argument);
+				} else if (($key == "update") || ($key == "insert")) {
+
+					$options = $this->extractFieldArguments($context);
+
+					if ($key == "update") $success = $context->database->update($context->table, $options);
+					else $success = $context->database->insert($context->table, $options);
+
+					// TODO: error handling, see success variable.
+
+					$this->removeContextAttribute($context, "edit");
+					$this->setContextAttribute($context, "visible", "true");
+				} else if ($key == "remove") {
+
+					$success = $context->database->remove($context->table, $argument);
+					// TODO: error handling, see success variable.
+				}
+			} else {
+
+				//$this->setAttribute($key, $value);
+			}
+		}
+
+		return $arguments;
+	}
+
+	public function __construct() {
+
+		// If the argument new_session=true is given, delete the current session.
+
+		if ((isset($_GET["new_session"])) && ($_GET["new_session"] == "true")) {
+
+			session_unset();
+			unset($_GET["new_session"]);
+		}
+
+		// load contexts from disk.
+
+		$this->contexts = $this->loadContexts();
+
+		// process http Arguments
+
+		$this->processHTTPArguments();
+	}
+
+	public function buildHTML() {
+
+		$widgets = array();
+
+		foreach($this->contexts as $i => $context) {
+
+			if ($this->getContextAttribute($context, "edit") != null) {
+				
+				$id = $this->getContextAttribute($context, "edit");
+				$widgets[] = $this->createEditor($context, $id);
+			} else if ($this->getContextAttribute($context, "visible") == "true") {
+
+				$flags = $this->getContextAttribute($context, "flags");
+				if ($flags == null) $widgets[] = $this->createTable($context);
+				else $widgets[] = $this->createTable($context, $flags);
+			}
+		}
+
+		$html = "";
+		$html .= $this->buildHeader();
+		$html .= $this->layoutNoJS($widgets);
+
+		if (true) {
+
+			$html .= "<div style=\"position:absolute;right:0px;top:0px;text-align:right;\">";
+			foreach ($_SESSION as $key => $value) {
+			
+				if (is_array($value)) foreach ($value as $key2 => $value2) $html .= $key . "=" . $key2 . "," . $value2 . "<br>";
+				else $html .= $key . "=" . $value . "<br>";
+			}
+			$html .= "</div>";
+		}
+
+		$html .= $this->buildFooter();
+
+		return $html;
 	}
 }
 
 $main = new Main();
-$main->run();
+print $main->buildHTML();
 
 ?>

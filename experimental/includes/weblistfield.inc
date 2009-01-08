@@ -19,7 +19,7 @@ class WebListField extends WebField
 
 		$list = $this->database->buildListField($this->field);
 	
-		$ret = "<td><select name=\"field" . $hash . ":" . $contextname . "\" >";
+		$ret = "<td><select name=\"ptr:" . $hash . "\" >";
 	
 		// If the field is optional, add a blank field on the top.
 	

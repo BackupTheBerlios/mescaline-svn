@@ -66,10 +66,10 @@ class WebWidget {
 
 			$ret .= "<input type=\"hidden\" name=\"";
 			
-			if ($argument instanceof ContextAttribute) $ret .= $argument->name . ":" . $argument->contextname;
+			if ($argument instanceof ContextAttribute) $ret .= $argument->name;
 			else $ret .= $argument->name;
 
-			$ret .= "\" value=\"" . $argument->value . "\"/>";
+			$ret .= "\" value=\"" . $argument->contextname . "," . $argument->value . "\"/>";
 		}
 		
 		return $ret;	
@@ -78,16 +78,16 @@ class WebWidget {
 	protected function compileHrefArguments($arguments) {
 
 		$ret = "?" . session_name() . "=" . session_id();
-
+		
 		foreach ($arguments as $i => $argument) {
 
 			$ret .= "&";
 			
 			if ($argument instanceof ContextAttribute) 
-				$ret .= $argument->name . ":". $argument->contextname . "=" . $argument->value;
+				$ret .= $argument->name . "=" . $argument->contextname . "," . $argument->value;
 			else $ret .= $argument->name . "=" . $argument->value;
 		}
-		
+
 		return $ret;	
 	}
 }

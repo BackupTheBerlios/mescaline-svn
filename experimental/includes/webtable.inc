@@ -67,12 +67,12 @@ class WebTable extends WebWidget
 					
 				if (!$this->context->table->isHidden($i)) {
 					
-					$arguments = array(new ContextAttribute("flags", $this->domid, $sortflags));
+					$arguments = array(new ContextAttribute("setFlags", $this->domid, $sortflags));
 					
 					$ret .= "<a href=\"./index.php" . $this->compileHrefArguments($arguments) . "\">" . $field->name . "</a>";
 				} 
 
-				$arguments = array(new ContextAttribute("flags", $this->domid, $hideflags));
+				$arguments = array(new ContextAttribute("setFlags", $this->domid, $hideflags));
 
 				$ret .= "<a " . (($this->context->table->isHidden($i)) ? "class=\"tooltip\"" : "")
 					. "href=\"./index.php" . $this->compileHrefArguments($arguments) . "\">"
@@ -88,7 +88,7 @@ class WebTable extends WebWidget
 
 		if ($this->context->allow_new) {
 
-			$arguments = array(new ContextAttribute("new", $this->domid, "true"));
+			$arguments = array(new ContextAttribute("edit", $this->domid, "new"));
 
 			$ret .= "<a href=\"./index.php" . $this->compileHrefArguments($arguments) . "\"><img src=\"./icons/new.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"new\"></a>";
 		}

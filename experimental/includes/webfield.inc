@@ -21,7 +21,7 @@ class WebField
 
 	function renderFormField($contextname, $hash, $new = false) {
 
-		return "<td><input name=\"field" . $hash . ":" . $contextname  . "\" value=\"" . $this->value ."\"></td>";
+		return "<td><input name=\"ptr:" . $hash . "\" value=\"" . $this->value ."\"></td>";
 	}
 
 	function renderFormName() {

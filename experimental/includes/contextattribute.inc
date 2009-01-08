@@ -1,20 +1,20 @@
 <?php
 
-require_once("argument.inc");
+require_once("attribute.inc");
 
-class ContextAttribute extends Argument {
+class ContextAttribute extends Attribute {
 
 	public $contextname;
 
 	function __construct($name, $contextname, $value) {
 
-		$this->name = $name;
+		parent::__construct($name, $value);
+
 		$this->contextname = $contextname;
-		$this->value = $value;
 	}
 
-	public function key() {
+	//public function key() { // TODO: still need that?
 
-		return $this->name . ":" . $this->contextname;
-	}
+	//	return $this->name . ":" . $this->contextname;
+	//}
 }
