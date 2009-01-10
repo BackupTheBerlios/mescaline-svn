@@ -12,9 +12,6 @@ class ContextAttribute extends Attribute {
 
 		$this->contextname = $contextname;
 	}
-
-	//public function key() { // TODO: still need that?
-
-	//	return $this->name . ":" . $this->contextname;
-	//}
 }
+
+?>

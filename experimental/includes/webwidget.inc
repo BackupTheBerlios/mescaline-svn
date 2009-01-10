@@ -21,7 +21,7 @@ class WebWidget {
 
 		return "<div class=\"webwidget_bar\">
 			  <div id=\"" . $this->domid . "_handle\">" . $this->domid . "</div>
-			  <div class=\"webwidget_icon\"><a href=\"./index.php" . $this->compileHrefArguments(array(new ContextAttribute("show", $this->domid, "false"))) . "\">
+			  <div class=\"webwidget_icon\"><a href=\"./index.php" . $this->compileHrefArguments(array(new ContextAttribute("setVisible", $this->domid, "false"))) . "\">
 				<img src=\"./icons/close.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"close\"/>
 			      </a>
 			  </div>
@@ -33,7 +33,7 @@ class WebWidget {
 		return "<div id=\"footer\"><a href=\"http://mescaline.berlios.de\"><img id=\"link\" width=\"100\" height=\"21\" border=\"0\" style=\"vertical-align:middle;\" src=\"./icons/footer.png\"/ alt=\"mescaline\"/></a></div>";
 	}
 
-	public function assembleArguments($arguments) {
+	/*public function assembleArguments($arguments) {
 
 		$ret = "";
 
@@ -44,11 +44,11 @@ class WebWidget {
 		}
 		
 		return $ret;
-	}
+	}*/
 
 	protected function buildContent() {}
 
-	public function assembleArgumentsPost($arguments) {
+	/*public function assembleArgumentsPost($arguments) {
 
 		$ret = "";
 
@@ -56,9 +56,9 @@ class WebWidget {
 			$ret .= "<input type=\"hidden\" name=\"" . $argument->key() . "\" value=\"" . $argument->value . "\">";
 	
 		return $ret;
-	}
+	}*/
 
-	protected function compileFormArguments($arguments) {
+	public function compileFormArguments($arguments) {
 
 		$ret = "<input type=\"hidden\" name=\"" . session_name() . "\" value=\"" . session_id() . "\"/>";
 
@@ -75,7 +75,7 @@ class WebWidget {
 		return $ret;	
 	}
 
-	protected function compileHrefArguments($arguments) {
+	public function compileHrefArguments($arguments) {
 
 		$ret = "?" . session_name() . "=" . session_id();
 		

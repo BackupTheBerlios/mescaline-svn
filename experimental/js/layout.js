@@ -47,7 +47,7 @@ function makeMoveable(sessionString, widgets){
 			if (y < 0) y = 0;
 			if (x < (0 - width + 20)) x = 20 - width;
 
-			window.location.replace("./index.php?" + sessionString + "&pos:" + mover.node.id + "=" + x + "x" + y);
+			window.location.replace("./index.php?" + sessionString + "&setPosition=" + mover.node.id + "," + x + "x" + y);
 		});
 	}
 }

@@ -4,6 +4,7 @@ session_start();
 
 ini_set('include_path', './includes/');
 
+require_once("attribute.inc");
 require_once("contextattribute.inc");
 require_once("version.inc");
 require_once("context.inc");
@@ -36,7 +37,7 @@ class Main {
 			<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">
 			<link rel=stylesheet type=\"text/css\" href=\"css/default.css\">
 			</head>
-			<body " . ($this->multiple ? " onload=\"onLoad();\">" : "") ."<script type=\"text/javascript\" src=\"js/layout.js\"></script>";	// TODO: get rid of this->multiple here.
+			<body onload=\"onLoad();\"><script type=\"text/javascript\" src=\"js/layout.js\"></script>";
 	}
 
 	private function buildFooter() {
@@ -117,7 +118,7 @@ class Main {
 
 	private function extractFieldArguments($context) {
 
-		// Extract options from parameters. The information arrives in the format: "<hash>=$contextname,$name ... ptr:<hash>=$value".
+		// Extract options from parameters. The information arrives in the format: "<hash>=$contextname,$name ... ptr:<hash>=$value". This is complicated but mandatory, because the contextname cannot be included in form values (they would appear in the fields).
 	
 		$options = array();
 
@@ -183,14 +184,16 @@ class Main {
 			foreach ($row as $i => $value) $webfields[$i]->value = $value;
 		}
 		
-		if ($this->multiple) return new WebEditor($context, $webfields, $id);
-		else return new SingleWebEditor($context, $webfields, $id);
+		return new WebEditor($context, $webfields, $id);
+		//if ($this->multiple) return new WebEditor($context, $webfields, $id);
+		//else return new SingleWebEditor($context, $webfields, $id);
 	}
 
 	private function createTable($context, $flags = 0) {
 
-		if ($this->multiple) $table = new WebTable($context, $this->arguments, $flags);
-		else $table = new SingleWebTable($context, $this->arguments, $flags);
+		$table = new WebTable($context, $this->arguments, $flags);
+		//if ($this->multiple) $table = new WebTable($context, $this->arguments, $flags);
+		//else $table = new SingleWebTable($context, $this->arguments, $flags);
 
 		$rows = $context->database->buildTable($context->table, $context->table->sort);
 
@@ -261,7 +264,7 @@ class Main {
 
 				var widgets = new Array(" . sizeof($widgets) . ");";
 				$i = 0;
-				foreach($widgets as $id => $widget) print "widgets[" . $i++ . "] = \"" . $id . "\";";
+				foreach($widgets as $key => $widget) print "widgets[" . $i++ . "] = \"" . $widget->domid . "\";";
 				print "makeMoveable(\"" . session_name() . "=" . session_id() . "\", widgets);		
 			};
 			dojo.addOnLoad(initDND);
@@ -286,29 +289,42 @@ class Main {
 		$positionArguments = array();
 		$layoutWidgets = array();
 
- 		foreach($widgets as $id => $widget) {
+ 		foreach($widgets as $key => $widget) {
 
-			if (!isset($_SESSION["pos"][$id])) $layoutWidgets[$id] = $widget;
-			else $positionArguments[$id] = new ContextAttribute($id, "pos", $_SESSION["pos"][$id]);
+			$layoutWidgets[$widget->domid] = $widget;
+			//if (!isset($_SESSION["pos"][$id])) $layoutWidgets[$id] = $widget;
+			//else $positionArguments[$id] = new ContextAttribute($id, "pos", $_SESSION["pos"][$id]);
 		}
 
-		$html .= "<script type=\"text/javascript\">
-			function onLoad() {
+		$html .= "<script type=\"text/javascript\"> function onLoad() { ";
 
-				var layoutWidgets = new Array(" . sizeof($layoutWidgets) . ");";
-				$i = 0;
-				foreach($layoutWidgets as $id => $widget) $html .= "layoutWidgets[" . $i++ . "] = \"" . $id . "\";";
-				$html .= "layout(layoutWidgets);";
-				foreach($positionArguments as $id => $argument) {
+		$i = 0;
+		foreach($widgets as $key => $widget) {
+
+			$position = $this->getContextAttribute($this->getContextByName($widget->domid), "position");
+
+			if ($position != null) {
+
+				$split = split("x", $position, 2);
+				$x = $split[0];
+				$y = $split[1];
+				$html .= "place(\"" . $widget->domid . "\"," . $x . "," . $y . ");";
+			}
+			else $html .= "place(\"" . $widget->domid . "\",0,0);";
+		}
+				//var layoutWidgets = new Array(" . sizeof($layoutWidgets) . ");";
+				//$i = 0;
+				//foreach($layoutWidgets as $id => $widget) $html .= "layoutWidgets[" . $i++ . "] = \"" . $id . "\";";
+				//$html .= "layout(layoutWidgets);";
+				/*foreach($positionArguments as $id => $argument) {
 
 					$split = split("x", $argument->value, 2);
 					$x = $split[0];
 					$y = $split[1];
 
 					$html .= "place(\"" . $id . "\"," . $x . "," . $y . ");";
-				}
-			$html .= "}
-		</script>";
+				}*/
+		$html .= "} </script>";
 
 		return $html;
 	}
@@ -591,20 +607,27 @@ class Main {
 
 			$splitArguments = split(",", $value, 2);
 
-			if (count($splitArguments) == 2) {
+			$argumentCount = count($splitArguments);
+
+			if ($argumentCount == 1) {
+
+				if ($key == "setJavascript") $this->setAttribute("javascript", $value); 
+			} else if ($argumentCount == 2) {
 
 				$contextName = $splitArguments[0];
 				$argument = $splitArguments[1];
 
 				$context = $this->getContextByName($contextName);
 
-				if ($key == "setVisible") $this->setContextAttribute($context, "visible", $argument);
+				if ($key == "setVisible") {
+	
+					if ($argument == "false") $this->removeContextAttribute($context, "edit");
+					$this->setContextAttribute($context, "visible", $argument);
+				}
 				else if ($key == "setFlags") $this->setContextAttribute($context, "flags", $argument);
-				else if ($key == "edit") {
-
-					$this->setContextAttribute($context, "visible", "false");
-					$this->setContextAttribute($context, "edit", $argument);
-				} else if (($key == "update") || ($key == "insert")) {
+				else if ($key == "setPosition") $this->setContextAttribute($context, "position", $argument);
+				else if ($key == "edit") $this->setContextAttribute($context, "edit", $argument);
+				else if (($key == "update") || ($key == "insert")) {
 
 					$options = $this->extractFieldArguments($context);
 
@@ -620,13 +643,22 @@ class Main {
 					$success = $context->database->remove($context->table, $argument);
 					// TODO: error handling, see success variable.
 				}
-			} else {
-
-				//$this->setAttribute($key, $value);
 			}
 		}
 
 		return $arguments;
+	}
+
+	protected function checkJavascript() {
+
+		if ($this->getAttribute("javascript") == null) {
+
+			print "<script type=\"text/javascript\">
+			window.location.replace(\"./index.php" . WebWidget::compileHrefArguments(array(new Attribute("setJavascript", "true"))) . "\");
+			</script>";
+
+			$this->setAttribute("javascript", "false");
+		}
 	}
 
 	public function __construct() {
@@ -668,7 +700,10 @@ class Main {
 
 		$html = "";
 		$html .= $this->buildHeader();
-		$html .= $this->layoutNoJS($widgets);
+		
+		$this->checkJavascript();
+		if ($this->getAttribute("javascript") == "true") $html .= $this->layoutJS($widgets);
+		else $html .= $this->layoutNoJS($widgets);
 
 		if (true) {
 
