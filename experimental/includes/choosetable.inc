@@ -3,7 +3,7 @@
 require_once("table.inc");
 require_once("wizardstep.inc");
 require_once("database.inc");
-require_once("context.inc");
+require_once("mysqlcontext.inc");
 
 class ChooseTable extends WizardStep
 {
@@ -32,7 +32,7 @@ class ChooseTable extends WizardStep
 			$password = $_GET['password'];
 	
 			$database = new Database($databasename, $hostname, $user, $password);
-			$this->context = new Context($contextname, null, $database); 
+			$this->context = new MySQLContext($contextname, null, $database); 
 		
 			$s = serialize($this->context);
 

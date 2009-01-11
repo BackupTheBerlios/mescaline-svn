@@ -1,7 +1,5 @@
 <?php
 
-require_once("context.inc");
-require_once("webwidget.inc");
 require_once("webfield.inc");
 require_once("idfield.inc");
 require_once("weblistfield.inc");
@@ -10,18 +8,12 @@ require_once("webboolfield.inc");
 class WebTable extends WebWidget
 {
 	public $content;
-	public $context;
 
-	function __construct($context, $arguments, $flags = 0)
+	function __construct($context, $flags = 0)
 	{
+		parent::__construct($context);
 
-		$this->moveable = true;
-		$this->context = $context;
 		$this->content = null;
-		$this->arguments = $arguments;
-
-		$this->domid = $context->name;
-
 		$this->disassembleFlags($flags);
 	}
 
@@ -65,17 +57,10 @@ class WebTable extends WebWidget
 
 				$ret .= "<td nowrap=\"nowrap\">";
 					
-				if (!$this->context->table->isHidden($i)) {
-					
-					$arguments = array(new ContextAttribute("setFlags", $this->domid, $sortflags));
-					
-					$ret .= "<a href=\"./index.php" . $this->compileHrefArguments($arguments) . "\">" . $field->name . "</a>";
-				} 
-
-				$arguments = array(new ContextAttribute("setFlags", $this->domid, $hideflags));
+				if (!$this->context->table->isHidden($i)) $ret .= "<a href=\"./index.php" . $this->compileHrefArgument("setFlags", $sortflags) . "\">" . $field->name . "</a>";
 
 				$ret .= "<a " . (($this->context->table->isHidden($i)) ? "class=\"tooltip\"" : "")
-					. "href=\"./index.php" . $this->compileHrefArguments($arguments) . "\">"
+					. "href=\"./index.php" . $this->compileHrefArgument("setFlags", $hideflags) . "\">"
 					. (($this->context->table->isHidden($i)) ? "<span>" . $field->name . "</span>" : "")
 					. "<img src=\"./icons/" . (($this->context->table->isHidden($i)) ? "show" : "hide") 
 					. ".png\" width=\"14\" height=\"14\" border=\"0\" style=\"vertical-align:middle\" alt=\"show\"></a></td>";
@@ -88,9 +73,7 @@ class WebTable extends WebWidget
 
 		if ($this->context->allow_new) {
 
-			$arguments = array(new ContextAttribute("edit", $this->domid, "new"));
-
-			$ret .= "<a href=\"./index.php" . $this->compileHrefArguments($arguments) . "\"><img src=\"./icons/new.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"new\"></a>";
+			$ret .= "<a href=\"./index.php" . $this->compileHrefArgument("edit", "new") . "\"><img src=\"./icons/new.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"new\"></a>";
 		}
 
 		$ret .= "</td></tr>";
@@ -118,19 +101,15 @@ class WebTable extends WebWidget
 
 			if ($this->context->allow_edit) { // edit is an http get method
 
-				$arguments = array(new ContextAttribute("edit", $this->domid, $id));
-
-				$ret .= "<a href=\"./index.php" . $this->compileHrefArguments($arguments) . "\">
+				$ret .= "<a href=\"./index.php" . $this->compileHrefArgument("edit", $id) . "\">
 				<img src=\"./icons/edit.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle;\" alt=\"edit\">
 				</a>";
 				
 			}
 
 			if ($this->context->allow_delete) { // delete is an http post method
-
-				$arguments = array(new ContextAttribute("remove", $this->domid, $id));
 	
-				$ret .= "<form style=\"display: inline;\" action=\"./index.php\" method=\"post\">" . $this->compileFormArguments($arguments) . "<input onclick=\"return window.confirm('Do you want to delete the entry?')\" type=\"image\" src=\"./icons/remove.png\" alt=\"remove\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\"/></form>"; 
+				$ret .= "<form style=\"display: inline;\" action=\"./index.php\" method=\"post\">" . $this->compileFormArgument("remove", $id) . "<input onclick=\"return window.confirm('Do you want to delete the entry?')\" type=\"image\" src=\"./icons/remove.png\" alt=\"remove\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\"/></form>"; 
 			}
 
 			$ret .= "</td></tr>";

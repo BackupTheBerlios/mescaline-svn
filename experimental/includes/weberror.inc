@@ -1,20 +1,13 @@
 <?php
 
-require_once("webwidget.inc");
-
 class WebError extends WebWidget {
 
-	public $caption;
-	public $arguments;
 	public $error;
 
-	function __construct($caption, $domid, $error, $argument = null) {
+	function __construct($context, $error, $value, $name) {
 
-		$this->moveable = true;
-		$this->caption = $caption;
-		$this->domid = $domid;
+		parent::__construct($context);
 		$this->error = $error;
-		$this->arguments = array($argument);
 	}
 
 	protected function buildContent() {

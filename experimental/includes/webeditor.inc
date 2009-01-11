@@ -1,21 +1,17 @@
 <?php
 
-require_once("webwidget.inc");
-
 class WebEditor extends WebWidget
 {
 	public $id;
-	public $context;
 	public $webfields;
 
 	function __construct($context, $webfields, $id) {
 
-		$this->moveable = true;
-		$this->context = $context;
+		parent::__construct($context);
+
 		$this->webfields = $webfields;
 		$this->id = $id;
-		$this->domid = $context->name;
-	} 
+	}
 
 	protected function buildContent() {
 
@@ -26,10 +22,12 @@ class WebEditor extends WebWidget
 
 		// create the hidden fields
 
-		$arguments = array(new ContextAttribute(($this->id == "new") ? "insert" : "update", $this->domid, $this->id));
-		foreach ($this->webfields as $i => $webfield) $arguments[] = new ContextAttribute(md5($webfield->field->name), $this->context->name, $webfield->field->name);
-		$ret .= $this->compileFormArguments($arguments);
+		$values = array();
+		$values[($this->id == "new") ? "insert" : "update"] = $this->id;
+		foreach ($this->webfields as $i => $webfield) $values[md5($webfield->field->name)] = $webfield->field->name;
 
+		$ret .= $this->compileMultipleFormArguments($values);
+		
 		// Walk through the fields and print them.
 
 		foreach ($this->webfields as $i => $webfield) $ret .= "<tr>" . $webfield->renderFormName() . $webfield->renderFormField($this->context->name, md5($webfield->field->name), ($this->id == "new")) . "</tr>";
