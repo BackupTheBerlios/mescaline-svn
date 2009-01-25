@@ -23,12 +23,12 @@ class WebWidget {
 
 	protected function buildHandle() {
 
-		return "<div class=\"webwidget_bar\">
-			  <div id=\"" . $this->domid . "_handle\">" . $this->domid . "</div>
-			  <div class=\"webwidget_icon\"><a href=\"./index.php" . $this->compileHrefArgument("setVisible", "false") . "\">
-				<img src=\"./icons/close.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"close\"/>
-			      </a>
-			  </div>
+		return "<div class=\"webwidget_bar\" id=\"" . $this->domid . "_handle\">" . $this->domid . "</div>
+			<div class=\"webwidget_close\">
+				<a href=\"./index.php" . $this->compileHrefArgument("setVisible", "false") . "\">
+					<img src=\"./icons/close.png\" width=\"20\" height=\"20\" border=\"0\" style=\"vertical-align:middle\" alt=\"close\"/>
+			      	</a>
+			</div>
 			</div>";
 	}
 

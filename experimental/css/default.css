@@ -121,8 +121,8 @@ a:visited {
 
 .webwidget { 
 
-	background-color: white; 
-	margin: 7px;
+	background-color: white;
+	position: relative;
 }
 
 .webwidget_bar { 
@@ -133,12 +133,13 @@ a:visited {
 	padding: 2px;
 }
 
-.webwidget_icon { 
+.webwidget_close { 
 	
 	top: 0px;
 	right: 2px;
 	position: absolute;
 }
+
 
 .webwidget_content { 
 

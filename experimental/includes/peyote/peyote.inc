@@ -20,8 +20,10 @@ class Peyote {
 			<title>peyote</title>
 			<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">
 			<link rel=stylesheet type=\"text/css\" href=\"css/default.css\">
-			</head>
-			<body onload=\"onLoad();\"><script type=\"text/javascript\" src=\"js/layout.js\"></script>";
+			</head>"
+			. (($this->getAttribute("javascript") == "true") 
+				? "<body onload=\"onLoad();\"><script type=\"text/javascript\" src=\"js/layout.js\"></script>"
+				: "<body>");
 	}
 
 	protected function buildFooter() {
@@ -31,21 +33,15 @@ class Peyote {
 
 	protected function dojo($widgets) {
 
-		print "<script type=\"text/javascript\" src=\"js/dojo.js\"></script>
-			<script type=\"text/javascript\">
-			dojo.require(\"dojo.dnd.Mover\");
-			dojo.require(\"dojo.dnd.Moveable\");
-			dojo.require(\"dojo.dnd.move\");
-	
-			var initDND = function(){		
+		$html = "";
+		$html .= "<script type=\"text/javascript\" src=\"js/dojo.js\"></script>";
+		$html .= "<script type=\"text/javascript\">dojo.require(\"dojo.dnd.Mover\");dojo.require(\"dojo.dnd.Moveable\");dojo.require(\"dojo.dnd.move\");";
+		$html .= "var initDND = function(){var widgets = new Array(" . sizeof($widgets) . ");";
+		$i = 0;
+		foreach($widgets as $key => $widget) $html .= "widgets[" . $i++ . "] = \"" . $widget->domid . "\";";
+		$html .= "makeMoveable(\"" . session_name() . "=" . session_id() . "\", widgets);};dojo.addOnLoad(initDND);</script>";
 
-				var widgets = new Array(" . sizeof($widgets) . ");";
-				$i = 0;
-				foreach($widgets as $key => $widget) print "widgets[" . $i++ . "] = \"" . $widget->domid . "\";";
-				print "makeMoveable(\"" . session_name() . "=" . session_id() . "\", widgets);		
-			};
-			dojo.addOnLoad(initDND);
-		</script>";
+		return $html;
 	}
 	
 	protected function layoutJS($widgets) {
@@ -54,7 +50,7 @@ class Peyote {
 
 		// dojo magic
 
-		$this->dojo($widgets);
+		$html .= $this->dojo($widgets);
 
 		// show widgets
 
@@ -91,17 +87,19 @@ class Peyote {
 
 	protected function layoutNoJS($widgets) {
 
-		$html = "";
-
-		$html .= "<div align=\"center\"><table><tr>";
+		$html = "<div style=\"padding: 5px; margin-left: auto; margin-right: auto; display: table;\"><table><tr>";
 
 		// show widgets
 
 		ksort($widgets);
 		foreach($widgets as $i => $widget) {
-		
+			
 			$widget->moveable = false;
-			$html .= "<td style=\"vertical-align:top\">" . $widget->HTML() . "</td>"; // TODO: rename HTML function to buildHTML
+
+			$html .= "<td style=\"vertical-align: top\">";
+			$html .= $widget->HTML();
+			$html .= "</td>";
+
 		}
 
 		$html .= "</tr></table></div>";
@@ -176,7 +174,8 @@ class Peyote {
 
 			if ($argumentCount == 1) {
 
-				if ($key == "setJavascript") $this->setAttribute("javascript", $value); 
+				if ($key == "setJavascript") $this->setAttribute("javascript", $value);
+				else if ($key == "setDebug") $this->setAttribute("debug", $value);
 			} else if ($argumentCount == 2) {
 
 				$contextName = $splitArguments[0];
@@ -226,7 +225,7 @@ class Peyote {
 		if ($this->getAttribute("javascript") == "true") $html .= $this->layoutJS($widgets);
 		else $html .= $this->layoutNoJS($widgets);
 
-		if (true) {
+		if ($this->getAttribute("debug") == "true") {
 
 			$html .= "<div style=\"position:absolute;right:0px;top:0px;text-align:right;\">";
 			foreach ($_SESSION as $key => $value) {
